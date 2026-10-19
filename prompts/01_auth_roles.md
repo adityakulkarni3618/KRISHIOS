@@ -1,0 +1,2 @@
+# Prompt 1 — Auth + roles (one commit per section)
+Read AGENTS.md. Investigate current `backend/app` and summarize what exists (no code changes yet). Then: (a) add user model + argon2 password hashing + login returning a token; (b) protect farm/soil routes so a user only sees their own farms; (c) add roles (farmer, expert, fpo, provider, researcher, admin); (d) tests for 401, 403, cross-user access, duplicate registration. Paste verbatim `pytest -v` output. One commit per lettered section.

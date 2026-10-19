@@ -1,0 +1,2 @@
+# Prompt 2 — Weather module
+Read AGENTS.md. First verify (browse) one weather provider's terms, limits and attribution and write them to `research/data_source_registry.md`. Build `adapters/weather` behind an interface with timeout, retry, cache, and UNAVAILABLE fallback. Show source + fetched_at + provenance in every response. Tests must cover timeout, stale cache, malformed response. Paste raw request/response pairs and verbatim test output.
