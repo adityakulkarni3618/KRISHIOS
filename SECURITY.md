@@ -1,0 +1,2 @@
+# Security
+Current state: **NOT production-ready.** No authentication/authorization yet; endpoints are open. Planned (Milestone 1b): password hashing (argon2), JWT or session auth, role-based access (farmer/expert/FPO/provider/researcher/admin), rate limiting, upload validation (type, size, re-encode images), audit log, secrets via environment only, dependency scanning in CI. Report vulnerabilities privately to the maintainers (add contact before public release).

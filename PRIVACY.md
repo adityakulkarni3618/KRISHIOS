@@ -1,0 +1,2 @@
+# Privacy
+Principles: collect the minimum; explicit consent for location and images; never expose precise farm coordinates publicly; export and delete workflows; no farm data sent to external LLMs without need and consent; retention policy defined before storing images/documents. Status: policy draft only — legal review required before collecting real farmer data (India DPDP Act 2023 applicability to be confirmed by counsel).
