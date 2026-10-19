@@ -1,0 +1,2 @@
+# Test strategy
+pytest for backend (unit + API + DB using in-memory SQLite). Planned: auth/authorization tests, external-API failure tests (timeouts, stale data, missing prices), offline-sync conflict tests, image-quality and low-confidence tests, model evaluation reports (precision/recall/F1 per class on independent test data), Playwright e2e, load tests. A 200 OK is not proof of correctness: each feature needs explicit acceptance criteria (see MVP.md).

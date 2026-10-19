@@ -1,0 +1,2 @@
+# Proposed pilot (proposal, not verified)
+Start with ONE district near your team for easy field access (e.g., Pune district) and 2–3 locally major crops chosen with a local KVK/agricultural-university expert. Season: next Rabi or Kharif decided by timing. Success = farmers can keep records, read weather + mandi info and a cost estimate without help; measured by usability sessions (not income claims). Do not expand to other districts until data and workflows are validated. District/crops are open decisions (see DECISIONS_NEEDED.md).
