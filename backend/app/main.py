@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from app.core.config import settings
 from app.db import Base, engine
-from app.routers import auth, calculator, farms, mapping, market, weather
+from app.routers import auth, calculator, farms, mapping, market, schemes, soil, weather
 
 app = FastAPI(title=settings.app_name, version="0.1.0")
 Base.metadata.create_all(engine)  # dev convenience; Alembic migrations come in Milestone 1b
@@ -13,6 +13,8 @@ app.include_router(mapping.router)
 app.include_router(weather.router)
 app.include_router(market.router)
 app.include_router(calculator.router)
+app.include_router(soil.router)
+app.include_router(schemes.router)
 
 
 @app.get("/health", tags=["system"])

@@ -21,7 +21,7 @@ class Coverage(str, Enum):
 CAPABILITIES: dict[str, Coverage] = {
     "A_farm_management": Coverage.TESTED,  # farmers/farms/soil-test records, argon2 auth & role isolation
     "B_crop_recommendation": Coverage.NOT_IMPLEMENTED,
-    "C_soil_health": Coverage.PARTIALLY_IMPLEMENTED,      # record keeping only, no interpretation
+    "C_soil_health": Coverage.TESTED,                     # ICAR benchmarked soil interpretation & amendment advisory
     "D_disease_pest": Coverage.NOT_IMPLEMENTED,
     "E_weather": Coverage.TESTED,                         # live Open-Meteo adapter with caching, resilience, agro-advisories
     "F_irrigation": Coverage.NOT_IMPLEMENTED,
@@ -29,7 +29,7 @@ CAPABILITIES: dict[str, Coverage] = {
     "H_yield": Coverage.NOT_IMPLEMENTED,
     "I_market": Coverage.TESTED,                          # APMC mandi price query with MSAMB/Agmarknet schema and min/modal/max
     "J_finance": Coverage.TESTED,                         # Farm economics calculator, break-even price/yield & sensitivity matrix
-    "K_schemes": Coverage.NOT_IMPLEMENTED,
+    "K_schemes": Coverage.TESTED,                         # Verified central & state schemes catalog with official portals
     "L_insurance": Coverage.NOT_IMPLEMENTED,
     "M_remote_sensing": Coverage.NOT_IMPLEMENTED,
     "N_postharvest": Coverage.NOT_IMPLEMENTED,
