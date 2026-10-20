@@ -1197,3 +1197,205 @@ body.theme-govt-active .input-label {
     font-size: 26px;
   }
 }
+
+/* ==========================================================================
+   3D & MOUSE-INTERACTIVE ANIMATIONS & DRONE HUD SYSTEM
+   ========================================================================== */
+
+/* Cursor Ambient Lime Glow */
+.ambient-glow-cursor {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(200, 245, 55, 0.08) 0%, rgba(200, 245, 55, 0.02) 40%, transparent 70%);
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  transition: transform 0.08s ease-out;
+  mix-blend-mode: screen;
+}
+
+/* 3D Scene Container with Perspective */
+.scene-3d-wrapper {
+  perspective: 1200px;
+  position: relative;
+  width: 100%;
+}
+
+.tilt-card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.25s ease;
+  will-change: transform;
+}
+
+/* Floating animation */
+@keyframes floatGentle {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(0.5deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes floatReverse {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(8px) rotate(-0.5deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.floating-stat-1 {
+  animation: floatGentle 5s ease-in-out infinite;
+}
+.floating-stat-2 {
+  animation: floatReverse 6s ease-in-out infinite;
+}
+.floating-stat-3 {
+  animation: floatGentle 5.5s ease-in-out infinite 0.5s;
+}
+.floating-stat-4 {
+  animation: floatReverse 4.8s ease-in-out infinite 1s;
+}
+
+/* Interactive Spray Mist Effect */
+@keyframes mistPulse {
+  0% { opacity: 0.35; transform: scaleX(0.96) translateY(0); filter: blur(3px); }
+  50% { opacity: 0.7; transform: scaleX(1.04) translateY(-3px); filter: blur(1.5px); }
+  100% { opacity: 0.35; transform: scaleX(0.96) translateY(0); filter: blur(3px); }
+}
+
+.spray-mist-emitter {
+  position: absolute;
+  top: 36%;
+  left: 20%;
+  right: 20%;
+  height: 60px;
+  background: radial-gradient(ellipse at center, rgba(200, 245, 55, 0.45) 0%, rgba(255, 255, 255, 0.3) 30%, transparent 70%);
+  animation: mistPulse 2.8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Cyber-Agri Drone HUD Overlay */
+.drone-hud-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  border: 1px solid rgba(200, 245, 55, 0.2);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.hud-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90px;
+  height: 90px;
+  border: 1px dashed rgba(200, 245, 55, 0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hud-crosshair::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-lime);
+  box-shadow: 0 0 10px var(--accent-lime);
+}
+
+.hud-telemetry-panel {
+  position: absolute;
+  top: 24px;
+  left: 28px;
+  background: rgba(8, 22, 12, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(200, 245, 55, 0.3);
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--accent-lime);
+  line-height: 1.5;
+}
+
+.hud-radar-sweep {
+  position: absolute;
+  bottom: 24px;
+  left: 28px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 1px solid rgba(200, 245, 55, 0.4);
+  background: radial-gradient(circle, rgba(200, 245, 55, 0.1) 0%, transparent 80%);
+}
+
+@keyframes sweepAngle {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.hud-radar-sweep::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg, transparent 300deg, rgba(200, 245, 55, 0.5) 360deg);
+  animation: sweepAngle 3s linear infinite;
+}
+
+/* Horizontal Scroll 3D Cards */
+.scrolling-3d-deck {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding: 12px 6px 36px 6px;
+  scroll-snap-type: x mandatory;
+}
+
+.scrolling-3d-deck::-webkit-scrollbar {
+  height: 6px;
+}
+
+.deck-card {
+  min-width: 340px;
+  max-width: 360px;
+  scroll-snap-align: start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+  cursor: pointer;
+}
+
+.deck-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--accent-lime);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
+}
+
+.deck-card-media {
+  position: relative;
+  height: 220px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.deck-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.deck-card:hover .deck-card-media img {
+  transform: scale(1.08);
+}
+

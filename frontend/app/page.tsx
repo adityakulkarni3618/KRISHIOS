@@ -132,6 +132,35 @@ export default function Home() {
   const [mappingQuery, setMappingQuery] = useState("");
   const [mappingResult, setMappingResult] = useState<any>(null);
 
+  // 3D & Animation State
+  const [cursorPos, setCursorPos] = useState({ x: -1000, y: -1000 });
+  const [tilt3D, setTilt3D] = useState({ rx: 0, ry: 0 });
+  const [sprayActive, setSprayActive] = useState(true);
+  const [droneVision, setDroneVision] = useState<"normal" | "ndvi" | "thermal">("normal");
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setCursorPos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  const handleCardMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rx = ((y - centerY) / centerY) * -6;
+    const ry = ((x - centerX) / centerX) * 6;
+    setTilt3D({ rx, ry });
+  };
+
+  const handleCardMouseLeave = () => {
+    setTilt3D({ rx: 0, ry: 0 });
+  };
+
   const t = (key: string): string => {
     return MESSAGES[lang]?.[key] || enMessages[key as keyof typeof enMessages] || key;
   };
@@ -457,6 +486,9 @@ export default function Home() {
 
   return (
     <>
+      {/* Ambient Mouse-Tracking Glow Orb */}
+      <div className="ambient-glow-cursor" style={{ left: cursorPos.x, top: cursorPos.y }} />
+
       {/* =========================================================================
           THEME 1: DRIBBLE MODERN PRECISION AGTECH LANDING PAGE
           ========================================================================= */}
@@ -719,6 +751,269 @@ export default function Home() {
               <span>Mastermail</span>
             </div>
           </div>
+
+          {/* 3D Smart Tractor & Precision Spray Simulator Section */}
+          <section className="innovating-section" style={{ marginTop: 24, marginBottom: 54 }}>
+            <div className="section-eyebrow">PRECISION 3D AGRI-MACHINERY</div>
+            <div className="section-top-header">
+              <h2 className="section-main-heading">
+                PREMIUM SMART FARMING & PRECISION HARVESTING
+              </h2>
+              <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  className="btn-lime-pill"
+                  onClick={() => setSprayActive(!sprayActive)}
+                  style={{ padding: "8px 16px", fontSize: 13 }}
+                >
+                  ⚡ Spray Mist: {sprayActive ? "ACTIVE" : "PAUSED"}
+                </button>
+                <div style={{ display: "flex", background: "rgba(0,0,0,0.5)", borderRadius: 20, padding: 3, gap: 4 }}>
+                  <button
+                    type="button"
+                    onClick={() => setDroneVision("normal")}
+                    style={{
+                      background: droneVision === "normal" ? "var(--accent-lime)" : "transparent",
+                      color: droneVision === "normal" ? "#08160c" : "#9db5a3",
+                      border: "none",
+                      borderRadius: 14,
+                      padding: "4px 10px",
+                      fontSize: 11,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    HD Feed
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDroneVision("ndvi")}
+                    style={{
+                      background: droneVision === "ndvi" ? "#4ade80" : "transparent",
+                      color: droneVision === "ndvi" ? "#08160c" : "#9db5a3",
+                      border: "none",
+                      borderRadius: 14,
+                      padding: "4px 10px",
+                      fontSize: 11,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    NDVI Bio-Scan
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDroneVision("thermal")}
+                    style={{
+                      background: droneVision === "thermal" ? "#f97316" : "transparent",
+                      color: droneVision === "thermal" ? "#ffffff" : "#9db5a3",
+                      border: "none",
+                      borderRadius: 14,
+                      padding: "4px 10px",
+                      fontSize: 11,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Thermal
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* 3D Scene Viewport with Tilt on Mouse Move */}
+            <div className="scene-3d-wrapper" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
+              <div
+                className="tilt-card-3d"
+                style={{
+                  position: "relative",
+                  height: 640,
+                  borderRadius: "var(--radius-xl)",
+                  overflow: "hidden",
+                  border: "1px solid var(--border-card)",
+                  boxShadow: "var(--shadow-card)",
+                  transform: `rotateX(${tilt3D.rx}deg) rotateY(${tilt3D.ry}deg)`,
+                  filter: droneVision === "ndvi" ? "contrast(1.4) saturate(1.8) hue-rotate(-20deg)" : droneVision === "thermal" ? "contrast(1.6) invert(0.85) hue-rotate(180deg)" : "none",
+                  transition: "filter 0.4s ease, transform 0.15s ease-out",
+                }}
+              >
+                <img
+                  src="/tractor_hero.png"
+                  alt="Overhead precision tractor spraying contoured agricultural field"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+
+                {/* Animated Spray Mist Layer */}
+                {sprayActive && <div className="spray-mist-emitter" />}
+
+                {/* Cyber-Agri Drone HUD Overlay */}
+                <div className="drone-hud-frame">
+                  <div className="hud-crosshair" />
+                  <div className="hud-telemetry-panel">
+                    <div>DRONE-ID: AGRI-UAV-09</div>
+                    <div>ALT: 42.4 M · SPEED: 14.2 KM/H</div>
+                    <div>FLOW: {sprayActive ? "4.8 L/MIN [ACTIVE]" : "0.0 L/MIN [IDLE]"}</div>
+                    <div>NDVI CANOPY: 0.84 OPTIMAL</div>
+                    <div>GPS: 18.5204° N, 73.8567° E</div>
+                  </div>
+                  <div className="hud-radar-sweep" title="Active 360° LiDAR Agronomic Radar" />
+                </div>
+
+                {/* 4 Floating 3D Stat Badges */}
+                <div
+                  className="floating-stat-1"
+                  style={{
+                    position: "absolute",
+                    top: "30%",
+                    left: "5%",
+                    background: "rgba(15, 34, 20, 0.85)",
+                    backdropFilter: "blur(14px)",
+                    border: "1px solid rgba(212, 249, 54, 0.35)",
+                    borderRadius: 18,
+                    padding: "16px 22px",
+                    zIndex: 6,
+                    boxShadow: "0 14px 28px rgba(0,0,0,0.5)",
+                  }}
+                >
+                  <div style={{ display: "flex", gap: -6, marginBottom: 6 }}>
+                    <span style={{ fontSize: 16 }}>🧑‍🌾👨‍🌾👩‍🌾</span>
+                  </div>
+                  <div style={{ fontSize: 26, fontWeight: 800, color: "#ffffff" }}>5000+</div>
+                  <div style={{ fontSize: 12, color: "var(--accent-lime)", fontWeight: 700 }}>Happy Cultivators</div>
+                </div>
+
+                <div
+                  className="floating-stat-2"
+                  style={{
+                    position: "absolute",
+                    top: "28%",
+                    right: "5%",
+                    background: "rgba(15, 34, 20, 0.85)",
+                    backdropFilter: "blur(14px)",
+                    border: "1px solid rgba(212, 249, 54, 0.35)",
+                    borderRadius: 18,
+                    padding: "16px 22px",
+                    zIndex: 6,
+                    boxShadow: "0 14px 28px rgba(0,0,0,0.5)",
+                  }}
+                >
+                  <div style={{ fontSize: 26, fontWeight: 800, color: "var(--accent-lime)" }}>50+</div>
+                  <div style={{ fontSize: 12, color: "#ffffff", fontWeight: 700 }}>Acres Cultivated</div>
+                  <div style={{ fontSize: 11, color: "var(--text-muted)" }}>Precision GPS Mapped</div>
+                </div>
+
+                <div
+                  className="floating-stat-3"
+                  style={{
+                    position: "absolute",
+                    bottom: "15%",
+                    left: "15%",
+                    background: "rgba(15, 34, 20, 0.85)",
+                    backdropFilter: "blur(14px)",
+                    border: "1px solid rgba(212, 249, 54, 0.35)",
+                    borderRadius: 18,
+                    padding: "16px 22px",
+                    zIndex: 6,
+                    boxShadow: "0 14px 28px rgba(0,0,0,0.5)",
+                  }}
+                >
+                  <div style={{ fontSize: 26, fontWeight: 800, color: "#ffffff" }}>10+</div>
+                  <div style={{ fontSize: 12, color: "var(--accent-lime)", fontWeight: 700 }}>Years Agronomic Experience</div>
+                  <div style={{ fontSize: 11, color: "var(--text-muted)" }}>MPKV & PDKV Benchmarked</div>
+                </div>
+
+                <div
+                  className="floating-stat-4"
+                  style={{
+                    position: "absolute",
+                    bottom: "15%",
+                    right: "15%",
+                    background: "rgba(15, 34, 20, 0.85)",
+                    backdropFilter: "blur(14px)",
+                    border: "1px solid rgba(212, 249, 54, 0.35)",
+                    borderRadius: 18,
+                    padding: "16px 22px",
+                    zIndex: 6,
+                    boxShadow: "0 14px 28px rgba(0,0,0,0.5)",
+                  }}
+                >
+                  <div style={{ fontSize: 18, fontWeight: 800, color: "var(--accent-lime)", display: "flex", alignItems: "center", gap: 6 }}>
+                    <span>🍇🍎🌽</span> 100% Fresh Harvest
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 4 }}>
+                    Harvested daily & delivered with maximum farm freshness.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Horizontal 3D Scroll Deck: Modern Smart Farming Technology */}
+          <section style={{ marginBottom: 64 }}>
+            <div className="section-eyebrow">CROP LIFECYCLE DECK</div>
+            <div className="section-top-header">
+              <h2 className="section-main-heading">
+                Growing Fresh Harvests Through Modern Farming Technology
+              </h2>
+              <p className="section-subtext-right">
+                Scroll horizontally through our integrated precision machinery, smart greenhouse automation, and organic orchard systems.
+              </p>
+            </div>
+
+            <div className="scrolling-3d-deck">
+              <div className="deck-card" onClick={() => setActiveTab("farms")}>
+                <div className="deck-card-media">
+                  <img src="/tractor_hero.png" alt="Smart Tractor Sprayer" />
+                  <span className="prov-badge live" style={{ position: "absolute", top: 12, right: 12 }}>AUTONOMOUS</span>
+                </div>
+                <div style={{ padding: 20 }}>
+                  <h4 style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", marginBottom: 6 }}>Smart Tractor & Boom Sprayer</h4>
+                  <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                    Automated GPS guidance and ultrasonic weed sensors deliver targeted crop protection with 40% chemical savings.
+                  </p>
+                </div>
+              </div>
+
+              <div className="deck-card" onClick={() => setActiveTab("weather")}>
+                <div className="deck-card-media">
+                  <img src="/smart_greenhouse.png" alt="IoT Solar Greenhouse" />
+                  <span className="prov-badge live" style={{ position: "absolute", top: 12, right: 12 }}>IOT ACTIVE</span>
+                </div>
+                <div style={{ padding: 20 }}>
+                  <h4 style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", marginBottom: 6 }}>Solar Smart Greenhouse</h4>
+                  <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                    Automated misting, climate telemetry, and automated VPD vapor pressure regulation for year-round horticultural nursery.
+                  </p>
+                </div>
+              </div>
+
+              <div className="deck-card" onClick={() => setActiveTab("market")}>
+                <div className="deck-card-media">
+                  <img src="/farmer_orchard.png" alt="Sunlit Citrus Orchard Harvest" />
+                  <span className="prov-badge live" style={{ position: "absolute", top: 12, right: 12 }}>100% ORGANIC</span>
+                </div>
+                <div style={{ padding: 20 }}>
+                  <h4 style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", marginBottom: 6 }}>Sunlit Citrus & Fruit Orchards</h4>
+                  <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                    Export-grade Nagpur oranges and Bhagwa pomegranates nurtured with organic compost and solar drip irrigation.
+                  </p>
+                </div>
+              </div>
+
+              <div className="deck-card" onClick={() => setActiveTab("calculator")}>
+                <div className="deck-card-media">
+                  <img src="/dribbble_drone.jpg" alt="Aerial Precision Drone Scouting" />
+                  <span className="prov-badge live" style={{ position: "absolute", top: 12, right: 12 }}>NDVI RADAR</span>
+                </div>
+                <div style={{ padding: 20 }}>
+                  <h4 style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", marginBottom: 6 }}>Multi-Spectral Drone Mapping</h4>
+                  <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                    Centimeter-accurate elevation mapping and early fungal infestation detection before visible canopy symptoms appear.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
 
           {/* 4. INNOVATING THE FUTURE OF AGRICULTURE */}
           <section className="innovating-section">
