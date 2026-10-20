@@ -53,10 +53,30 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-body.theme-govt-active {
-  background-color: #f1f5f9;
-  color: #0f172a;
-  background-image: none;
+body.theme-govt-active, body.theme-light {
+  --bg-deep: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-subtle: #f1f5f9;
+  --bg-card-elevated: #e2e8f0;
+  
+  --accent-lime: #166534;
+  --accent-lime-hover: #15803d;
+  --accent-lime-glow: rgba(22, 101, 52, 0.2);
+  
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  
+  --border-card: #e2e8f0;
+  --border-lime: rgba(22, 101, 52, 0.25);
+  
+  --shadow-card: 0 16px 36px -12px rgba(15, 23, 42, 0.08);
+
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  background-image: 
+    radial-gradient(circle at 10% 15%, rgba(22, 101, 52, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 90% 75%, rgba(22, 101, 52, 0.06) 0%, transparent 50%);
 }
 
 /* Custom Scrollbar */
@@ -1397,5 +1417,414 @@ body.theme-govt-active .input-label {
 
 .deck-card:hover .deck-card-media img {
   transform: scale(1.08);
+}
+
+/* Floating 3D Stat Badges Base & Light Theme */
+.floating-stat-badge {
+  background: rgba(15, 34, 20, 0.85);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(212, 249, 54, 0.35);
+  border-radius: 18px;
+  padding: 16px 22px;
+  z-index: 6;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+body.theme-light .floating-stat-badge,
+body.theme-govt-active .floating-stat-badge {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(22, 101, 52, 0.25);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+}
+
+/* ==========================================================================
+   MODERN LIGHT THEME SPECIFIC COMPONENT STYLING
+   ========================================================================== */
+body.theme-light .ambient-glow-cursor,
+body.theme-govt-active .ambient-glow-cursor {
+  display: none;
+}
+
+/* 1. Navbar in Light Mode */
+body.theme-light .dribbble-navbar,
+body.theme-govt-active .dribbble-navbar {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+body.theme-light .dribbble-brand,
+body.theme-govt-active .dribbble-brand {
+  color: #0f172a;
+}
+
+body.theme-light .dribbble-brand span.brand-dot,
+body.theme-govt-active .dribbble-brand span.brand-dot {
+  background: #166534;
+  box-shadow: 0 0 10px rgba(22, 101, 52, 0.5);
+}
+
+body.theme-light .dribbble-nav-center,
+body.theme-govt-active .dribbble-nav-center {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+
+body.theme-light .dribbble-nav-link,
+body.theme-govt-active .dribbble-nav-link {
+  color: #475569;
+}
+
+body.theme-light .dribbble-nav-link:hover,
+body.theme-govt-active .dribbble-nav-link:hover {
+  color: #0f172a;
+  background: #e2e8f0;
+}
+
+body.theme-light .dribbble-nav-link.active,
+body.theme-govt-active .dribbble-nav-link.active {
+  background: #166534;
+  color: #ffffff;
+}
+
+body.theme-light .btn-lime-pill,
+body.theme-govt-active .btn-lime-pill {
+  background: #166534;
+  color: #ffffff;
+}
+
+body.theme-light .btn-lime-pill:hover,
+body.theme-govt-active .btn-lime-pill:hover {
+  background: #15803d;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(22, 101, 52, 0.25);
+}
+
+body.theme-light .circle-arrow-icon,
+body.theme-govt-active .circle-arrow-icon {
+  background: #ffffff;
+  color: #166534;
+}
+
+body.theme-light .btn-lime-pill:hover .circle-arrow-icon,
+body.theme-govt-active .btn-lime-pill:hover .circle-arrow-icon {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+body.theme-light .theme-switch-capsule,
+body.theme-govt-active .theme-switch-capsule {
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
+}
+
+body.theme-light .theme-pill-btn,
+body.theme-govt-active .theme-pill-btn {
+  color: #64748b;
+}
+
+body.theme-light .theme-pill-btn:hover,
+body.theme-govt-active .theme-pill-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #0f172a;
+}
+
+body.theme-light .theme-pill-btn.active,
+body.theme-govt-active .theme-pill-btn.active {
+  background: #166534;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(22, 101, 52, 0.25);
+}
+
+.lang-switcher-pill {
+  display: flex;
+  gap: 3px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 2px;
+  border-radius: 20px;
+}
+
+body.theme-light .lang-switcher-pill,
+body.theme-govt-active .lang-switcher-pill {
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
+}
+
+/* 2. Hero Banner & Partners in Light Mode */
+body.theme-light .dribbble-hero-card,
+body.theme-govt-active .dribbble-hero-card {
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.1);
+}
+
+body.theme-light .dribbble-hero-overlay,
+body.theme-govt-active .dribbble-hero-overlay {
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.84) 0%,
+    rgba(15, 23, 42, 0.58) 45%,
+    rgba(15, 23, 42, 0.15) 100%
+  );
+}
+
+body.theme-light .dribbble-hero-telemetry-pill,
+body.theme-govt-active .dribbble-hero-telemetry-pill {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(22, 101, 52, 0.25);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+  color: #0f172a;
+}
+
+body.theme-light .dribbble-partners-strip,
+body.theme-govt-active .dribbble-partners-strip {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+}
+
+body.theme-light .partner-logo-box,
+body.theme-govt-active .partner-logo-box {
+  color: #64748b;
+}
+
+body.theme-light .partner-logo-box:hover,
+body.theme-govt-active .partner-logo-box:hover {
+  color: #0f172a;
+}
+
+/* 3. Section Titles & Text */
+body.theme-light .section-main-heading,
+body.theme-govt-active .section-main-heading {
+  color: #0f172a;
+}
+
+body.theme-light .section-subtext-right,
+body.theme-govt-active .section-subtext-right {
+  color: #475569;
+}
+
+body.theme-light .section-eyebrow,
+body.theme-govt-active .section-eyebrow {
+  color: #166534;
+}
+
+/* 4. Stat Items & Cards in Light Mode */
+body.theme-light .dribbble-stat-item,
+body.theme-govt-active .dribbble-stat-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+}
+
+body.theme-light .dribbble-stat-item:hover,
+body.theme-govt-active .dribbble-stat-item:hover {
+  border-color: rgba(22, 101, 52, 0.4);
+}
+
+body.theme-light .dribbble-stat-num,
+body.theme-govt-active .dribbble-stat-num {
+  color: #0f172a;
+}
+
+body.theme-light .dribbble-stat-label,
+body.theme-govt-active .dribbble-stat-label {
+  color: #166534;
+}
+
+body.theme-light .dribbble-stat-desc,
+body.theme-govt-active .dribbble-stat-desc {
+  color: #475569;
+}
+
+/* 5. 3D Tractor HUD and Telemetry in Light Mode */
+body.theme-light .hud-telemetry-panel,
+body.theme-govt-active .hud-telemetry-panel {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(22, 101, 52, 0.35);
+  color: #166534;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+}
+
+body.theme-light .hud-crosshair,
+body.theme-govt-active .hud-crosshair {
+  border-color: rgba(22, 101, 52, 0.6);
+}
+
+body.theme-light .hud-crosshair::before,
+body.theme-govt-active .hud-crosshair::before {
+  background: #166534;
+  box-shadow: 0 0 10px rgba(22, 101, 52, 0.6);
+}
+
+body.theme-light .hud-radar-sweep,
+body.theme-govt-active .hud-radar-sweep {
+  border-color: rgba(22, 101, 52, 0.4);
+  background: radial-gradient(circle, rgba(22, 101, 52, 0.08) 0%, transparent 80%);
+}
+
+body.theme-light .hud-radar-sweep::after,
+body.theme-govt-active .hud-radar-sweep::after {
+  background: conic-gradient(from 0deg, transparent 0deg, transparent 300deg, rgba(22, 101, 52, 0.45) 360deg);
+}
+
+body.theme-light .spray-mist-emitter,
+body.theme-govt-active .spray-mist-emitter {
+  background: radial-gradient(ellipse at center, rgba(34, 197, 94, 0.35) 0%, rgba(255, 255, 255, 0.5) 30%, transparent 70%);
+}
+
+/* 6. Scrolling 3D Deck Cards in Light Mode */
+body.theme-light .deck-card,
+body.theme-govt-active .deck-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+}
+
+body.theme-light .deck-card:hover,
+body.theme-govt-active .deck-card:hover {
+  border-color: #166534;
+  box-shadow: 0 20px 40px -10px rgba(22, 101, 52, 0.15);
+}
+
+/* 7. Tech Grid Cards */
+body.theme-light .tech-grid-card,
+body.theme-govt-active .tech-grid-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+}
+
+body.theme-light .tech-grid-card:hover,
+body.theme-govt-active .tech-grid-card:hover {
+  border-color: rgba(22, 101, 52, 0.4);
+}
+
+body.theme-light .tech-card-title,
+body.theme-govt-active .tech-card-title {
+  color: #0f172a;
+}
+
+body.theme-light .tech-card-desc,
+body.theme-govt-active .tech-card-desc {
+  color: #475569;
+}
+
+/* 8. Interactive Console in Light Mode */
+body.theme-light .console-section,
+body.theme-govt-active .console-section {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.05);
+}
+
+body.theme-light .console-section [style*="var(--bg-card-subtle)"],
+body.theme-govt-active .console-section [style*="var(--bg-card-subtle)"] {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+body.theme-light .console-section table th,
+body.theme-govt-active .console-section table th {
+  color: #475569 !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+}
+
+body.theme-light .console-section table td,
+body.theme-govt-active .console-section table td {
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+body.theme-light .console-nav-tabs,
+body.theme-govt-active .console-nav-tabs {
+  border-bottom-color: #e2e8f0;
+}
+
+body.theme-light .console-tab-btn,
+body.theme-govt-active .console-tab-btn {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+body.theme-light .console-tab-btn:hover,
+body.theme-govt-active .console-tab-btn:hover {
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+body.theme-light .console-tab-btn.active,
+body.theme-govt-active .console-tab-btn.active {
+  background: #166534;
+  color: #ffffff;
+  border-color: #166534;
+}
+
+body.theme-light .field-photo-card,
+body.theme-govt-active .field-photo-card {
+  border-color: #e2e8f0;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+body.theme-light .drone-video-banner,
+body.theme-govt-active .drone-video-banner {
+  border-color: #e2e8f0;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+/* 9. FAQ Section in Light Mode */
+body.theme-light .faq-section-box,
+body.theme-govt-active .faq-section-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.05);
+}
+
+body.theme-light .faq-row,
+body.theme-govt-active .faq-row {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+body.theme-light .faq-question-text,
+body.theme-govt-active .faq-question-text {
+  color: #0f172a;
+}
+
+body.theme-light .faq-circle-btn,
+body.theme-govt-active .faq-circle-btn {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+
+body.theme-light .faq-circle-btn.open,
+body.theme-govt-active .faq-circle-btn.open {
+  background: #166534;
+  border-color: #166534;
+  color: #ffffff;
+}
+
+body.theme-light .faq-answer-content,
+body.theme-govt-active .faq-answer-content {
+  color: #475569;
+}
+
+/* 10. Footer in Light Mode */
+body.theme-light .dribbble-footer,
+body.theme-govt-active .dribbble-footer {
+  border-top: 1px solid #e2e8f0;
+  color: #64748b;
+}
+
+/* 11. Modal in Light Mode */
+body.theme-light .modal-surface,
+body.theme-govt-active .modal-surface {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
 }
 

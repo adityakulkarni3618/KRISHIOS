@@ -7,7 +7,7 @@ import mrMessages from "../messages/mr.json";
 import hiMessages from "../messages/hi.json";
 
 type Language = "mr" | "en" | "hi";
-type ThemeMode = "dribbble" | "govt";
+type ThemeMode = "dark" | "light";
 
 const MESSAGES: Record<Language, Record<string, string>> = {
   mr: mrMessages,
@@ -83,7 +83,7 @@ interface Scheme {
 }
 
 export default function Home() {
-  const [theme, setTheme] = useState<ThemeMode>("dribbble");
+  const [theme, setTheme] = useState<ThemeMode>("dark");
   const [lang, setLang] = useState<Language>("mr");
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -180,12 +180,17 @@ export default function Home() {
 
   useEffect(() => {
     try {
-      const savedTheme = localStorage.getItem("krishios_theme") as ThemeMode;
-      if (savedTheme) {
-        setTheme(savedTheme);
-        if (savedTheme === "govt") {
-          document.body.classList.add("theme-govt-active");
-        } else {
+      const savedTheme = localStorage.getItem("krishios_theme");
+      if (savedTheme === "light" || savedTheme === "govt") {
+        setTheme("light");
+        if (typeof document !== "undefined") {
+          document.body.classList.add("theme-light");
+          document.body.classList.remove("theme-govt-active");
+        }
+      } else {
+        setTheme("dark");
+        if (typeof document !== "undefined") {
+          document.body.classList.remove("theme-light");
           document.body.classList.remove("theme-govt-active");
         }
       }
@@ -217,9 +222,11 @@ export default function Home() {
     try {
       localStorage.setItem("krishios_theme", newTheme);
       if (typeof document !== "undefined") {
-        if (newTheme === "govt") {
-          document.body.classList.add("theme-govt-active");
+        if (newTheme === "light") {
+          document.body.classList.add("theme-light");
+          document.body.classList.remove("theme-govt-active");
         } else {
+          document.body.classList.remove("theme-light");
           document.body.classList.remove("theme-govt-active");
         }
       }
@@ -227,7 +234,7 @@ export default function Home() {
   };
 
   const toggleTheme = () => {
-    const nextTheme: ThemeMode = theme === "dribbble" ? "govt" : "dribbble";
+    const nextTheme: ThemeMode = theme === "dark" ? "light" : "dark";
     handleThemeChange(nextTheme);
   };
 
@@ -489,18 +496,14 @@ export default function Home() {
       {/* Ambient Mouse-Tracking Glow Orb */}
       <div className="ambient-glow-cursor" style={{ left: cursorPos.x, top: cursorPos.y }} />
 
-      {/* =========================================================================
-          THEME 1: DRIBBLE MODERN PRECISION AGTECH LANDING PAGE
-          ========================================================================= */}
-      {theme === "dribbble" ? (
-        <div className="dribbble-landing-wrapper">
+      <div className="dribbble-landing-wrapper">
           {/* 1. Dribbble Capsule Navbar */}
           <header className="dribbble-navbar">
             <div
               className="dribbble-brand"
               onClick={toggleTheme}
               style={{ cursor: "pointer" }}
-              title="Click logo to switch theme"
+              title="Click logo to switch Dark / Light theme"
             >
               <span className="brand-dot" />
               <span>PAULVANTE</span>
@@ -559,41 +562,41 @@ export default function Home() {
                 aria-label="Theme Switcher"
                 onClick={toggleTheme}
                 style={{ cursor: "pointer" }}
-                title="Click anywhere to toggle theme"
+                title="Click anywhere to toggle Dark / Light theme"
               >
                 <button
                   type="button"
-                  className={`theme-pill-btn ${theme === "dribbble" ? "active" : ""}`}
+                  className={`theme-pill-btn ${theme === "dark" ? "active" : ""}`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    toggleTheme();
+                    handleThemeChange("dark");
                   }}
-                  title="Click to toggle theme (🌿 Dribbble Modern)"
-                  aria-label="Dribbble Modern Theme"
+                  title="Dark Theme (🌿 Modern AgTech)"
+                  aria-label="Dark Theme"
                 >
                   🌿
                 </button>
                 <button
                   type="button"
-                  className={`theme-pill-btn ${(theme as ThemeMode) === "govt" ? "active" : ""}`}
+                  className={`theme-pill-btn ${theme === "light" ? "active" : ""}`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    toggleTheme();
+                    handleThemeChange("light");
                   }}
-                  title="Click to toggle theme (🏛️ Government Portal)"
-                  aria-label="Government Portal Theme"
+                  title="Light Theme (☀️ Crisp Emerald)"
+                  aria-label="Light Theme"
                 >
-                  🏛️
+                  ☀️
                 </button>
               </div>
 
               {/* Language switcher */}
-              <div style={{ display: "flex", gap: 3, background: "rgba(0,0,0,0.4)", padding: 2, borderRadius: 20 }}>
+              <div className="lang-switcher-pill">
                 <button
                   onClick={() => handleLangChange("mr")}
                   style={{
                     background: lang === "mr" ? "var(--accent-lime)" : "transparent",
-                    color: lang === "mr" ? "#08160c" : "#9db5a3",
+                    color: lang === "mr" ? (theme === "light" ? "#ffffff" : "#08160c") : "var(--text-secondary)",
                     border: "none",
                     borderRadius: 14,
                     padding: "3px 8px",
@@ -608,7 +611,7 @@ export default function Home() {
                   onClick={() => handleLangChange("hi")}
                   style={{
                     background: lang === "hi" ? "var(--accent-lime)" : "transparent",
-                    color: lang === "hi" ? "#08160c" : "#9db5a3",
+                    color: lang === "hi" ? (theme === "light" ? "#ffffff" : "#08160c") : "var(--text-secondary)",
                     border: "none",
                     borderRadius: 14,
                     padding: "3px 8px",
@@ -623,7 +626,7 @@ export default function Home() {
                   onClick={() => handleLangChange("en")}
                   style={{
                     background: lang === "en" ? "var(--accent-lime)" : "transparent",
-                    color: lang === "en" ? "#08160c" : "#9db5a3",
+                    color: lang === "en" ? (theme === "light" ? "#ffffff" : "#08160c") : "var(--text-secondary)",
                     border: "none",
                     borderRadius: 14,
                     padding: "3px 8px",
@@ -693,7 +696,7 @@ export default function Home() {
                 <div style={{ fontSize: 11, color: "var(--accent-lime)", fontWeight: 800, textTransform: "uppercase" }}>
                   ● LIVE TELEMETRY
                 </div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#ffffff" }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary)" }}>
                   {selectedDistrict} District: {weather?.temperature ? `${weather.temperature.toFixed(1)}°C` : "31.8°C"} · Clear Sky
                 </div>
               </div>
@@ -861,80 +864,52 @@ export default function Home() {
 
                 {/* 4 Floating 3D Stat Badges */}
                 <div
-                  className="floating-stat-1"
+                  className="floating-stat-1 floating-stat-badge"
                   style={{
                     position: "absolute",
                     top: "30%",
                     left: "5%",
-                    background: "rgba(15, 34, 20, 0.85)",
-                    backdropFilter: "blur(14px)",
-                    border: "1px solid rgba(212, 249, 54, 0.35)",
-                    borderRadius: 18,
-                    padding: "16px 22px",
-                    zIndex: 6,
-                    boxShadow: "0 14px 28px rgba(0,0,0,0.5)",
                   }}
                 >
                   <div style={{ display: "flex", gap: -6, marginBottom: 6 }}>
                     <span style={{ fontSize: 16 }}>🧑‍🌾👨‍🌾👩‍🌾</span>
                   </div>
-                  <div style={{ fontSize: 26, fontWeight: 800, color: "#ffffff" }}>5000+</div>
+                  <div style={{ fontSize: 26, fontWeight: 800, color: "var(--text-primary)" }}>5000+</div>
                   <div style={{ fontSize: 12, color: "var(--accent-lime)", fontWeight: 700 }}>Happy Cultivators</div>
                 </div>
 
                 <div
-                  className="floating-stat-2"
+                  className="floating-stat-2 floating-stat-badge"
                   style={{
                     position: "absolute",
                     top: "28%",
                     right: "5%",
-                    background: "rgba(15, 34, 20, 0.85)",
-                    backdropFilter: "blur(14px)",
-                    border: "1px solid rgba(212, 249, 54, 0.35)",
-                    borderRadius: 18,
-                    padding: "16px 22px",
-                    zIndex: 6,
-                    boxShadow: "0 14px 28px rgba(0,0,0,0.5)",
                   }}
                 >
                   <div style={{ fontSize: 26, fontWeight: 800, color: "var(--accent-lime)" }}>50+</div>
-                  <div style={{ fontSize: 12, color: "#ffffff", fontWeight: 700 }}>Acres Cultivated</div>
+                  <div style={{ fontSize: 12, color: "var(--text-primary)", fontWeight: 700 }}>Acres Cultivated</div>
                   <div style={{ fontSize: 11, color: "var(--text-muted)" }}>Precision GPS Mapped</div>
                 </div>
 
                 <div
-                  className="floating-stat-3"
+                  className="floating-stat-3 floating-stat-badge"
                   style={{
                     position: "absolute",
                     bottom: "15%",
                     left: "15%",
-                    background: "rgba(15, 34, 20, 0.85)",
-                    backdropFilter: "blur(14px)",
-                    border: "1px solid rgba(212, 249, 54, 0.35)",
-                    borderRadius: 18,
-                    padding: "16px 22px",
-                    zIndex: 6,
-                    boxShadow: "0 14px 28px rgba(0,0,0,0.5)",
                   }}
                 >
-                  <div style={{ fontSize: 26, fontWeight: 800, color: "#ffffff" }}>10+</div>
+                  <div style={{ fontSize: 26, fontWeight: 800, color: "var(--text-primary)" }}>10+</div>
                   <div style={{ fontSize: 12, color: "var(--accent-lime)", fontWeight: 700 }}>Years Agronomic Experience</div>
                   <div style={{ fontSize: 11, color: "var(--text-muted)" }}>MPKV & PDKV Benchmarked</div>
                 </div>
 
                 <div
-                  className="floating-stat-4"
+                  className="floating-stat-4 floating-stat-badge"
                   style={{
                     position: "absolute",
                     bottom: "15%",
                     right: "15%",
-                    background: "rgba(15, 34, 20, 0.85)",
-                    backdropFilter: "blur(14px)",
-                    border: "1px solid rgba(212, 249, 54, 0.35)",
-                    borderRadius: 18,
-                    padding: "16px 22px",
-                    zIndex: 6,
-                    boxShadow: "0 14px 28px rgba(0,0,0,0.5)",
                   }}
                 >
                   <div style={{ fontSize: 18, fontWeight: 800, color: "var(--accent-lime)", display: "flex", alignItems: "center", gap: 6 }}>
@@ -967,7 +942,7 @@ export default function Home() {
                   <span className="prov-badge live" style={{ position: "absolute", top: 12, right: 12 }}>AUTONOMOUS</span>
                 </div>
                 <div style={{ padding: 20 }}>
-                  <h4 style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", marginBottom: 6 }}>Smart Tractor & Boom Sprayer</h4>
+                  <h4 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", marginBottom: 6 }}>Smart Tractor & Boom Sprayer</h4>
                   <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5 }}>
                     Automated GPS guidance and ultrasonic weed sensors deliver targeted crop protection with 40% chemical savings.
                   </p>
@@ -980,7 +955,7 @@ export default function Home() {
                   <span className="prov-badge live" style={{ position: "absolute", top: 12, right: 12 }}>IOT ACTIVE</span>
                 </div>
                 <div style={{ padding: 20 }}>
-                  <h4 style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", marginBottom: 6 }}>Solar Smart Greenhouse</h4>
+                  <h4 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", marginBottom: 6 }}>Solar Smart Greenhouse</h4>
                   <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5 }}>
                     Automated misting, climate telemetry, and automated VPD vapor pressure regulation for year-round horticultural nursery.
                   </p>
@@ -993,7 +968,7 @@ export default function Home() {
                   <span className="prov-badge live" style={{ position: "absolute", top: 12, right: 12 }}>100% ORGANIC</span>
                 </div>
                 <div style={{ padding: 20 }}>
-                  <h4 style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", marginBottom: 6 }}>Sunlit Citrus & Fruit Orchards</h4>
+                  <h4 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", marginBottom: 6 }}>Sunlit Citrus & Fruit Orchards</h4>
                   <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5 }}>
                     Export-grade Nagpur oranges and Bhagwa pomegranates nurtured with organic compost and solar drip irrigation.
                   </p>
@@ -1006,7 +981,7 @@ export default function Home() {
                   <span className="prov-badge live" style={{ position: "absolute", top: 12, right: 12 }}>NDVI RADAR</span>
                 </div>
                 <div style={{ padding: 20 }}>
-                  <h4 style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", marginBottom: 6 }}>Multi-Spectral Drone Mapping</h4>
+                  <h4 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", marginBottom: 6 }}>Multi-Spectral Drone Mapping</h4>
                   <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5 }}>
                     Centimeter-accurate elevation mapping and early fungal infestation detection before visible canopy symptoms appear.
                   </p>
@@ -1163,7 +1138,7 @@ export default function Home() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
               <div>
                 <div className="section-eyebrow">LIVE AGTECH DECISION DESK</div>
-                <h3 style={{ fontSize: 24, fontWeight: 800, color: "#ffffff" }}>
+                <h3 style={{ fontSize: 24, fontWeight: 800, color: "var(--text-primary)" }}>
                   Interactive Agricultural Intelligence Console
                 </h3>
               </div>
@@ -1240,7 +1215,7 @@ export default function Home() {
 
                   <div style={{ background: "var(--bg-card-subtle)", padding: 20, borderRadius: "var(--radius-md)", border: "1px solid var(--border-card)" }}>
                     <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase" }}>Rainfall Today</div>
-                    <div style={{ fontSize: 36, fontWeight: 800, color: "#ffffff", margin: "4px 0" }}>
+                    <div style={{ fontSize: 36, fontWeight: 800, color: "var(--text-primary)", margin: "4px 0" }}>
                       {weather?.precipitation ? `${weather.precipitation.toFixed(1)} mm` : "0.0 mm"}
                     </div>
                     <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>
@@ -1304,7 +1279,7 @@ export default function Home() {
                         .filter((m) => m.commodity.toLowerCase().includes(mandiSearch.toLowerCase()))
                         .map((m) => (
                           <tr key={m.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                            <td style={{ padding: "12px 14px", fontWeight: 700, color: "#ffffff" }}>{m.commodity}</td>
+                            <td style={{ padding: "12px 14px", fontWeight: 700, color: "var(--text-primary)" }}>{m.commodity}</td>
                             <td style={{ padding: "12px 14px", color: "var(--text-secondary)" }}>{m.variety}</td>
                             <td style={{ padding: "12px 14px", color: "var(--text-secondary)" }}>₹{m.min_price}</td>
                             <td style={{ padding: "12px 14px", fontWeight: 800, color: "var(--accent-lime)" }}>₹{m.modal_price}</td>
@@ -1369,7 +1344,7 @@ export default function Home() {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16, background: "var(--bg-card-subtle)", padding: 24, borderRadius: "var(--radius-lg)", border: "1px solid var(--border-card)" }}>
                   <div>
                     <div style={{ fontSize: 12, color: "var(--text-muted)", textTransform: "uppercase" }}>Total Production Cost</div>
-                    <div style={{ fontSize: 24, fontWeight: 800, color: "#ffffff" }}>₹{totalCost.toLocaleString()}</div>
+                    <div style={{ fontSize: 24, fontWeight: 800, color: "var(--text-primary)" }}>₹{totalCost.toLocaleString()}</div>
                     <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>₹{Math.round(costPerHa).toLocaleString()} / ha</div>
                   </div>
 
@@ -1400,7 +1375,7 @@ export default function Home() {
             {activeTab === "farms" && (
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                  <h4 style={{ fontSize: 16, fontWeight: 700, color: "#ffffff" }}>Registered Holdings & Soil Health</h4>
+                  <h4 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>Registered Holdings & Soil Health</h4>
                   <button className="btn-lime-pill" onClick={() => setShowAddFarmModal(true)}>
                     + Add New Farm Plot
                   </button>
@@ -1410,7 +1385,7 @@ export default function Home() {
                   {farms.map((f) => (
                     <div key={f.id} style={{ background: "var(--bg-card-subtle)", border: "1px solid var(--border-card)", borderRadius: "var(--radius-md)", padding: 20 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
-                        <h5 style={{ fontSize: 16, fontWeight: 700, color: "#ffffff" }}>{f.name}</h5>
+                        <h5 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>{f.name}</h5>
                         <span className="prov-badge live">7/12 Registered</span>
                       </div>
                       <div style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12 }}>
@@ -1425,7 +1400,7 @@ export default function Home() {
                               setSelectedFarmForSoil(f.id);
                               setShowAddSoilModal(true);
                             }}
-                            style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.2)", color: "#ffffff", padding: "2px 8px", borderRadius: 4, fontSize: 11, cursor: "pointer" }}
+                            style={{ background: "transparent", border: "1px solid var(--border-card)", color: "var(--text-primary)", padding: "2px 8px", borderRadius: 4, fontSize: 11, cursor: "pointer" }}
                           >
                             + Add Soil Test
                           </button>
@@ -1434,7 +1409,7 @@ export default function Home() {
                         {soilTests[f.id] && soilTests[f.id].length > 0 ? (
                           soilTests[f.id].map((st) => (
                             <div key={st.id} style={{ fontSize: 12, color: "var(--text-secondary)" }}>
-                              pH: <strong style={{ color: "#ffffff" }}>{st.ph}</strong> (Neutral) · Organic Carbon: <strong style={{ color: "#ffffff" }}>{st.organic_carbon_pct}%</strong> ({st.lab_name})
+                              pH: <strong style={{ color: "var(--text-primary)" }}>{st.ph}</strong> (Neutral) · Organic Carbon: <strong style={{ color: "var(--text-primary)" }}>{st.organic_carbon_pct}%</strong> ({st.lab_name})
                             </div>
                           ))
                         ) : (
@@ -1454,7 +1429,7 @@ export default function Home() {
                   {schemes.map((s) => (
                     <div key={s.id} style={{ background: "var(--bg-card-subtle)", border: "1px solid var(--border-card)", borderRadius: "var(--radius-md)", padding: 20 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-                        <h5 style={{ fontSize: 15, fontWeight: 700, color: "#ffffff" }}>{s.name}</h5>
+                        <h5 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)" }}>{s.name}</h5>
                         <span className="prov-badge live">{s.sponsor}</span>
                       </div>
                       <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 14 }}>
@@ -1589,7 +1564,7 @@ export default function Home() {
           <footer className="dribbble-footer">
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span className="brand-dot" />
-              <strong style={{ color: "#ffffff", fontSize: 16 }}>PAULVANTE · KRISHIOS</strong>
+              <strong style={{ color: "var(--text-primary)", fontSize: 16 }}>PAULVANTE · KRISHIOS</strong>
             </div>
 
             <div>
@@ -1602,282 +1577,6 @@ export default function Home() {
             </div>
           </footer>
         </div>
-      ) : (
-        /* =========================================================================
-            THEME 2: OFFICIAL GOVERNMENT OF MAHARASHTRA AGRISTACK PORTAL
-            ========================================================================= */
-        <div className="govt-portal-wrapper">
-          {/* Tri-color stripe */}
-          <div className="tri-color-bar" />
-
-          {/* Top Utility Bar */}
-          <div className="gov-top-utility">
-            <div className="gov-utility-container">
-              <div>
-                🇮🇳 भारत सरकार | महाराष्ट्र शासन (Government of Maharashtra) | कृषी व शेतकरी कल्याण विभाग
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                {/* Theme Switcher in Govt Bar */}
-                <div
-                  className="theme-switch-capsule"
-                  role="group"
-                  aria-label="Theme Switcher"
-                  onClick={toggleTheme}
-                  style={{ cursor: "pointer" }}
-                  title="Click anywhere to toggle theme"
-                >
-                  <button
-                    type="button"
-                    className={`theme-pill-btn ${(theme as ThemeMode) === "dribbble" ? "active" : ""}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleTheme();
-                    }}
-                    title="Click to toggle theme (🌿 Dribbble Modern)"
-                    aria-label="Dribbble Modern Theme"
-                  >
-                    🌿
-                  </button>
-                  <button
-                    type="button"
-                    className={`theme-pill-btn ${theme === "govt" ? "active" : ""}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleTheme();
-                    }}
-                    title="Click to toggle theme (🏛️ Government Portal)"
-                    aria-label="Government Portal Theme"
-                  >
-                    🏛️
-                  </button>
-                </div>
-
-                {/* Font Size & Lang */}
-                <div style={{ display: "flex", gap: 4 }}>
-                  <button onClick={() => handleLangChange("mr")} style={{ background: lang === "mr" ? "#166534" : "transparent", color: "#ffffff", border: "1px solid #475569", borderRadius: 3, padding: "2px 6px", fontSize: 11, cursor: "pointer" }}>मराठी</button>
-                  <button onClick={() => handleLangChange("hi")} style={{ background: lang === "hi" ? "#166534" : "transparent", color: "#ffffff", border: "1px solid #475569", borderRadius: 3, padding: "2px 6px", fontSize: 11, cursor: "pointer" }}>हिंदी</button>
-                  <button onClick={() => handleLangChange("en")} style={{ background: lang === "en" ? "#166534" : "transparent", color: "#ffffff", border: "1px solid #475569", borderRadius: 3, padding: "2px 6px", fontSize: 11, cursor: "pointer" }}>English</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Official Main Header */}
-          <header className="gov-main-header">
-            <div className="gov-header-container">
-              <div
-                className="gov-emblem-block"
-                onClick={toggleTheme}
-                style={{ cursor: "pointer" }}
-                title="Click emblem to switch theme"
-              >
-                <div className="gov-emblem-circle">🌾</div>
-                <div>
-                  <div className="gov-title-dept">GOVERNMENT OF MAHARASHTRA — DEPARTMENT OF AGRICULTURE</div>
-                  <div className="gov-title-mission">National Digital Agriculture Mission (AgriStack)</div>
-                  <h1 className="gov-title-main">KRISHIOS — कृषी ओएस</h1>
-                  <div className="gov-title-sub">Unified Agricultural Decision Desk & Advisory Ecosystem</div>
-                </div>
-              </div>
-
-              <div className="gov-kisan-banner">
-                <div className="gov-kisan-box">
-                  <span style={{ fontSize: 24 }}>📞</span>
-                  <div>
-                    <div className="gov-kisan-num">1800-180-1551</div>
-                    <div style={{ fontSize: 11, color: "#64748b" }}>Kisan Call Centre (Toll Free 24x7)</div>
-                  </div>
-                </div>
-                <span className="prov-badge live">● अधिकृत सर्व्हर जोडलेले (LIVE)</span>
-              </div>
-            </div>
-          </header>
-
-          {/* Primary Navigation Bar */}
-          <nav className="gov-navbar">
-            <div className="gov-nav-container">
-              <button className={`gov-nav-item ${activeTab === "overview" ? "active" : ""}`} onClick={() => setActiveTab("overview")}>
-                🏛️ {t("nav_overview")}
-              </button>
-              <button className={`gov-nav-item ${activeTab === "farms" ? "active" : ""}`} onClick={() => setActiveTab("farms")}>
-                🌾 {t("nav_farms")}
-              </button>
-              <button className={`gov-nav-item ${activeTab === "weather" ? "active" : ""}`} onClick={() => setActiveTab("weather")}>
-                ⛅ {t("nav_weather")}
-              </button>
-              <button className={`gov-nav-item ${activeTab === "market" ? "active" : ""}`} onClick={() => setActiveTab("market")}>
-                📊 {t("nav_market")}
-              </button>
-              <button className={`gov-nav-item ${activeTab === "calculator" ? "active" : ""}`} onClick={() => setActiveTab("calculator")}>
-                🧮 {t("nav_calculator")}
-              </button>
-              <button className={`gov-nav-item ${activeTab === "schemes" ? "active" : ""}`} onClick={() => setActiveTab("schemes")}>
-                📜 {t("nav_schemes")}
-              </button>
-              <button className={`gov-nav-item ${activeTab === "mapping" ? "active" : ""}`} onClick={() => setActiveTab("mapping")}>
-                🧭 {t("nav_mapping")}
-              </button>
-            </div>
-          </nav>
-
-          {/* Official Bulletin Ticker */}
-          <div className="gov-ticker-wrapper">
-            <div className="gov-ticker-badge">OFFICIAL BULLETIN</div>
-            <div className="gov-ticker-content">
-              📢 IMD Weather Advisory: Light to moderate showers expected in Marathwada & Vidarbha | Kharif 2026 APMC daily arrivals updated | Soil Health Card phase guidelines active.
-            </div>
-          </div>
-
-          {/* Main Content Area */}
-          <main className="gov-portal-main">
-            {/* Farmer Profile Bar */}
-            <div className="gov-farmer-bar">
-              <div>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#0f2942" }}>
-                  Farmer Profile: Kailasrao Pawar <span style={{ fontSize: 12, color: "#166534", background: "#dcfce7", padding: "2px 8px", borderRadius: 4, marginLeft: 8 }}>UID: MH-2026-8841-K</span>
-                </h3>
-                <div style={{ fontSize: 12.5, color: "#64748b", marginTop: 4 }}>
-                  Registered District: Nashik / Pune · Aadhaar e-KYC: Verified · Aaple Sarkar DBT Linked
-                </div>
-              </div>
-              <button className="gov-btn gov-btn-primary" onClick={() => setShowAddFarmModal(true)}>
-                + Register New Farm
-              </button>
-            </div>
-
-            {/* 4 Metric Summary Cards */}
-            <div className="gov-metrics-grid">
-              <div className="gov-metric-card card-green">
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#64748b" }}>REGISTERED FARMS</div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: "#0f2942" }}>
-                  {farms.length} <span style={{ fontSize: 14, fontWeight: 500, color: "#64748b" }}>(4.3 ha)</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "#166534", fontWeight: 700 }}>
-                  <span>7/12 अभिलेख</span>
-                  <span>अधिकृत नोंद</span>
-                </div>
-              </div>
-
-              <div className="gov-metric-card card-blue">
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#64748b" }}>ACTIVE WEATHER REGION</div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: "#0f2942" }}>
-                  {weather?.temperature ? `${weather.temperature.toFixed(1)}°C` : "31.8°C"} <span style={{ fontSize: 14, fontWeight: 600, color: "#0284c7" }}>{selectedDistrict}</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "#0284c7", fontWeight: 700 }}>
-                  <span>IMD / OPEN-METEO</span>
-                  <span>थेट हवामान</span>
-                </div>
-              </div>
-
-              <div className="gov-metric-card card-saffron">
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#64748b" }}>SOIL HEALTH RECORDS</div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: "#0f2942" }}>2</div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "#b45309", fontWeight: 700 }}>
-                  <span>ICAR मानके</span>
-                  <span>मृदा आरोग्य पत्रिका</span>
-                </div>
-              </div>
-
-              <div className="gov-metric-card card-navy">
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#64748b" }}>VERIFIED SCHEMES</div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: "#0f2942" }}>{schemes.length}</div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "#0f2942", fontWeight: 700 }}>
-                  <span>सत्यापित योजना</span>
-                  <span>केंद्र व राज्य</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Daily Climate Advisory Box */}
-            <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderLeft: "4px solid #f59e0b", padding: "14px 18px", borderRadius: 4, marginBottom: 24 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "#92400e", marginBottom: 4 }}>
-                📢 Daily Climate Advisory — {selectedDistrict} कृषी हवामान विभाग
-              </div>
-              <div style={{ fontSize: 13, color: "#78350f" }}>
-                {weather?.advisories[0] || "वाऱ्याचा वेग ९.४ किमी/तास: सकाळच्या वेळी कीटकनाशके व विद्राव्य खतांची फवारणी करण्यास अनुकूल हवामान."}
-              </div>
-            </div>
-
-            {/* Content Cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-              {/* Land Holdings Table */}
-              <div className="gov-card">
-                <div className="gov-card-header">
-                  <div className="gov-card-title">🌾 My Farms & Soil (Land Holding Records)</div>
-                  <button className="gov-btn gov-btn-primary" style={{ padding: "4px 10px", fontSize: 12 }} onClick={() => setShowAddFarmModal(true)}>+ Register New Farm</button>
-                </div>
-                <div className="gov-card-body">
-                  <div className="gov-table-wrapper">
-                    <table className="gov-table">
-                      <thead>
-                        <tr>
-                          <th>Plot Name</th>
-                          <th>Area</th>
-                          <th>District</th>
-                          <th>Irrigation</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {farms.map((f) => (
-                          <tr key={f.id}>
-                            <td style={{ fontWeight: 600 }}>{f.name}</td>
-                            <td>{f.area_hectares} ha</td>
-                            <td>{f.district}</td>
-                            <td>{f.irrigation_source || "Borewell"}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-
-              {/* APMC Top Rates */}
-              <div className="gov-card">
-                <div className="gov-card-header">
-                  <div className="gov-card-title">📊 Maharashtra APMC Top Rates ({selectedDistrict})</div>
-                  <span className="prov-badge live">MSAMB Live</span>
-                </div>
-                <div className="gov-card-body">
-                  <div className="gov-table-wrapper">
-                    <table className="gov-table">
-                      <thead>
-                        <tr>
-                          <th>Commodity</th>
-                          <th>Modal Rate</th>
-                          <th>Min / Max</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {mandiPrices.slice(0, 4).map((m) => (
-                          <tr key={m.id}>
-                            <td style={{ fontWeight: 600 }}>{m.commodity}</td>
-                            <td style={{ fontWeight: 700, color: "#166534" }}>₹{m.modal_price} / qtl</td>
-                            <td>₹{m.min_price} - ₹{m.max_price}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </main>
-
-          {/* Official Footer */}
-          <footer className="official-portal-footer">
-            <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
-              <div>
-                <strong style={{ color: "#ffffff" }}>KRISHIOS — कृषी ओएस</strong> · Government of Maharashtra Agriculture Decision Desk
-                <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 4 }}>National e-Governance Plan in Agriculture (NeGPA) compliant.</div>
-              </div>
-              <div>
-                📞 Kisan Helpline: <strong style={{ color: "#ffffff" }}>1800-180-1551</strong> · Open 24 Hours
-              </div>
-            </div>
-          </footer>
-        </div>
-      )}
 
       {/* =========================================================================
           COMMON MODALS (Shared across both themes)
