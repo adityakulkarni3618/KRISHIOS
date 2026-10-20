@@ -187,12 +187,19 @@ export default function Home() {
     setTheme(newTheme);
     try {
       localStorage.setItem("krishios_theme", newTheme);
-      if (newTheme === "govt") {
-        document.body.classList.add("theme-govt-active");
-      } else {
-        document.body.classList.remove("theme-govt-active");
+      if (typeof document !== "undefined") {
+        if (newTheme === "govt") {
+          document.body.classList.add("theme-govt-active");
+        } else {
+          document.body.classList.remove("theme-govt-active");
+        }
       }
     } catch {}
+  };
+
+  const toggleTheme = () => {
+    const nextTheme: ThemeMode = theme === "dribbble" ? "govt" : "dribbble";
+    handleThemeChange(nextTheme);
   };
 
   const handleLangChange = (l: Language) => {
@@ -457,10 +464,15 @@ export default function Home() {
         <div className="dribbble-landing-wrapper">
           {/* 1. Dribbble Capsule Navbar */}
           <header className="dribbble-navbar">
-            <a href="#home" className="dribbble-brand">
+            <div
+              className="dribbble-brand"
+              onClick={toggleTheme}
+              style={{ cursor: "pointer" }}
+              title="Click logo to switch theme"
+            >
               <span className="brand-dot" />
               <span>PAULVANTE</span>
-            </a>
+            </div>
 
             <div className="dribbble-nav-center">
               <button
@@ -509,19 +521,34 @@ export default function Home() {
 
             <div className="dribbble-nav-right">
               {/* Dual-Theme Switcher Pill */}
-              <div className="theme-switch-capsule" role="group" aria-label="Theme Switcher">
+              <div
+                className="theme-switch-capsule"
+                role="group"
+                aria-label="Theme Switcher"
+                onClick={toggleTheme}
+                style={{ cursor: "pointer" }}
+                title="Click anywhere to toggle theme"
+              >
                 <button
+                  type="button"
                   className={`theme-pill-btn ${theme === "dribbble" ? "active" : ""}`}
-                  onClick={() => handleThemeChange("dribbble")}
-                  title="Dribbble Agriculture Modern Aesthetic"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleTheme();
+                  }}
+                  title="Click to toggle theme (🌿 Dribbble Modern)"
                   aria-label="Dribbble Modern Theme"
                 >
                   🌿
                 </button>
                 <button
+                  type="button"
                   className={`theme-pill-btn ${(theme as ThemeMode) === "govt" ? "active" : ""}`}
-                  onClick={() => handleThemeChange("govt")}
-                  title="Government of Maharashtra Official AgriStack Portal"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleTheme();
+                  }}
+                  title="Click to toggle theme (🏛️ Government Portal)"
                   aria-label="Government Portal Theme"
                 >
                   🏛️
@@ -1296,19 +1323,34 @@ export default function Home() {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                 {/* Theme Switcher in Govt Bar */}
-                <div className="theme-switch-capsule" role="group" aria-label="Theme Switcher">
+                <div
+                  className="theme-switch-capsule"
+                  role="group"
+                  aria-label="Theme Switcher"
+                  onClick={toggleTheme}
+                  style={{ cursor: "pointer" }}
+                  title="Click anywhere to toggle theme"
+                >
                   <button
+                    type="button"
                     className={`theme-pill-btn ${(theme as ThemeMode) === "dribbble" ? "active" : ""}`}
-                    onClick={() => handleThemeChange("dribbble")}
-                    title="Dribbble Agriculture Modern Aesthetic"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleTheme();
+                    }}
+                    title="Click to toggle theme (🌿 Dribbble Modern)"
                     aria-label="Dribbble Modern Theme"
                   >
                     🌿
                   </button>
                   <button
+                    type="button"
                     className={`theme-pill-btn ${theme === "govt" ? "active" : ""}`}
-                    onClick={() => handleThemeChange("govt")}
-                    title="Government of Maharashtra Official AgriStack Portal"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleTheme();
+                    }}
+                    title="Click to toggle theme (🏛️ Government Portal)"
                     aria-label="Government Portal Theme"
                   >
                     🏛️
@@ -1328,7 +1370,12 @@ export default function Home() {
           {/* Official Main Header */}
           <header className="gov-main-header">
             <div className="gov-header-container">
-              <div className="gov-emblem-block">
+              <div
+                className="gov-emblem-block"
+                onClick={toggleTheme}
+                style={{ cursor: "pointer" }}
+                title="Click emblem to switch theme"
+              >
                 <div className="gov-emblem-circle">🌾</div>
                 <div>
                   <div className="gov-title-dept">GOVERNMENT OF MAHARASHTRA — DEPARTMENT OF AGRICULTURE</div>
