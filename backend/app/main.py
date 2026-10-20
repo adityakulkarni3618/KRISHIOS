@@ -4,8 +4,18 @@ from app.core.config import settings
 from app.db import Base, engine
 from app.routers import auth, calculator, farms, mapping, market, schemes, soil, weather
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title=settings.app_name, version="0.1.0")
 Base.metadata.create_all(engine)  # dev convenience; Alembic migrations come in Milestone 1b
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(auth.router)
 app.include_router(farms.router)
