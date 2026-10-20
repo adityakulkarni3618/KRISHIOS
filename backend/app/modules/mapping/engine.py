@@ -37,7 +37,7 @@ CAPABILITIES: dict[str, Coverage] = {
     "P_livestock": Coverage.NOT_IMPLEMENTED,
     "Q_assistant": Coverage.NOT_IMPLEMENTED,
     "R_community": Coverage.NOT_IMPLEMENTED,
-    "S_offline": Coverage.NOT_IMPLEMENTED,
+    "S_offline": Coverage.TESTED,                         # Multilingual UI (mr/hi/en) with offline local cache & sync
     "T_analytics": Coverage.NOT_IMPLEMENTED,
     "X_mapping_engine": Coverage.PARTIALLY_IMPLEMENTED,
 }
