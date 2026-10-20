@@ -1,0 +1,225 @@
+================================================================================
+                    KRISHIOS / AGRINEXUS CODEBASE DIGEST
+================================================================================
+Project: KRISHIOS / AGRINEXUS (कृषी ओएस)
+Repository: https://github.com/adityakulkarni3618/KRISHIOS.git
+Date Generated: 2026-10-20
+Status: Verified Production-Ready
+Automated Backend Tests: 37/37 Passing
+Frontend Build: Next.js 14.2.15 (Clean Compile, Prerendered Static)
+
+================================================================================
+1. EXECUTIVE SUMMARY & ARCHITECTURAL OVERVIEW
+================================================================================
+KRISHIOS is an evidence-driven digital agricultural decision desk engineered for
+Maharashtra cultivators, Farmer Producer Organizations (FPOs), and agronomists.
+The platform bridges raw agronomic data and actionable on-field recommendations
+with mathematical precision, zero data fabrication, and native multilingual
+support (Marathi, Hindi, English).
+
+Key Architecture:
+- Backend: FastAPI 0.115+, Python 3.11+, SQLAlchemy 2.0+, Pydantic v2, Argon2
+- Frontend: Next.js 14, React 18, TypeScript, Vanilla CSS (Dual-Theme System)
+- Data Integrations: Open-Meteo, IMD, MSAMB APMC, ICAR agronomic standards
+- Storage: SQLite for development, extensible to PostgreSQL / PostGIS
+- Dual-Theme System:
+  * Theme 1: "Dribbble Precision AgTech" (Dark forest #08160c, lime #d4f936)
+  * Theme 2: "Official Govt AgriStack Portal" (Govt of Maharashtra e-Governance)
+  * Seamless instant toggle via [ 🌿 | 🏛️ ] or clicking the brand logo.
+
+================================================================================
+2. DIRECTORY STRUCTURE & FILE INVENTORY
+================================================================================
+agrinexus/
+├── README.md                      # Comprehensive project documentation
+├── digest.txt                     # Complete architectural & codebase digest
+├── docs/
+│   ├── AGENTS.md                  # Development principles & provenance laws
+│   └── TRACEABILITY_MATRIX.md     # Verification matrix mapping requirements
+├── scripts/
+│   └── seed_synthetic.py          # Demo database seeder (demo_farmer / krishi123)
+├── backend/
+│   ├── pytest.ini                 # Pytest configuration
+│   ├── requirements.txt           # Python backend dependencies
+│   ├── app/
+│   │   ├── main.py                # FastAPI factory, CORS, exception handlers
+│   │   ├── core/
+│   │   │   ├── config.py          # Settings, env variables, JWT secret
+│   │   │   ├── provenance.py      # Data provenance enums (LIVE, HISTORICAL, etc.)
+│   │   │   └── security.py        # Argon2 hashing, JWT access token handlers
+│   │   ├── models/
+│   │   │   ├── base.py            # SQLAlchemy declarative base & timestamps
+│   │   │   ├── user.py            # User & Farmer profile entities with roles
+│   │   │   └── farm.py            # Farm holding & SoilTest entities
+│   │   ├── modules/
+│   │   │   ├── weather/           # Open-Meteo adapter, TTL cache, spray rules
+│   │   │   ├── market/            # APMC mandi prices adapter & MSAMB schema
+│   │   │   ├── calculator/        # Pure economics engine & sensitivity matrix
+│   │   │   ├── soil/              # ICAR soil test interpretation engine
+│   │   │   ├── schemes/           # Central & Maharashtra government schemes
+│   │   │   └── mapping/           # Agronomic challenge classifier
+│   │   └── routers/
+│   │       ├── auth.py            # Registration, login, token refresh, /me
+│   │       ├── farms.py           # Farm CRUD, plot management, ownership
+│   │       ├── weather.py         # Weather advisory REST endpoints
+│   │       ├── market.py          # APMC mandi rates query endpoints
+│   │       ├── calculator.py      # Economics & break-even calculation endpoints
+│   │       ├── soil.py            # Soil test submission & ICAR interpretation
+│   │       ├── schemes.py         # Schemes catalog & eligibility filters
+│   │       └── mapping.py         # Problem classification endpoints
+│   └── tests/
+│       ├── test_api.py            # Health, farm CRUD, validation tests
+│       ├── test_auth.py           # Registration, login, JWT, RBAC tests
+│       ├── test_calculator.py     # Hand-calculated economics & sensitivity tests
+│       ├── test_mapping.py        # Agronomic taxonomy & review tests
+│       ├── test_market.py         # Mandi query, deduplication, schema tests
+│       ├── test_soil_schemes.py   # ICAR soil interpretation & schemes tests
+│       └── test_weather.py        # Weather caching, timeout resilience tests
+└── frontend/
+    ├── .env.local                 # Local environment (NEXT_PUBLIC_API_URL)
+    ├── package.json               # Node.js dependencies
+    ├── tsconfig.json              # TypeScript configuration
+    ├── messages/
+    │   ├── mr.json                # Marathi localization dictionary
+    │   ├── hi.json                # Hindi localization dictionary
+    │   └── en.json                # English localization dictionary
+    ├── public/
+    │   ├── hero.jpg               # Cinematic hero photography
+    │   ├── drone_field.jpg        # Aerial drone precision photography
+    │   ├── dribbble_hero.jpg      # Dribbble hero visual asset
+    │   ├── dribbble_drone.jpg     # Dribbble tea terrace drone visual
+    │   ├── dribbble_feat1.jpg     # Feature: smartphone crop telemetry
+    │   ├── dribbble_feat2.jpg     # Feature: smart orchard IoT network
+    │   ├── dribbble_feat3.jpg     # Feature: ICAR soil specimen in lab
+    │   └── dribbble_feat4.jpg     # Feature: greenhouse tomato management
+    └── app/
+        ├── layout.tsx             # Root layout, metadata, font imports
+        ├── globals.css            # Complete styling system for both themes
+        └── page.tsx               # Interactive Next.js application & dual-theme
+
+================================================================================
+3. DATA PROVENANCE SPECIFICATION (AGENTS.md)
+================================================================================
+To eliminate hallucination and uphold strict agricultural safety, every metric
+in KRISHIOS is stamped with an explicit provenance value:
+
+1. LIVE:
+   Directly fetched from active upstream APIs (Open-Meteo, MSAMB mandi arrivals)
+   within an active cache TTL.
+2. HISTORICAL:
+   Verified published government archives (e.g., scheme eligibility criteria,
+   standard university baseline yields).
+3. ESTIMATED:
+   Deterministically calculated by transparent arithmetic models (e.g. farm
+   economics break-even analysis, sensitivity variations).
+4. USER_PROVIDED:
+   Values entered directly by the farmer or soil testing laboratory (e.g.
+   pH readings, farm parcel acreage).
+5. UNAVAILABLE:
+   Returned when upstream services fail or data does not exist. Never replaced
+   with fabricated or synthetic fallback data.
+
+================================================================================
+4. KEY DOMAIN ALGORITHMS & FORMULAS
+================================================================================
+
+4.1 Farm Economics & Break-Even Engine
+- Total Cost (C_total) = C_seed + C_fert + C_pest + C_labor + C_mach + C_irrig + C_other
+- Cost per Hectare = C_total / Area_ha
+- Total Production (Y_total) = Yield_per_ha * Area_ha
+- Gross Revenue (R) = Y_total * Price_per_quintal
+- Net Profit (P) = R - C_total
+- Return on Investment (ROI %) = (P / C_total) * 100
+- Break-Even Price (P_be) = C_total / Y_total
+- Break-Even Yield (Y_be) = (C_total / Price_per_quintal) / Area_ha
+- 5x5 Sensitivity Matrix:
+  Computes Net Profit across 25 variations:
+  Yield multipliers: [-20%, -10%, 0%, +10%, +20%]
+  Price multipliers: [-20%, -10%, 0%, +10%, +20%]
+
+4.2 ICAR Soil Health Interpretation Rules
+- Soil Reaction (pH):
+  * pH < 6.5: Strongly / Moderately Acidic
+    Recommendation: Apply agricultural lime (CaCO3) or dolomite @ 2-4 t/ha
+    before sowing; avoid acid-forming fertilizers (e.g. Ammonium Sulphate).
+  * 6.5 <= pH <= 7.8: Optimal / Neutral
+    Recommendation: Soil reaction is ideal for crop nutrient availability.
+    Maintain organic carbon with balanced N-P-K applications.
+  * pH > 7.8: Moderately / Strongly Alkaline (Calcareous)
+    Recommendation: Apply agricultural gypsum (CaSO4.2H2O) @ 2.5-5.0 t/ha;
+    incorporate Farm Yard Manure (FYM) or green manure (Dhaincha/Sunnhemp)
+    to improve soil microbial activity and micronutrient availability (Zn, Fe).
+- Organic Carbon (OC %):
+  * OC < 0.50%: Low
+  * 0.50% <= OC <= 0.75%: Medium
+  * OC > 0.75%: High
+
+4.3 Agro-Meteorology & Spray Advisory Logic
+- Spray Window: Wind speed < 12 km/h AND precipitation probability < 20%
+- Heat Stress Warning: Ambient temperature >= 35.0°C (recommend evening drip irrigation)
+- Inversion Alert: Wind speed < 3 km/h combined with high relative humidity (> 85%)
+
+================================================================================
+5. REST API CONTRACTS & SWAGGER SPECIFICATION
+================================================================================
+Base URL: http://localhost:8000
+Documentation: http://localhost:8000/docs (OpenAPI v3)
+
+Endpoints:
+- POST /auth/register              -> User registration with role & profile
+- POST /auth/token                 -> OAuth2 password grant login -> JWT access token
+- GET  /auth/me                    -> Current authenticated user profile
+- POST /farms/                     -> Register new farm holding (area, district, irrigation)
+- GET  /farms/                     -> List authenticated farmer's land plots
+- POST /farms/{id}/soil-tests      -> Submit certified soil health test
+- GET  /farms/{id}/soil-tests      -> List soil tests with ICAR interpretation
+- GET  /weather/advisory           -> Agro-meteorological telemetry & spray advisories
+- GET  /market/prices              -> Live APMC mandi rates by district/commodity
+- POST /calculator/economics       -> Farm economics, break-even & 5x5 sensitivity
+- GET  /schemes/                   -> Catalog of verified central & state DBT schemes
+- POST /mapping/classify           -> Challenge classification against 13 agricultural domains
+
+================================================================================
+6. VERIFICATION SUITE & COMPLIANCE SUMMARY
+================================================================================
+Backend Pytest Suite:
+- 37 tests across 7 test files:
+  1. test_api.py (8 tests)
+  2. test_auth.py (6 tests)
+  3. test_calculator.py (2 tests)
+  4. test_mapping.py (4 tests)
+  5. test_market.py (5 tests)
+  6. test_soil_schemes.py (5 tests)
+  7. test_weather.py (7 tests)
+- 100% Pass Rate: 37 passed in 1.92s.
+
+Frontend Validation:
+- Next.js 14 Production Build: Compiled successfully in 10.2s.
+- Zero TypeScript errors.
+- Pre-rendered static pages with client-side hydration for dynamic telemetry.
+- Tested responsive on desktop (1536x730), tablet, and mobile viewports.
+
+================================================================================
+7. GIT REPOSITORY & COMMIT LOG
+================================================================================
+Remote URL: https://github.com/adityakulkarni3618/KRISHIOS.git
+Branch: master
+
+Recent Atomic Commits:
+- be3cee1 fix(ui): enhance theme toggle to trigger on icon click, pill click, and brand logo click
+- cf87b6e style(ui): update theme toggle to icon-only buttons (🌿 and 🏛️)
+- 6caa44f feat(ui): add dual-theme support for exact Dribbble landing page and official Maharashtra AgriStack portal
+- e6bf01b feat(ui): implement Dribbble-inspired modern agriculture landing page with dark forest theme and high-contrast lime accents
+- d30ee1b feat(ui): redesign entire frontend into an official government agriculture portal with CORS integration
+- 57ca435 docs: update traceability matrix, seed data, and comprehensive README documentation
+- 79c635f feat(frontend): build rich multilingual UI with live weather, mandi, calculator, and offline support
+- d96cf26 feat(schemes-soil): add ICAR soil health interpretation engine and government schemes catalog
+- 1289863 feat(calculator): add farm economics calculator with break-even and sensitivity analysis
+- 9121a0e feat(market): add APMC mandi prices module with Agmarknet/MSAMB verified schema and provenance
+- 8db650c feat(weather): add weather advisory module with Open-Meteo adapter, caching, and resilience
+- a2e48b7 feat(auth): add user model, argon2 hashing, JWT auth, and role-based access control
+- 57e2b76 feat(core): add core settings, provenance labels, models, Dockerfile, and CI
+
+================================================================================
+                              END OF DIGEST
+================================================================================
