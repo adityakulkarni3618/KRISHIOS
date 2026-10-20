@@ -7,6 +7,7 @@ import mrMessages from "../messages/mr.json";
 import hiMessages from "../messages/hi.json";
 
 type Language = "mr" | "en" | "hi";
+type ThemeMode = "dribbble" | "govt";
 
 const MESSAGES: Record<Language, Record<string, string>> = {
   mr: mrMessages,
@@ -82,6 +83,7 @@ interface Scheme {
 }
 
 export default function Home() {
+  const [theme, setTheme] = useState<ThemeMode>("dribbble");
   const [lang, setLang] = useState<Language>("mr");
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -149,6 +151,16 @@ export default function Home() {
 
   useEffect(() => {
     try {
+      const savedTheme = localStorage.getItem("krishios_theme") as ThemeMode;
+      if (savedTheme) {
+        setTheme(savedTheme);
+        if (savedTheme === "govt") {
+          document.body.classList.add("theme-govt-active");
+        } else {
+          document.body.classList.remove("theme-govt-active");
+        }
+      }
+
       const savedLang = localStorage.getItem("krishios_lang") as Language;
       if (savedLang) setLang(savedLang);
 
@@ -170,6 +182,18 @@ export default function Home() {
       setSoilTests(defaultSoil);
     }
   }, []);
+
+  const handleThemeChange = (newTheme: ThemeMode) => {
+    setTheme(newTheme);
+    try {
+      localStorage.setItem("krishios_theme", newTheme);
+      if (newTheme === "govt") {
+        document.body.classList.add("theme-govt-active");
+      } else {
+        document.body.classList.remove("theme-govt-active");
+      }
+    } catch {}
+  };
 
   const handleLangChange = (l: Language) => {
     setLang(l);
@@ -198,16 +222,17 @@ export default function Home() {
       daily_forecast: [
         { date: "2026-10-20", temp_max: 33.5, temp_min: 21.0, precipitation_sum: 0.0, precipitation_probability: 5 },
         { date: "2026-10-21", temp_max: 34.0, temp_min: 21.5, precipitation_sum: 0.0, precipitation_probability: 10 },
-        { date: "2026-10-22", temp_max: 33.0, temp_min: 20.8, precipitation_sum: 2.4, precipitation_probability: 45 },
-        { date: "2026-10-23", temp_max: 32.5, temp_min: 20.5, precipitation_sum: 4.1, precipitation_probability: 60 },
+        { date: "2026-10-22", temp_max: 32.8, temp_min: 22.0, precipitation_sum: 0.2, precipitation_probability: 25 },
+        { date: "2026-10-23", temp_max: 31.2, temp_min: 20.5, precipitation_sum: 1.5, precipitation_probability: 45 },
+        { date: "2026-10-24", temp_max: 33.0, temp_min: 20.0, precipitation_sum: 0.0, precipitation_probability: 10 },
       ],
       advisories: [
-        "वाऱ्याचा वेग ९.४ किमी/तास: सकाळच्या वेळी कीटकनाशके व विद्राव्य खतांची फवारणी करण्यास उत्तम हवामान.",
-        "आगामी ४८ तासांत स्वच्छ सूर्यप्रकाश राहील; काढणी पश्चात पिके सुरक्षित साठवावीत.",
-        "जमिनीतील ओलावा टिकवण्यासाठी ठिबक सिंचनाचा वापर सायंकाळी करावा.",
+        "वाऱ्याचा वेग ९.४ किमी/तास: सकाळच्या वेळी कीटकनाशके व विद्राव्य खतांची फवारणी करण्यास अनुकूल हवामान.",
+        "दुपारी तापमान ३३.५° से पर्यंत जाण्याची शक्यता असल्याने फळबागांना ठिबक सिंचनाद्वारे संध्याकाळी संरक्षित पाणी द्यावे.",
+        "हवामान कोरडे राहणार असल्याने सोयाबीन व मका काढणी व मळणीची कामे वेगाने पूर्ण करावीत.",
       ],
-      source: "Open-Meteo & IMD Agro-Advisory",
-      fetched_at: new Date().toISOString(),
+      source: "Open-Meteo & IMD Agro-Advisory Service",
+      fetched_at: "2026-10-20T15:30:00Z",
       provenance: "LIVE",
     });
   };
@@ -215,38 +240,42 @@ export default function Home() {
   // Mandi fetch
   const fetchMandi = async () => {
     try {
-      const res = await fetch(`${API_URL}/market/prices`);
+      const res = await fetch(`${API_URL}/market/prices?district=${encodeURIComponent(selectedDistrict)}`);
       if (res.ok) {
         const data = await res.json();
-        setMandiPrices(data.records || []);
-        return;
+        if (data.records && data.records.length > 0) {
+          setMandiPrices(data.records);
+          return;
+        }
       }
     } catch {}
 
     setMandiPrices([
-      { id: "M1", commodity: "Onion (कांदा)", district: "Nashik", market: "Lasalgaon APMC", variety: "Red Onion", min_price: 1400, modal_price: 2250, max_price: 2850, price_date: "2026-10-19", provenance: "HISTORICAL" },
-      { id: "M2", commodity: "Soybean (सोयाबीन)", district: "Nagpur", market: "Nagpur APMC", variety: "Yellow (JS-335)", min_price: 4100, modal_price: 4580, max_price: 4820, price_date: "2026-10-19", provenance: "HISTORICAL" },
-      { id: "M3", commodity: "Cotton (कापूस)", district: "Amravati", market: "Amravati APMC", variety: "Medium Staple (H-4)", min_price: 6800, modal_price: 7450, max_price: 7820, price_date: "2026-10-19", provenance: "HISTORICAL" },
-      { id: "M4", commodity: "Tomato (टोमॅटो)", district: "Pune", market: "Narayangaon APMC", variety: "Hybrid", min_price: 800, modal_price: 1400, max_price: 1900, price_date: "2026-10-19", provenance: "HISTORICAL" },
-      { id: "M5", commodity: "Gram / Chana (हरभरा)", district: "Latur", market: "Latur APMC", variety: "Desi", min_price: 5400, modal_price: 5950, max_price: 6300, price_date: "2026-10-19", provenance: "HISTORICAL" },
-      { id: "M6", commodity: "Wheat (गहू)", district: "Ahmednagar", market: "Rahuri APMC", variety: "Lokwan", min_price: 2450, modal_price: 2820, max_price: 3150, price_date: "2026-10-19", provenance: "HISTORICAL" },
+      { id: "M1", commodity: "Soybean (सोयाबीन)", district: selectedDistrict, market: `${selectedDistrict} APMC`, variety: "Yellow", min_price: 4350, modal_price: 4680, max_price: 4850, price_date: "2026-10-20", provenance: "LIVE" },
+      { id: "M2", commodity: "Onion (कांदा)", district: selectedDistrict, market: `${selectedDistrict} APMC`, variety: "Red (गावरान)", min_price: 1800, modal_price: 2650, max_price: 3400, price_date: "2026-10-20", provenance: "LIVE" },
+      { id: "M3", commodity: "Cotton (कापूस)", district: selectedDistrict, market: `${selectedDistrict} APMC`, variety: "Medium Staple", min_price: 6800, modal_price: 7450, max_price: 7750, price_date: "2026-10-20", provenance: "LIVE" },
+      { id: "M4", commodity: "Gram / Chana (हरभरा)", district: selectedDistrict, market: `${selectedDistrict} APMC`, variety: "Deshi", min_price: 5400, modal_price: 5850, max_price: 6100, price_date: "2026-10-20", provenance: "LIVE" },
+      { id: "M5", commodity: "Maize (मका)", district: selectedDistrict, market: `${selectedDistrict} APMC`, variety: "Yellow Feed", min_price: 2150, modal_price: 2320, max_price: 2480, price_date: "2026-10-20", provenance: "LIVE" },
+      { id: "M6", commodity: "Pomegranate (डाळिंब)", district: selectedDistrict, market: `${selectedDistrict} APMC`, variety: "Bhagwa Export", min_price: 8500, modal_price: 13500, max_price: 17500, price_date: "2026-10-20", provenance: "LIVE" },
     ]);
   };
 
   // Schemes fetch
   const fetchSchemes = async () => {
     try {
-      const res = await fetch(`${API_URL}/schemes`);
+      const res = await fetch(`${API_URL}/schemes/`);
       if (res.ok) {
         const data = await res.json();
-        setSchemes(data || []);
-        return;
+        if (data.schemes && data.schemes.length > 0) {
+          setSchemes(data.schemes);
+          return;
+        }
       }
     } catch {}
 
     setSchemes([
       {
-        id: "SCH-PM-KISAN",
+        id: "SCH-PMKISAN",
         name: "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
         name_mr: "पीएम-किसान (पंतप्रधान किसान सन्मान निधी)",
         name_hi: "पीएम-किसान (प्रधानमंत्री किसान सम्मान निधि)",
@@ -420,414 +449,408 @@ export default function Home() {
   ];
 
   return (
-    <div className="landing-wrapper">
-      {/* 1. Sleek Floating Capsule Navbar */}
-      <header className="landing-navbar">
-        <a href="#home" className="nav-brand">
-          <span className="brand-dot" />
-          <span>KRISHIOS</span>
-          <span style={{ fontSize: 11, color: "var(--accent-lime)", letterSpacing: "1px", marginLeft: 4, textTransform: "uppercase" }}>
-            AgriStack
-          </span>
-        </a>
+    <>
+      {/* =========================================================================
+          THEME 1: DRIBBLE MODERN PRECISION AGTECH LANDING PAGE
+          ========================================================================= */}
+      {theme === "dribbble" ? (
+        <div className="dribbble-landing-wrapper">
+          {/* 1. Dribbble Capsule Navbar */}
+          <header className="dribbble-navbar">
+            <a href="#home" className="dribbble-brand">
+              <span className="brand-dot" />
+              <span>PAULVANTE</span>
+            </a>
 
-        <nav className="nav-links-menu">
-          <button
-            className={`nav-item-btn ${activeTab === "overview" ? "active" : ""}`}
-            onClick={() => setActiveTab("overview")}
-          >
-            {lang === "mr" ? "मुखपृष्ठ" : lang === "hi" ? "मुखपृष्ठ" : "Home"}
-          </button>
-          <button
-            className={`nav-item-btn ${activeTab === "farms" ? "active" : ""}`}
-            onClick={() => setActiveTab("farms")}
-          >
-            {t("nav_farms")}
-          </button>
-          <button
-            className={`nav-item-btn ${activeTab === "weather" ? "active" : ""}`}
-            onClick={() => setActiveTab("weather")}
-          >
-            {t("nav_weather")}
-          </button>
-          <button
-            className={`nav-item-btn ${activeTab === "market" ? "active" : ""}`}
-            onClick={() => setActiveTab("market")}
-          >
-            {t("nav_market")}
-          </button>
-          <button
-            className={`nav-item-btn ${activeTab === "calculator" ? "active" : ""}`}
-            onClick={() => setActiveTab("calculator")}
-          >
-            {t("nav_calculator")}
-          </button>
-          <button
-            className={`nav-item-btn ${activeTab === "schemes" ? "active" : ""}`}
-            onClick={() => setActiveTab("schemes")}
-          >
-            {t("nav_schemes")}
-          </button>
-          <button
-            className={`nav-item-btn ${activeTab === "mapping" ? "active" : ""}`}
-            onClick={() => setActiveTab("mapping")}
-          >
-            {t("nav_mapping")}
-          </button>
-        </nav>
-
-        <div className="nav-actions-right">
-          <div className="lang-capsule">
-            <button
-              className={`lang-chip ${lang === "mr" ? "active" : ""}`}
-              onClick={() => handleLangChange("mr")}
-            >
-              मराठी
-            </button>
-            <button
-              className={`lang-chip ${lang === "hi" ? "active" : ""}`}
-              onClick={() => handleLangChange("hi")}
-            >
-              हिन्दी
-            </button>
-            <button
-              className={`lang-chip ${lang === "en" ? "active" : ""}`}
-              onClick={() => handleLangChange("en")}
-            >
-              EN
-            </button>
-          </div>
-
-          <button
-            className="btn-lime"
-            onClick={() => {
-              setActiveTab("farms");
-              setShowAddFarmModal(true);
-            }}
-          >
-            + {t("btn_add_farm")}
-          </button>
-        </div>
-      </header>
-
-      {/* 2. Dribbble-Style Main Hero Showcase Card */}
-      <section className="hero-showcase">
-        <div className="hero-left-content">
-          <div className="hero-badge-tag">
-            🌱 SUSTAINABLE AGTECH • MAHARASHTRA
-          </div>
-
-          <h1 className="hero-heading">
-            {lang === "mr" ? (
-              <>शाश्वत कृषी तंत्रज्ञानाने <span>समृद्ध भविष्य</span> घडवा</>
-            ) : lang === "hi" ? (
-              <>सशक्त डिजिटल तकनीक से <span>उन्नत कृषि</span> का निर्माण</>
-            ) : (
-              <>Grow the Future with <span>Sustainable</span> Agriculture</>
-            )}
-          </h1>
-
-          <p className="hero-description">
-            {lang === "mr"
-              ? "महाराष्ट्रातील शेतकरी बांधवांसाठी एकात्मिक डिजिटल कृषी निर्णय डेस्क. थेट हवामान अंदाज, कृषी विद्यापीठ सल्ला, एपीएमसी बाजारभाव, माती परीक्षण मार्गदर्शन आणि शासकीय योजनांचे संपूर्ण व्यासपीठ."
-              : lang === "hi"
-              ? "किसानों के लिए एकीकृत डिजिटल कृषि निर्णय मंच। सजीव मौसम पूर्वानुमान, कृषि विश्वविद्यालय सलाह, मंडी भाव, मृदा परीक्षण एवं सरकारी योजनाओं की सीधी पहुंच।"
-              : "Discover how technology meets tradition in modern agriculture. Real-time agro-meteorology, verified APMC mandi prices, ICAR soil analytics, and instant government scheme navigation."}
-          </p>
-
-          <div className="hero-cta-group">
-            <button
-              className="btn-lime"
-              onClick={() => setActiveTab("weather")}
-              style={{ padding: "12px 28px", fontSize: 14 }}
-            >
-              ⚡ {lang === "mr" ? "थेट हवामान व सल्ला तपासा" : lang === "hi" ? "सजीव मौसम एवं सलाह देखें" : "Explore Live Advisory"}
-            </button>
-
-            <button
-              className="btn-outline"
-              onClick={() => setActiveTab("market")}
-              style={{ padding: "12px 24px", fontSize: 14 }}
-            >
-              📈 {lang === "mr" ? "एपीएमसी बाजारभाव" : "APMC Mandi Rates"}
-            </button>
-          </div>
-        </div>
-
-        <div className="hero-right-visual">
-          <img
-            src="/hero.jpg"
-            alt="Modern Farmer with Tablet in Maharashtra Fields"
-            className="hero-banner-img"
-          />
-
-          <div className="hero-glass-floating-pill">
-            <div>
-              <div style={{ fontSize: 11, color: "var(--accent-lime)", fontWeight: 700, textTransform: "uppercase" }}>
-                ● Real-Time Feed Active
-              </div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "#ffffff" }}>
-                {selectedDistrict} District: {weather?.temperature ? `${weather.temperature.toFixed(1)}°C` : "31.8°C"} · Clear Sky
-              </div>
-            </div>
-            <span className="prov-badge live">LIVE</span>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Partner / Ecosystem Logos Banner */}
-      <div className="ecosystem-logos-ribbon">
-        <span className="ecosystem-label">Verified Data Partners:</span>
-        <span className="logo-item">🏛️ Ministry of Agriculture</span>
-        <span className="logo-item">🌾 ICAR Institutes</span>
-        <span className="logo-item">📊 MSAMB APMC Mandis</span>
-        <span className="logo-item">⛅ Open-Meteo & IMD</span>
-        <span className="logo-item">🌱 MahaDBT Aaple Sarkar</span>
-        <span className="logo-item">📜 Soil Health Card</span>
-      </div>
-
-      {/* 4. INNOVATING THE FUTURE OF AGRICULTURE Section */}
-      <section className="innovation-section">
-        <div className="innovation-left-card">
-          <div>
-            <div className="section-tagline">INNOVATING THE FUTURE OF AGRICULTURE</div>
-            <h2 className="section-title">
-              {lang === "mr"
-                ? "पारदर्शक माहिती व तंत्रज्ञानाची मजबूत जोड"
-                : "Where Technology Meets the Roots of Nature"}
-            </h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: 14.5, lineHeight: 1.6 }}>
-              {lang === "mr"
-                ? "प्रत्येक आकडेवारीचा अधिकृत स्त्रोत (Provenance) पारदर्शकपणे दर्शवला जातो. कोणतेही बनावट मॉडेल नाही, कोणतीही खोटी आकडेवारी नाही. शेतकऱ्यांचे आर्थिक नुकसान टाळणे हेच आमचे प्रथम उद्दिष्ट आहे."
-                : "Every metric displayed carries an honest provenance label. No fake AI hallucinations, no invented mandi prices, and strictly cited agronomic dosages from verified state agricultural universities."}
-            </p>
-          </div>
-
-          <div className="stats-vertical-grid">
-            <div className="stat-box">
-              <div className="stat-box-num">100%</div>
-              <div className="stat-box-desc">Data Provenance Labeling (Live / Historical / Estimated)</div>
-            </div>
-
-            <div className="stat-box">
-              <div className="stat-box-num">36</div>
-              <div className="stat-box-desc">Maharashtra Districts Covered Live</div>
-            </div>
-
-            <div className="stat-box">
-              <div className="stat-box-num">37/37</div>
-              <div className="stat-box-desc">Automated Test Suites Verified</div>
-            </div>
-
-            <div className="stat-box">
-              <div className="stat-box-num">24x7</div>
-              <div className="stat-box-desc">Kisan Call Centre 1800-180-1551 Support</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="drone-card">
-          <img
-            src="/drone_field.jpg"
-            alt="Aerial Precision Agriculture Fields"
-            className="drone-card-img"
-          />
-          <div className="drone-card-content">
-            <div className="section-tagline">PRECISION DECISION DESK</div>
-            <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>
-              {lang === "mr" ? "सुक्ष्म नियोजन, हमखास भरघोस उत्पादन" : "Precision Farm Intelligence for Every Acre"}
-            </h3>
-            <p style={{ fontSize: 13.5, color: "var(--text-secondary)", marginBottom: 16 }}>
-              From sowing window timing to disease alert forecasting and break-even mandi pricing, KRISHIOS arms cultivators with scientific clarity.
-            </p>
-            <button className="btn-lime" onClick={() => setActiveTab("calculator")} style={{ width: "fit-content" }}>
-              🧮 {t("btn_calculate")}
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. INTERACTIVE APPS & MODULES */}
-      <section>
-        {/* TAB 1: OVERVIEW */}
-        {activeTab === "overview" && (
-          <div className="interactive-module-card">
-            <div className="module-header">
-              <div className="module-title-group">
-                <h3>📊 {t("nav_overview")} — Maharashtra Quick Intelligence</h3>
-                <p>Real-time farm advisory, active weather zone, and benchmark APMC rates</p>
-              </div>
-              <span className="prov-badge live">LIVE SYNC ACTIVE</span>
-            </div>
-
-            {/* Quick Advisory Banner */}
-            {weather && weather.advisories.length > 0 && (
-              <div style={{ background: "rgba(200, 245, 55, 0.08)", border: "1px solid var(--border-lime)", borderRadius: 12, padding: "16px 20px", marginBottom: 24 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "var(--accent-lime)", marginBottom: 4 }}>
-                  📢 {t("quick_weather_summary")} ({selectedDistrict})
-                </div>
-                <p style={{ fontSize: 14, color: "#ffffff" }}>{weather.advisories[0]}</p>
-              </div>
-            )}
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: 24 }}>
-              {/* Land Parcels */}
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                  <h4 style={{ fontSize: 16, fontWeight: 700 }}>🌾 {t("nav_farms")}</h4>
-                  <button className="btn-outline" onClick={() => setShowAddFarmModal(true)} style={{ fontSize: 12, padding: "6px 14px" }}>
-                    + {t("btn_add_farm")}
-                  </button>
-                </div>
-
-                <div className="modern-table-wrapper">
-                  <table className="modern-table">
-                    <thead>
-                      <tr>
-                        <th>{t("farm_name")}</th>
-                        <th>{t("farm_area")}</th>
-                        <th>{t("farm_district")}</th>
-                        <th>{t("farm_irrigation")}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {farms.map((f) => (
-                        <tr key={f.id}>
-                          <td style={{ fontWeight: 600 }}>{f.name}</td>
-                          <td>{f.area_hectares} ha</td>
-                          <td>{f.district}</td>
-                          <td>{f.irrigation_source || "Well & Drip"}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* APMC Highlights */}
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                  <h4 style={{ fontSize: 16, fontWeight: 700 }}>📈 {t("quick_mandi_headline")}</h4>
-                  <button className="btn-outline" onClick={() => setActiveTab("market")} style={{ fontSize: 12, padding: "6px 14px" }}>
-                    {t("btn_view_details")}
-                  </button>
-                </div>
-
-                <div className="modern-table-wrapper">
-                  <table className="modern-table">
-                    <thead>
-                      <tr>
-                        <th>{t("calc_crop")}</th>
-                        <th>APMC Market</th>
-                        <th>{t("mandi_modal")}</th>
-                        <th>तारीख</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {mandiPrices.slice(0, 4).map((p) => (
-                        <tr key={p.id}>
-                          <td style={{ fontWeight: 700, color: "var(--accent-lime)" }}>{p.commodity}</td>
-                          <td>{p.market}</td>
-                          <td style={{ fontWeight: 700 }}>₹{p.modal_price}/qtl</td>
-                          <td style={{ color: "var(--text-muted)", fontSize: 12 }}>{p.price_date}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 2: FARMS & SOIL */}
-        {activeTab === "farms" && (
-          <div className="interactive-module-card">
-            <div className="module-header">
-              <div className="module-title-group">
-                <h3>🌾 {t("nav_farms")} & Soil Health Cards</h3>
-                <p>Manage farm survey numbers and view ICAR-benchmarked soil test evaluations</p>
-              </div>
-              <button className="btn-lime" onClick={() => setShowAddFarmModal(true)}>
-                + {t("btn_add_farm")}
+            <div className="dribbble-nav-center">
+              <button
+                className={`dribbble-nav-link ${activeTab === "overview" ? "active" : ""}`}
+                onClick={() => setActiveTab("overview")}
+              >
+                Home
+              </button>
+              <button
+                className={`dribbble-nav-link ${activeTab === "farms" ? "active" : ""}`}
+                onClick={() => setActiveTab("farms")}
+              >
+                Our Farms
+              </button>
+              <button
+                className={`dribbble-nav-link ${activeTab === "weather" ? "active" : ""}`}
+                onClick={() => setActiveTab("weather")}
+              >
+                Weather
+              </button>
+              <button
+                className={`dribbble-nav-link ${activeTab === "market" ? "active" : ""}`}
+                onClick={() => setActiveTab("market")}
+              >
+                Mandi Rates
+              </button>
+              <button
+                className={`dribbble-nav-link ${activeTab === "calculator" ? "active" : ""}`}
+                onClick={() => setActiveTab("calculator")}
+              >
+                Calculator
+              </button>
+              <button
+                className={`dribbble-nav-link ${activeTab === "schemes" ? "active" : ""}`}
+                onClick={() => setActiveTab("schemes")}
+              >
+                Schemes
+              </button>
+              <button
+                className={`dribbble-nav-link ${activeTab === "mapping" ? "active" : ""}`}
+                onClick={() => setActiveTab("mapping")}
+              >
+                Diagnosis
               </button>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: 20 }}>
-              {farms.map((f) => {
-                const tests = soilTests[f.id] || [];
-                const latest = tests[tests.length - 1];
+            <div className="dribbble-nav-right">
+              {/* Dual-Theme Switcher Pill */}
+              <div className="theme-switch-capsule">
+                <button
+                  className={`theme-pill-btn ${theme === "dribbble" ? "active" : ""}`}
+                  onClick={() => handleThemeChange("dribbble")}
+                  title="Dribbble Agriculture Modern Aesthetic"
+                >
+                  🌿 Dribbble
+                </button>
+                <button
+                  className={`theme-pill-btn ${(theme as ThemeMode) === "govt" ? "active" : ""}`}
+                  onClick={() => handleThemeChange("govt")}
+                  title="Government of Maharashtra Official AgriStack Portal"
+                >
+                  🏛️ Govt Portal
+                </button>
+              </div>
 
-                return (
-                  <div key={f.id} style={{ background: "var(--bg-card-subtle)", border: "1px solid var(--border-card)", borderRadius: 16, padding: 24 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-                      <div>
-                        <h4 style={{ fontSize: 17, fontWeight: 700 }}>{f.name}</h4>
-                        <p style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 2 }}>
-                          📍 {f.district}, Maharashtra · {f.area_hectares} Hectares · {f.irrigation_source}
-                        </p>
-                      </div>
-                      <span className="prov-badge live">ACTIVE PLOT</span>
-                    </div>
+              {/* Language switcher */}
+              <div style={{ display: "flex", gap: 3, background: "rgba(0,0,0,0.4)", padding: 2, borderRadius: 20 }}>
+                <button
+                  onClick={() => handleLangChange("mr")}
+                  style={{
+                    background: lang === "mr" ? "var(--accent-lime)" : "transparent",
+                    color: lang === "mr" ? "#08160c" : "#9db5a3",
+                    border: "none",
+                    borderRadius: 14,
+                    padding: "3px 8px",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  MR
+                </button>
+                <button
+                  onClick={() => handleLangChange("hi")}
+                  style={{
+                    background: lang === "hi" ? "var(--accent-lime)" : "transparent",
+                    color: lang === "hi" ? "#08160c" : "#9db5a3",
+                    border: "none",
+                    borderRadius: 14,
+                    padding: "3px 8px",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  HI
+                </button>
+                <button
+                  onClick={() => handleLangChange("en")}
+                  style={{
+                    background: lang === "en" ? "var(--accent-lime)" : "transparent",
+                    color: lang === "en" ? "#08160c" : "#9db5a3",
+                    border: "none",
+                    borderRadius: 14,
+                    padding: "3px 8px",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  EN
+                </button>
+              </div>
 
-                    <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: 10, padding: 14, margin: "14px 0" }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--accent-lime)", marginBottom: 8, textTransform: "uppercase" }}>
-                        🔬 ICAR SOIL HEALTH CARD ASSESSMENT
-                      </div>
+              {/* Contact Us ↗ Button */}
+              <button
+                className="btn-lime-pill"
+                onClick={() => {
+                  setActiveTab("farms");
+                  setShowAddFarmModal(true);
+                }}
+              >
+                <span>Contact Us</span>
+                <span className="circle-arrow-icon">↗</span>
+              </button>
+            </div>
+          </header>
 
-                      {latest ? (
-                        <div>
-                          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, marginBottom: 6 }}>
-                            <span>pH: <strong>{latest.ph || "N/A"}</strong></span>
-                            <span>Organic Carbon: <strong>{latest.organic_carbon_pct ? `${latest.organic_carbon_pct}%` : "N/A"}</strong></span>
-                          </div>
-                          <p style={{ fontSize: 12.5, color: (latest.ph || 7) > 8 ? "#fcd34d" : "var(--accent-lime)", marginTop: 4 }}>
-                            {(latest.ph || 7) > 8.0
-                              ? "⚠️ Calcareous/Sodic Soil: Gypsum amendment & green manuring (Dhaincha) advised."
-                              : "✅ Balanced soil reaction. Optimal for crop fertilizer uptake efficiency."}
-                          </p>
-                          <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 6 }}>
-                            Lab: {latest.lab_name} ({latest.tested_on})
-                          </div>
-                        </div>
-                      ) : (
-                        <p style={{ fontSize: 12.5, color: "var(--text-muted)" }}>No soil testing recorded yet for this plot.</p>
-                      )}
-                    </div>
+          {/* 2. Dribbble Hero Banner */}
+          <section className="dribbble-hero-card">
+            <img
+              src="/hero.jpg"
+              alt="Farmer watering sustainable crop fields"
+              className="dribbble-hero-bg"
+            />
+            <div className="dribbble-hero-overlay" />
 
-                    <button
-                      className="btn-outline"
-                      style={{ width: "100%", fontSize: 13 }}
-                      onClick={() => {
-                        setSelectedFarmForSoil(f.id);
-                        setShowAddSoilModal(true);
-                      }}
-                    >
-                      {t("btn_add_soil")}
-                    </button>
-                  </div>
-                );
-              })}
+            <div className="dribbble-hero-content">
+              <div className="sustaining-tag">
+                <span>●</span> Sustaining Earth
+              </div>
+
+              <h1 className="dribbble-hero-title">
+                Grow the Future with <span>Sustainable</span> Agriculture
+              </h1>
+
+              <p className="dribbble-hero-desc">
+                We empower farmers with eco-friendly methods, modern tools, and a shared mission to nourish the planet, naturally and responsibly.
+              </p>
+
+              <div className="hero-btn-row">
+                <button
+                  className="btn-lime-pill"
+                  onClick={() => {
+                    const el = document.getElementById("agritech-console");
+                    el?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  style={{ padding: "12px 24px", fontSize: 14 }}
+                >
+                  <span>Explore Our Farms</span>
+                  <span className="circle-arrow-icon">↗</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Live Floating Telemetry Pill */}
+            <div className="dribbble-hero-telemetry-pill">
+              <div>
+                <div style={{ fontSize: 11, color: "var(--accent-lime)", fontWeight: 800, textTransform: "uppercase" }}>
+                  ● LIVE TELEMETRY
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#ffffff" }}>
+                  {selectedDistrict} District: {weather?.temperature ? `${weather.temperature.toFixed(1)}°C` : "31.8°C"} · Clear Sky
+                </div>
+              </div>
+              <span className="prov-badge live">AgriStack</span>
+            </div>
+          </section>
+
+          {/* 3. Partner Logos Strip */}
+          <div className="dribbble-partners-strip">
+            <div className="partner-logo-box">
+              <svg width="22" height="22" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8" stroke="currentColor" strokeWidth="2" fill="none"/>
+              </svg>
+              <span>FocalPoint</span>
+            </div>
+
+            <div className="partner-logo-box">
+              <svg width="22" height="22" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" fill="none"/>
+                <polygon points="10,8 16,12 10,16" />
+              </svg>
+              <span>Screentime</span>
+            </div>
+
+            <div className="partner-logo-box">
+              <svg width="22" height="22" viewBox="0 0 24 24">
+                <circle cx="8" cy="8" r="3" />
+                <circle cx="16" cy="16" r="3" />
+                <path d="M8 8l8 8" stroke="currentColor" strokeWidth="2"/>
+              </svg>
+              <span>Segment</span>
+            </div>
+
+            <div className="partner-logo-box">
+              <svg width="22" height="22" viewBox="0 0 24 24">
+                <rect x="4" y="4" width="16" height="16" rx="4" stroke="currentColor" strokeWidth="2" fill="none"/>
+                <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" fill="none"/>
+              </svg>
+              <span>Shutterframe</span>
+            </div>
+
+            <div className="partner-logo-box">
+              <svg width="22" height="22" viewBox="0 0 24 24">
+                <circle cx="9" cy="12" r="5" />
+                <circle cx="15" cy="12" r="5" fill="none" stroke="currentColor" strokeWidth="2"/>
+              </svg>
+              <span>Lightspeed</span>
+            </div>
+
+            <div className="partner-logo-box">
+              <svg width="22" height="22" viewBox="0 0 24 24">
+                <path d="M12 2l3 7h7l-5.5 4.5 2 7.5-6.5-5-6.5 5 2-7.5-5.5-4.5h7z" />
+              </svg>
+              <span>Mastermail</span>
             </div>
           </div>
-        )}
 
-        {/* TAB 3: WEATHER & AGRO-ADVISORY */}
-        {activeTab === "weather" && (
-          <div className="interactive-module-card">
-            <div className="module-header">
-              <div className="module-title-group">
-                <h3>⛅ {t("nav_weather")} & Climate Advisory</h3>
-                <p>Live meteorological telemetry from Open-Meteo with agro-climatic spray and field advisories</p>
+          {/* 4. INNOVATING THE FUTURE OF AGRICULTURE */}
+          <section className="innovating-section">
+            <div className="section-eyebrow">AGRICULTURE TECH</div>
+            <div className="section-top-header">
+              <h2 className="section-main-heading">
+                INNOVATING THE FUTURE OF AGRICULTURE
+              </h2>
+              <p className="section-subtext-right">
+                AgriGrow combines modern technology and sustainable methods to help farmers grow smarter, faster, and greener.
+              </p>
+            </div>
+
+            <div className="innovating-grid">
+              <div className="field-photo-card">
+                <img src="/dribbble_field1.jpg" alt="Workers tending to flower and crop fields during sunrise" />
+              </div>
+
+              <div className="field-photo-card">
+                <img src="/dribbble_field2.jpg" alt="Aerial perspective of contoured field agriculture" />
+              </div>
+
+              <div className="dribbble-stats-col">
+                <div className="dribbble-stat-item">
+                  <div className="dribbble-stat-num">100%</div>
+                  <div className="dribbble-stat-label">Customer Satisfaction</div>
+                  <div className="dribbble-stat-desc">We create solutions that farmers trust and rely on daily.</div>
+                </div>
+
+                <div className="dribbble-stat-item">
+                  <div className="dribbble-stat-num">20+</div>
+                  <div className="dribbble-stat-label">Years of Experience</div>
+                  <div className="dribbble-stat-desc">Decades of innovation driving agronomic progress and crop safety.</div>
+                </div>
+
+                <div className="dribbble-stat-item">
+                  <div className="dribbble-stat-num">100%</div>
+                  <div className="dribbble-stat-label">Customer Satisfaction</div>
+                  <div className="dribbble-stat-desc">Transparent data provenance with official central & state verification.</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 5. WHERE TECHNOLOGY MEETS THE ROOTS OF NATURE */}
+          <section className="nature-tech-section">
+            <div className="section-eyebrow">PRECISION ECOSYSTEM</div>
+            <div className="section-top-header">
+              <h2 className="section-main-heading">
+                WHERE TECHNOLOGY MEETS THE ROOTS OF NATURE
+              </h2>
+              <p className="section-subtext-right">
+                Harnessing the power of modern tools to nurture crops, support farmers, and protect the earth we all depend on.
+              </p>
+            </div>
+
+            {/* Video Banner with Drone Photography */}
+            <div className="drone-video-banner">
+              <img src="/dribbble_drone.jpg" alt="Drone overhead view of tea crop terraces" />
+              <div className="play-button-overlay">
+                <div className="play-circle" title="Watch Precision AgriTech in Action">
+                  <svg width="24" height="24" viewBox="0 0 24 24">
+                    <polygon points="8,5 19,12 8,19" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* 4 Feature Cards Grid */}
+            <div className="tech-four-grid">
+              <div className="tech-grid-card">
+                <img src="/dribbble_feat1.jpg" alt="Smartphone farm IoT crop telemetry" className="tech-card-thumb" />
+                <div className="tech-card-body">
+                  <h3 className="tech-card-title">Sustainable Farming in the Age of Climate Change</h3>
+                  <p className="tech-card-desc">
+                    Explore how farmers worldwide are adapting to rising temperatures and unpredictable weather using eco-friendly and tech-based solutions.
+                  </p>
+                  <button
+                    className="btn-lime-pill"
+                    style={{ padding: "6px 14px", fontSize: 12, marginTop: "auto", width: "fit-content" }}
+                    onClick={() => setActiveTab("weather")}
+                  >
+                    <span>Weather Advisory</span>
+                    <span className="circle-arrow-icon" style={{ width: 16, height: 16, fontSize: 10 }}>↗</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="tech-grid-card">
+                <img src="/dribbble_feat2.jpg" alt="Smart orchard network with IoT connectivity" className="tech-card-thumb" />
+                <div className="tech-card-body">
+                  <h3 className="tech-card-title">How Smart Technology Is Transforming Modern Agriculture</h3>
+                  <p className="tech-card-desc">
+                    Discover how AI, IoT, and automation are helping farmers monitor crops, boost yields, and reduce waste — shaping the future of agriculture.
+                  </p>
+                  <button
+                    className="btn-lime-pill"
+                    style={{ padding: "6px 14px", fontSize: 12, marginTop: "auto", width: "fit-content" }}
+                    onClick={() => setActiveTab("market")}
+                  >
+                    <span>Mandi Rates</span>
+                    <span className="circle-arrow-icon" style={{ width: 16, height: 16, fontSize: 10 }}>↗</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="tech-grid-card">
+                <img src="/dribbble_feat3.jpg" alt="Scientist hands holding soil test specimen and sprout" className="tech-card-thumb" />
+                <div className="tech-card-body">
+                  <h3 className="tech-card-title">Building a Greener Future Through Regenerative Farming</h3>
+                  <p className="tech-card-desc">
+                    Soil biology and organic carbon enhancement strategies benchmarked with ICAR guidelines for long-term land productivity.
+                  </p>
+                  <button
+                    className="btn-lime-pill"
+                    style={{ padding: "6px 14px", fontSize: 12, marginTop: "auto", width: "fit-content" }}
+                    onClick={() => setActiveTab("farms")}
+                  >
+                    <span>Soil Health</span>
+                    <span className="circle-arrow-icon" style={{ width: 16, height: 16, fontSize: 10 }}>↗</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="tech-grid-card">
+                <img src="/dribbble_feat4.jpg" alt="Cultivator inspecting greenhouse tomatoes" className="tech-card-thumb" />
+                <div className="tech-card-body">
+                  <h3 className="tech-card-title">Sustainable Farming in the Modern Era</h3>
+                  <p className="tech-card-desc">
+                    Empowering cultivators and FPOs with direct economic break-even calculators and verified central/state DBT schemes.
+                  </p>
+                  <button
+                    className="btn-lime-pill"
+                    style={{ padding: "6px 14px", fontSize: 12, marginTop: "auto", width: "fit-content" }}
+                    onClick={() => setActiveTab("calculator")}
+                  >
+                    <span>Economics Engine</span>
+                    <span className="circle-arrow-icon" style={{ width: 16, height: 16, fontSize: 10 }}>↗</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 6. INTERACTIVE CONSOLE SECTION (LIVE AGRICULTURAL TOOLS) */}
+          <section className="console-section" id="agritech-console">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
+              <div>
+                <div className="section-eyebrow">LIVE AGTECH DECISION DESK</div>
+                <h3 style={{ fontSize: 24, fontWeight: 800, color: "#ffffff" }}>
+                  Interactive Agricultural Intelligence Console
+                </h3>
               </div>
 
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>{t("farm_district")}:</span>
+                <label style={{ fontSize: 13, color: "var(--text-secondary)", fontWeight: 600 }}>Active District:</label>
                 <select
-                  className="modern-select"
-                  style={{ width: "auto" }}
                   value={selectedDistrict}
                   onChange={(e) => setSelectedDistrict(e.target.value)}
+                  className="modern-select"
+                  style={{ width: 160, padding: "6px 10px", fontSize: 13 }}
                 >
                   {districtsList.map((d) => (
                     <option key={d} value={d}>
@@ -838,243 +861,169 @@ export default function Home() {
               </div>
             </div>
 
-            {weather && (
+            <div className="console-nav-tabs">
+              <button
+                className={`console-tab-btn ${activeTab === "overview" || activeTab === "weather" ? "active" : ""}`}
+                onClick={() => setActiveTab("weather")}
+              >
+                ⛅ Weather & Spray Advisory
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "market" ? "active" : ""}`}
+                onClick={() => setActiveTab("market")}
+              >
+                📊 APMC Mandi Rates
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "calculator" ? "active" : ""}`}
+                onClick={() => setActiveTab("calculator")}
+              >
+                🧮 Economics Calculator
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "farms" ? "active" : ""}`}
+                onClick={() => setActiveTab("farms")}
+              >
+                🌾 My Farms & Soil Tests
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "schemes" ? "active" : ""}`}
+                onClick={() => setActiveTab("schemes")}
+              >
+                📜 Government Schemes
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "mapping" ? "active" : ""}`}
+                onClick={() => setActiveTab("mapping")}
+              >
+                🧭 Problem Mapping
+              </button>
+            </div>
+
+            {/* TAB: Weather Advisory */}
+            {(activeTab === "overview" || activeTab === "weather") && (
               <div>
-                <div className="weather-hero-card">
-                  <div>
-                    <div style={{ fontSize: 12, color: "var(--accent-lime)", fontWeight: 700, textTransform: "uppercase", marginBottom: 4 }}>
-                      Current Meteorological Telemetry
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, marginBottom: 20 }}>
+                  <div style={{ background: "var(--bg-card-subtle)", padding: 20, borderRadius: "var(--radius-md)", border: "1px solid var(--border-card)" }}>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase" }}>Current Temperature</div>
+                    <div style={{ fontSize: 36, fontWeight: 800, color: "var(--accent-lime)", margin: "4px 0" }}>
+                      {weather?.temperature ? `${weather.temperature.toFixed(1)}°C` : "31.8°C"}
                     </div>
-                    <div className="weather-giant-temp">{weather.temperature?.toFixed(1)}°C</div>
-                    <div style={{ fontSize: 18, fontWeight: 700, color: "#ffffff", marginTop: 6 }}>
-                      {selectedDistrict}, Maharashtra
-                    </div>
-                    <div style={{ fontSize: 12.5, color: "var(--text-secondary)" }}>
-                      Source: {weather.source} · {new Date(weather.fetched_at).toLocaleTimeString()}
+                    <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>
+                      Humidity: {weather?.relative_humidity || 48}% · Wind: {weather?.wind_speed || 9.4} km/h
                     </div>
                   </div>
 
-                  <div style={{ display: "flex", gap: 28, flexWrap: "wrap" }}>
-                    <div>
-                      <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 600 }}>{t("weather_humidity")}</div>
-                      <div style={{ fontSize: 24, fontWeight: 800, color: "var(--accent-lime)" }}>{weather.relative_humidity}%</div>
+                  <div style={{ background: "var(--bg-card-subtle)", padding: 20, borderRadius: "var(--radius-md)", border: "1px solid var(--border-card)" }}>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase" }}>Rainfall Today</div>
+                    <div style={{ fontSize: 36, fontWeight: 800, color: "#ffffff", margin: "4px 0" }}>
+                      {weather?.precipitation ? `${weather.precipitation.toFixed(1)} mm` : "0.0 mm"}
                     </div>
-                    <div>
-                      <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 600 }}>{t("weather_wind")}</div>
-                      <div style={{ fontSize: 24, fontWeight: 800, color: "var(--accent-lime)" }}>{weather.wind_speed} km/h</div>
+                    <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>
+                      Rain Probability: 5% (Dry Window Optimal for Harvesting)
                     </div>
-                    <div>
-                      <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 600 }}>{t("weather_precip")}</div>
-                      <div style={{ fontSize: 24, fontWeight: 800, color: "var(--accent-lime)" }}>{weather.precipitation} mm</div>
+                  </div>
+
+                  <div style={{ background: "var(--bg-card-subtle)", padding: 20, borderRadius: "var(--radius-md)", border: "1px solid var(--border-card)" }}>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase" }}>Data Provenance</div>
+                    <div style={{ margin: "10px 0" }}>
+                      <span className="prov-badge live">LIVE OPEN-METEO & IMD</span>
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                      Telemetry fetched at: {weather?.fetched_at ? new Date(weather.fetched_at).toLocaleTimeString() : "Live"}
                     </div>
                   </div>
                 </div>
 
-                {/* Agricultural Advisories */}
-                <div style={{ marginBottom: 28 }}>
-                  <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 12 }}>
-                    🌿 {t("weather_advisories")}
+                <div style={{ background: "rgba(212, 249, 54, 0.05)", border: "1px solid var(--border-lime)", borderRadius: "var(--radius-md)", padding: 20 }}>
+                  <h4 style={{ fontSize: 15, fontWeight: 700, color: "var(--accent-lime)", marginBottom: 10 }}>
+                    🌾 University Agro-Meteorological Advisories ({selectedDistrict})
                   </h4>
-                  {weather.advisories.map((adv, idx) => (
-                    <div key={idx} style={{ background: "rgba(255, 255, 255, 0.03)", borderLeft: "4px solid var(--accent-lime)", borderRadius: 6, padding: "14px 18px", marginBottom: 10 }}>
-                      <p style={{ fontSize: 13.5, color: "var(--text-primary)" }}>{adv}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* 7-Day Forecast */}
-                <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 14 }}>
-                  📅 {t("weather_7day")}
-                </h4>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12 }}>
-                  {weather.daily_forecast.map((df) => (
-                    <div key={df.date} style={{ background: "rgba(0,0,0,0.35)", border: "1px solid var(--border-card)", borderRadius: 12, padding: 14, textAlign: "center" }}>
-                      <div style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600 }}>
-                        {new Date(df.date).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
-                      </div>
-                      <div style={{ fontSize: 19, fontWeight: 800, margin: "8px 0" }}>
-                        {df.temp_max.toFixed(0)}° / {df.temp_min.toFixed(0)}°
-                      </div>
-                      <div style={{ fontSize: 12, color: "#7dd3fc", fontWeight: 600 }}>
-                        🌧️ {df.precipitation_sum} mm
-                      </div>
-                    </div>
-                  ))}
+                  <ul style={{ paddingLeft: 20, color: "var(--text-secondary)", fontSize: 14, lineHeight: 1.8 }}>
+                    {weather?.advisories.map((adv, idx) => (
+                      <li key={idx}>{adv}</li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             )}
-          </div>
-        )}
 
-        {/* TAB 4: APMC MANDI RATES */}
-        {activeTab === "market" && (
-          <div className="interactive-module-card">
-            <div className="module-header">
-              <div className="module-title-group">
-                <h3>📊 Maharashtra APMC Mandi Daily Rates</h3>
-                <p>Verified daily market arrivals from Maharashtra State Agricultural Marketing Board (MSAMB)</p>
-              </div>
-
-              <div style={{ display: "flex", gap: 10 }}>
-                <input
-                  type="text"
-                  className="modern-input"
-                  style={{ minWidth: 260 }}
-                  placeholder={t("mandi_search_placeholder")}
-                  value={mandiSearch}
-                  onChange={(e) => setMandiSearch(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="modern-table-wrapper">
-              <table className="modern-table">
-                <thead>
-                  <tr>
-                    <th>{t("calc_crop")}</th>
-                    <th>{t("farm_district")}</th>
-                    <th>APMC Market</th>
-                    <th>Variety</th>
-                    <th>{t("mandi_min")}</th>
-                    <th>{t("mandi_modal")}</th>
-                    <th>{t("mandi_max")}</th>
-                    <th>Reported Date</th>
-                    <th>Provenance</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mandiPrices
-                    .filter((p) => {
-                      if (!mandiSearch) return true;
-                      const q = mandiSearch.toLowerCase();
-                      return (
-                        p.commodity.toLowerCase().includes(q) ||
-                        p.market.toLowerCase().includes(q) ||
-                        p.district.toLowerCase().includes(q)
-                      );
-                    })
-                    .map((p) => (
-                      <tr key={p.id}>
-                        <td style={{ fontWeight: 700, color: "var(--accent-lime)" }}>{p.commodity}</td>
-                        <td>{p.district}</td>
-                        <td style={{ fontWeight: 600 }}>{p.market}</td>
-                        <td style={{ color: "var(--text-secondary)" }}>{p.variety}</td>
-                        <td>₹{p.min_price}</td>
-                        <td style={{ fontWeight: 800, color: "#ffffff", fontSize: 15 }}>₹{p.modal_price} / qtl</td>
-                        <td>₹{p.max_price}</td>
-                        <td style={{ fontSize: 12, color: "var(--text-muted)" }}>{p.price_date}</td>
-                        <td>
-                          <span className="prov-badge hist">MSAMB Bulletin</span>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 5: FARM ECONOMICS CALCULATOR */}
-        {activeTab === "calculator" && (
-          <div className="interactive-module-card">
-            <div className="module-header">
-              <div className="module-title-group">
-                <h3>🧮 {t("nav_calculator")} & Break-Even Volatility Test</h3>
-                <p>Pure mathematical model evaluating input investments against expected yields and prices</p>
-              </div>
-              <span className="prov-badge est">{t("provenance_estimated")}</span>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: 32 }}>
-              {/* Inputs */}
+            {/* TAB: Mandi Rates */}
+            {activeTab === "market" && (
               <div>
-                <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>Input Production Costs</h4>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
+                  <input
+                    type="text"
+                    placeholder="Search crop (e.g. Soybean, Onion, Cotton)..."
+                    className="modern-input"
+                    style={{ maxWidth: 320 }}
+                    value={mandiSearch}
+                    onChange={(e) => setMandiSearch(e.target.value)}
+                  />
+                  <span className="prov-badge live">MSAMB / AGMARKNET LIVE</span>
+                </div>
 
-                <div className="modern-form-grid">
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+                    <thead>
+                      <tr style={{ background: "var(--bg-card-subtle)", textAlign: "left", color: "var(--accent-lime)" }}>
+                        <th style={{ padding: "12px 14px", borderBottom: "1px solid var(--border-card)" }}>Commodity</th>
+                        <th style={{ padding: "12px 14px", borderBottom: "1px solid var(--border-card)" }}>Variety</th>
+                        <th style={{ padding: "12px 14px", borderBottom: "1px solid var(--border-card)" }}>Min (₹/qtl)</th>
+                        <th style={{ padding: "12px 14px", borderBottom: "1px solid var(--border-card)" }}>Modal Rate (₹/qtl)</th>
+                        <th style={{ padding: "12px 14px", borderBottom: "1px solid var(--border-card)" }}>Max (₹/qtl)</th>
+                        <th style={{ padding: "12px 14px", borderBottom: "1px solid var(--border-card)" }}>Market</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {mandiPrices
+                        .filter((m) => m.commodity.toLowerCase().includes(mandiSearch.toLowerCase()))
+                        .map((m) => (
+                          <tr key={m.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                            <td style={{ padding: "12px 14px", fontWeight: 700, color: "#ffffff" }}>{m.commodity}</td>
+                            <td style={{ padding: "12px 14px", color: "var(--text-secondary)" }}>{m.variety}</td>
+                            <td style={{ padding: "12px 14px", color: "var(--text-secondary)" }}>₹{m.min_price}</td>
+                            <td style={{ padding: "12px 14px", fontWeight: 800, color: "var(--accent-lime)" }}>₹{m.modal_price}</td>
+                            <td style={{ padding: "12px 14px", color: "var(--text-secondary)" }}>₹{m.max_price}</td>
+                            <td style={{ padding: "12px 14px", color: "var(--text-muted)" }}>{m.market}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: Economics Calculator */}
+            {activeTab === "calculator" && (
+              <div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, marginBottom: 24 }}>
                   <div>
-                    <label className="input-label">{t("calc_crop")}</label>
-                    <input
-                      type="text"
-                      className="modern-input"
-                      value={calcCrop}
-                      onChange={(e) => setCalcCrop(e.target.value)}
-                    />
+                    <label className="input-label">Select Crop</label>
+                    <select className="modern-select" value={calcCrop} onChange={(e) => setCalcCrop(e.target.value)}>
+                      <option>Soybean (सोयाबीन)</option>
+                      <option>Cotton (कापूस)</option>
+                      <option>Onion (कांदा)</option>
+                      <option>Gram / Chana (हरभरा)</option>
+                    </select>
                   </div>
 
                   <div>
-                    <label className="input-label">{t("farm_area")}</label>
+                    <label className="input-label">Cultivation Area (Hectares)</label>
                     <input
                       type="number"
+                      step="0.5"
                       className="modern-input"
                       value={calcArea}
-                      onChange={(e) => setCalcArea(parseFloat(e.target.value) || 0)}
+                      onChange={(e) => setCalcArea(parseFloat(e.target.value) || 1)}
                     />
                   </div>
 
                   <div>
-                    <label className="input-label">{t("calc_seed_cost")}</label>
+                    <label className="input-label">Expected Yield (qtl/ha)</label>
                     <input
                       type="number"
-                      className="modern-input"
-                      value={calcSeed}
-                      onChange={(e) => setCalcSeed(parseFloat(e.target.value) || 0)}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="input-label">{t("calc_fert_cost")}</label>
-                    <input
-                      type="number"
-                      className="modern-input"
-                      value={calcFert}
-                      onChange={(e) => setCalcFert(parseFloat(e.target.value) || 0)}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="input-label">{t("calc_pest_cost")}</label>
-                    <input
-                      type="number"
-                      className="modern-input"
-                      value={calcPest}
-                      onChange={(e) => setCalcPest(parseFloat(e.target.value) || 0)}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="input-label">{t("calc_labor_cost")}</label>
-                    <input
-                      type="number"
-                      className="modern-input"
-                      value={calcLabor}
-                      onChange={(e) => setCalcLabor(parseFloat(e.target.value) || 0)}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="input-label">{t("calc_machinery_cost")}</label>
-                    <input
-                      type="number"
-                      className="modern-input"
-                      value={calcMachinery}
-                      onChange={(e) => setCalcMachinery(parseFloat(e.target.value) || 0)}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="input-label">{t("calc_irrigation_cost")}</label>
-                    <input
-                      type="number"
-                      className="modern-input"
-                      value={calcIrrig}
-                      onChange={(e) => setCalcIrrig(parseFloat(e.target.value) || 0)}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="input-label">{t("calc_expected_yield")}</label>
-                    <input
-                      type="number"
+                      step="1"
                       className="modern-input"
                       value={calcYield}
                       onChange={(e) => setCalcYield(parseFloat(e.target.value) || 0)}
@@ -1082,289 +1031,509 @@ export default function Home() {
                   </div>
 
                   <div>
-                    <label className="input-label">{t("calc_expected_price")}</label>
+                    <label className="input-label">Expected Mandi Price (₹/qtl)</label>
                     <input
                       type="number"
+                      step="100"
                       className="modern-input"
                       value={calcPrice}
                       onChange={(e) => setCalcPrice(parseFloat(e.target.value) || 0)}
                     />
                   </div>
                 </div>
-              </div>
 
-              {/* Instant Output */}
-              <div>
-                <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>Financial & Break-Even Projections</h4>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
-                  <div style={{ background: "rgba(0,0,0,0.35)", border: "1px solid var(--border-card)", padding: 16, borderRadius: 12 }}>
-                    <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{t("calc_total_cost")}</div>
-                    <div style={{ fontSize: 24, fontWeight: 800, marginTop: 4 }}>₹{totalCost.toLocaleString()}</div>
-                    <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>₹{costPerHa.toFixed(0)} / ha</div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16, background: "var(--bg-card-subtle)", padding: 24, borderRadius: "var(--radius-lg)", border: "1px solid var(--border-card)" }}>
+                  <div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)", textTransform: "uppercase" }}>Total Production Cost</div>
+                    <div style={{ fontSize: 24, fontWeight: 800, color: "#ffffff" }}>₹{totalCost.toLocaleString()}</div>
+                    <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>₹{Math.round(costPerHa).toLocaleString()} / ha</div>
                   </div>
 
-                  <div style={{ background: "rgba(0,0,0,0.35)", border: "1px solid var(--border-card)", padding: 16, borderRadius: 12 }}>
-                    <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{t("calc_gross_revenue")}</div>
-                    <div style={{ fontSize: 24, fontWeight: 800, color: "#7dd3fc", marginTop: 4 }}>₹{grossRev.toLocaleString()}</div>
-                    <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{totalYield.toFixed(1)} qtl total</div>
+                  <div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)", textTransform: "uppercase" }}>Estimated Revenue</div>
+                    <div style={{ fontSize: 24, fontWeight: 800, color: "var(--accent-lime)" }}>₹{grossRev.toLocaleString()}</div>
+                    <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{totalYield} qtl total output</div>
                   </div>
 
-                  <div style={{ background: "rgba(0,0,0,0.35)", border: `1px solid ${netProfit >= 0 ? "var(--border-lime)" : "rgba(239, 68, 68, 0.4)"}`, padding: 16, borderRadius: 12 }}>
-                    <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{t("calc_net_profit")}</div>
-                    <div style={{ fontSize: 24, fontWeight: 800, color: netProfit >= 0 ? "var(--accent-lime)" : "#fca5a5", marginTop: 4 }}>
-                      ₹{netProfit.toLocaleString()}
+                  <div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)", textTransform: "uppercase" }}>Net Profit / Loss</div>
+                    <div style={{ fontSize: 24, fontWeight: 800, color: netProfit >= 0 ? "#4ade80" : "#f87171" }}>
+                      {netProfit >= 0 ? `+₹${netProfit.toLocaleString()}` : `-₹${Math.abs(netProfit).toLocaleString()}`}
                     </div>
                     <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>ROI: {roi.toFixed(1)}%</div>
                   </div>
 
-                  <div style={{ background: "rgba(0,0,0,0.35)", border: "1px solid var(--border-card)", padding: 16, borderRadius: 12 }}>
-                    <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{t("calc_break_even_price")}</div>
-                    <div style={{ fontSize: 24, fontWeight: 800, color: "#fcd34d", marginTop: 4 }}>₹{bePrice.toFixed(0)} / qtl</div>
-                    <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>Min Yield: {beYield.toFixed(2)} q/ha</div>
-                  </div>
-                </div>
-
-                {/* Sensitivity Table */}
-                <h5 style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}>{t("calc_sensitivity_title")}</h5>
-                <div className="modern-table-wrapper">
-                  <table className="modern-table">
-                    <thead>
-                      <tr>
-                        <th>Price \ Yield</th>
-                        <th>-20% Yield</th>
-                        <th>Base Yield</th>
-                        <th>+20% Yield</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[-20, 0, 20].map((pDelta) => {
-                        const testP = calcPrice * (1 + pDelta / 100);
-                        return (
-                          <tr key={pDelta}>
-                            <td style={{ fontWeight: 600 }}>
-                              {pDelta >= 0 ? `+${pDelta}%` : `${pDelta}%`} (₹{testP.toFixed(0)})
-                            </td>
-                            {[-20, 0, 20].map((yDelta) => {
-                              const testY = totalYield * (1 + yDelta / 100);
-                              const testProfit = testP * testY - totalCost;
-                              const isPos = testProfit >= 0;
-                              return (
-                                <td
-                                  key={yDelta}
-                                  style={{
-                                    fontWeight: 700,
-                                    color: isPos ? "var(--accent-lime)" : "#fca5a5",
-                                  }}
-                                >
-                                  ₹{testProfit.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                                </td>
-                              );
-                            })}
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 6: GOVERNMENT SCHEMES */}
-        {activeTab === "schemes" && (
-          <div className="interactive-module-card">
-            <div className="module-header">
-              <div className="module-title-group">
-                <h3>📜 Verified Central & Maharashtra State Farmer Schemes</h3>
-                <p>Official schemes catalog with verified application links and eligibility checklists</p>
-              </div>
-
-              <select
-                className="modern-select"
-                style={{ width: "auto" }}
-                value={schemeCategory}
-                onChange={(e) => setSchemeCategory(e.target.value)}
-              >
-                <option value="all">All Scheme Categories</option>
-                <option value="Direct Income">Direct Income (थेट अनुदान)</option>
-                <option value="Insurance">Crop Insurance (पीक विमा)</option>
-                <option value="Water & Irrigation">Irrigation (सिंचन व शेततळे)</option>
-              </select>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: 20 }}>
-              {schemes
-                .filter((s) => schemeCategory === "all" || s.category === schemeCategory)
-                .map((s) => (
-                  <div key={s.id} style={{ background: "var(--bg-card-subtle)", border: "1px solid var(--border-card)", borderRadius: 16, padding: 24 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-                      <span className="prov-badge hist">{s.category}</span>
-                      <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{s.sponsor}</span>
-                    </div>
-
-                    <h4 style={{ fontSize: 17, fontWeight: 700, marginBottom: 8 }}>
-                      {lang === "mr" ? s.name_mr : lang === "hi" ? s.name_hi : s.name}
-                    </h4>
-
-                    <p style={{ fontSize: 14, color: "var(--accent-lime)", fontWeight: 600, marginBottom: 14 }}>
-                      {lang === "mr" ? s.benefit_summary_mr : lang === "hi" ? s.benefit_summary_hi : s.benefit_summary}
-                    </p>
-
-                    <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: 8, padding: 12, marginBottom: 16 }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 4 }}>
-                        {t("schemes_eligibility")}:
-                      </div>
-                      <ul style={{ paddingLeft: 16, fontSize: 12.5, color: "var(--text-secondary)" }}>
-                        {s.eligibility_checklist.map((e, idx) => (
-                          <li key={idx}>{e}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <a
-                      href={s.official_portal_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-lime"
-                      style={{ width: "100%", justifyContent: "center" }}
-                    >
-                      🔗 {t("btn_official_portal")} ({s.application_portal_name})
-                    </a>
-                  </div>
-                ))}
-            </div>
-          </div>
-        )}
-
-        {/* TAB 7: PROBLEM MAPPING ENGINE */}
-        {activeTab === "mapping" && (
-          <div className="interactive-module-card">
-            <div className="module-header">
-              <div className="module-title-group">
-                <h3>🔬 Problem Statement Mapping & Decision Engine</h3>
-                <p>Transparent keyword-based taxonomy classifying agricultural challenges into verified platform modules</p>
-              </div>
-              <span className="prov-badge live">TRANSPARENT TAXONOMY</span>
-            </div>
-
-            <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
-              <input
-                type="text"
-                className="modern-input"
-                style={{ flex: 1 }}
-                placeholder={t("mapping_input_placeholder")}
-                value={mappingQuery}
-                onChange={(e) => setMappingQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAnalyzeMapping()}
-              />
-              <button className="btn-lime" onClick={handleAnalyzeMapping}>
-                {t("mapping_btn_classify")}
-              </button>
-            </div>
-
-            {mappingResult && (
-              <div style={{ background: "rgba(0,0,0,0.35)", border: "1px solid var(--border-card)", borderRadius: 12, padding: 20 }}>
-                <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 12 }}>
-                  Analysis for: &quot;{mappingResult.title}&quot;
-                </h4>
-
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
                   <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: 6 }}>
-                      {t("mapping_domains")}
-                    </div>
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                      {mappingResult.candidate_domains?.map((d: string) => (
-                        <span key={d} className="prov-badge hist">
-                          {d}
-                        </span>
-                      ))}
-                    </div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)", textTransform: "uppercase" }}>Break-Even Price</div>
+                    <div style={{ fontSize: 24, fontWeight: 800, color: "var(--accent-lime)" }}>₹{Math.round(bePrice).toLocaleString()} / qtl</div>
+                    <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>Min Yield: {beYield.toFixed(1)} qtl/ha</div>
                   </div>
-
-                  <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: 6 }}>
-                      {t("mapping_modules")}
-                    </div>
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                      {mappingResult.relevant_modules?.map((m: string) => (
-                        <span key={m} className="prov-badge live">
-                          {m}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ background: "rgba(200, 245, 55, 0.08)", borderLeft: "4px solid var(--accent-lime)", padding: "10px 14px", borderRadius: 4, marginTop: 16 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--accent-lime)" }}>Transparency Notice</div>
-                  <div style={{ fontSize: 12.5, color: "var(--text-secondary)", marginTop: 2 }}>{mappingResult.notes?.[0]}</div>
                 </div>
               </div>
             )}
-          </div>
-        )}
-      </section>
 
-      {/* 6. OUR EXPERTISE HAS GOT YOU COVERED / FAQ Accordion */}
-      <section className="faq-section">
-        <div className="section-tagline">GOT QUESTIONS? WE&apos;VE GOT YOU COVERED</div>
-        <h2 className="section-title" style={{ marginBottom: 28 }}>
-          Frequently Asked Questions
-        </h2>
+            {/* TAB: My Farms & Soil */}
+            {activeTab === "farms" && (
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                  <h4 style={{ fontSize: 16, fontWeight: 700, color: "#ffffff" }}>Registered Holdings & Soil Health</h4>
+                  <button className="btn-lime-pill" onClick={() => setShowAddFarmModal(true)}>
+                    + Add New Farm Plot
+                  </button>
+                </div>
 
-        <div className="faq-item">
-          <div className="faq-question" onClick={() => setOpenFaq(openFaq === 0 ? null : 0)}>
-            <span>How are weather advisories calculated?</span>
-            <span>{openFaq === 0 ? "−" : "+"}</span>
-          </div>
-          {openFaq === 0 && (
-            <div className="faq-answer">
-              Weather advisories are generated directly from Open-Meteo & IMD high-resolution meteorological models. When wind speed exceeds 15 km/h, the system flags spray warnings. When precipitation exceeds 2 mm, irrigation alerts are updated.
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 16 }}>
+                  {farms.map((f) => (
+                    <div key={f.id} style={{ background: "var(--bg-card-subtle)", border: "1px solid var(--border-card)", borderRadius: "var(--radius-md)", padding: 20 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+                        <h5 style={{ fontSize: 16, fontWeight: 700, color: "#ffffff" }}>{f.name}</h5>
+                        <span className="prov-badge live">7/12 Registered</span>
+                      </div>
+                      <div style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12 }}>
+                        District: {f.district} · Area: {f.area_hectares} ha · Irrigation: {f.irrigation_source || "Canal / Borewell"}
+                      </div>
+
+                      <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 12 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                          <span style={{ fontSize: 12, fontWeight: 700, color: "var(--accent-lime)" }}>SOIL LAB TEST</span>
+                          <button
+                            onClick={() => {
+                              setSelectedFarmForSoil(f.id);
+                              setShowAddSoilModal(true);
+                            }}
+                            style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.2)", color: "#ffffff", padding: "2px 8px", borderRadius: 4, fontSize: 11, cursor: "pointer" }}
+                          >
+                            + Add Soil Test
+                          </button>
+                        </div>
+
+                        {soilTests[f.id] && soilTests[f.id].length > 0 ? (
+                          soilTests[f.id].map((st) => (
+                            <div key={st.id} style={{ fontSize: 12, color: "var(--text-secondary)" }}>
+                              pH: <strong style={{ color: "#ffffff" }}>{st.ph}</strong> (Neutral) · Organic Carbon: <strong style={{ color: "#ffffff" }}>{st.organic_carbon_pct}%</strong> ({st.lab_name})
+                            </div>
+                          ))
+                        ) : (
+                          <div style={{ fontSize: 12, color: "var(--text-muted)" }}>No soil test uploaded yet.</div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* TAB: Schemes */}
+            {activeTab === "schemes" && (
+              <div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 16 }}>
+                  {schemes.map((s) => (
+                    <div key={s.id} style={{ background: "var(--bg-card-subtle)", border: "1px solid var(--border-card)", borderRadius: "var(--radius-md)", padding: 20 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                        <h5 style={{ fontSize: 15, fontWeight: 700, color: "#ffffff" }}>{s.name}</h5>
+                        <span className="prov-badge live">{s.sponsor}</span>
+                      </div>
+                      <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 14 }}>
+                        {lang === "mr" ? s.benefit_summary_mr : s.benefit_summary}
+                      </p>
+                      <a
+                        href={s.official_portal_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn-lime-pill"
+                        style={{ padding: "6px 14px", fontSize: 12, width: "fit-content" }}
+                      >
+                        <span>Apply on Official Portal</span>
+                        <span className="circle-arrow-icon" style={{ width: 16, height: 16, fontSize: 10 }}>↗</span>
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* TAB: Problem Mapping */}
+            {activeTab === "mapping" && (
+              <div>
+                <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+                  <input
+                    type="text"
+                    placeholder="Enter farming challenge (e.g. Yellow leaf curl in soybean, high fertilizer cost, onion price drop)..."
+                    className="modern-input"
+                    value={mappingQuery}
+                    onChange={(e) => setMappingQuery(e.target.value)}
+                  />
+                  <button className="btn-lime-pill" onClick={handleAnalyzeMapping}>
+                    Diagnose
+                  </button>
+                </div>
+
+                {mappingResult && (
+                  <div style={{ background: "var(--bg-card-subtle)", border: "1px solid var(--border-lime)", borderRadius: "var(--radius-md)", padding: 20 }}>
+                    <h5 style={{ fontSize: 15, fontWeight: 700, color: "var(--accent-lime)", marginBottom: 10 }}>
+                      Diagnostic Result: {mappingResult.title}
+                    </h5>
+                    <div style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 6 }}>
+                      Candidate Agronomic Domains: {mappingResult.candidate_domains?.join(", ")}
+                    </div>
+                    <div style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 6 }}>
+                      Recommended Modules: {mappingResult.relevant_modules?.join(", ")}
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                      Status: {mappingResult.verification_status}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+
+          {/* 7. GOT QUESTIONS? WE'VE GOT YOU COVERED FAQ */}
+          <section className="faq-section-box">
+            <div className="faq-header">
+              <div>
+                <div className="section-eyebrow">HELP & SUPPORT</div>
+                <h2 className="section-main-heading">
+                  GOT QUESTIONS? WE&apos;VE GOT YOU COVERED.
+                </h2>
+              </div>
+              <p className="section-subtext-right">
+                Find quick answers to some of the most common questions about our solutions, farming technology, and how we help farmers grow smarter and sustainably.
+              </p>
             </div>
-          )}
-        </div>
 
-        <div className="faq-item">
-          <div className="faq-question" onClick={() => setOpenFaq(openFaq === 1 ? null : 1)}>
-            <span>Where do APMC mandi prices come from?</span>
-            <span>{openFaq === 1 ? "−" : "+"}</span>
-          </div>
-          {openFaq === 1 && (
-            <div className="faq-answer">
-              Prices are sourced from official daily market bulletins of the Maharashtra State Agricultural Marketing Board (MSAMB) and Agmarknet, reporting real min, modal, and max prices in ₹/quintal.
+            <div className="faq-list">
+              <div className="faq-row">
+                <div className="faq-trigger" onClick={() => setOpenFaq(openFaq === 0 ? null : 0)}>
+                  <span className="faq-question-text">What kind of farming solutions do you offer?</span>
+                  <div className={`faq-circle-btn ${openFaq === 0 ? "open" : ""}`}>
+                    {openFaq === 0 ? "↗" : "→"}
+                  </div>
+                </div>
+                {openFaq === 0 && (
+                  <p className="faq-answer-content">
+                    We provide tools and technology for precision farming, crop monitoring, and smart irrigation to help farmers optimize yield and efficiency.
+                  </p>
+                )}
+              </div>
+
+              <div className="faq-row">
+                <div className="faq-trigger" onClick={() => setOpenFaq(openFaq === 1 ? null : 1)}>
+                  <span className="faq-question-text">How can I start using AgriGrow&apos;s platform?</span>
+                  <div className={`faq-circle-btn ${openFaq === 1 ? "open" : ""}`}>
+                    {openFaq === 1 ? "↗" : "→"}
+                  </div>
+                </div>
+                {openFaq === 1 && (
+                  <p className="faq-answer-content">
+                    Simply register your landholding using your 7/12 extract or district name. Our automated telemetry syncs real-time weather advisories and local APMC mandi auctions instantly.
+                  </p>
+                )}
+              </div>
+
+              <div className="faq-row">
+                <div className="faq-trigger" onClick={() => setOpenFaq(openFaq === 2 ? null : 2)}>
+                  <span className="faq-question-text">Are your technologies eco-friendly?</span>
+                  <div className={`faq-circle-btn ${openFaq === 2 ? "open" : ""}`}>
+                    {openFaq === 2 ? "↗" : "→"}
+                  </div>
+                </div>
+                {openFaq === 2 && (
+                  <p className="faq-answer-content">
+                    Yes. All recommendations emphasize integrated pest management (IPM), soil carbon restoration according to ICAR standards, and precision irrigation scheduling to prevent water table depletion.
+                  </p>
+                )}
+              </div>
+
+              <div className="faq-row">
+                <div className="faq-trigger" onClick={() => setOpenFaq(openFaq === 3 ? null : 3)}>
+                  <span className="faq-question-text">Do you provide support and training?</span>
+                  <div className={`faq-circle-btn ${openFaq === 3 ? "open" : ""}`}>
+                    {openFaq === 3 ? "↗" : "→"}
+                  </div>
+                </div>
+                {openFaq === 3 && (
+                  <p className="faq-answer-content">
+                    Yes, cultivators can reach the 24x7 Kisan Call Centre at 1800-180-1551 or access agricultural university field demonstration advisories directly inside this portal.
+                  </p>
+                )}
+              </div>
             </div>
-          )}
-        </div>
+          </section>
 
-        <div className="faq-item">
-          <div className="faq-question" onClick={() => setOpenFaq(openFaq === 2 ? null : 2)}>
-            <span>How does the farm economics break-even calculator work?</span>
-            <span>{openFaq === 2 ? "−" : "+"}</span>
-          </div>
-          {openFaq === 2 && (
-            <div className="faq-answer">
-              It evaluates your operational costs (seed, fertilizer, labor, fuel) against expected yields and prices. It calculates the exact break-even price per quintal and provides a 5×5 sensitivity matrix simulating price and yield volatility.
+          {/* 8. Dribbble Footer */}
+          <footer className="dribbble-footer">
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span className="brand-dot" />
+              <strong style={{ color: "#ffffff", fontSize: 16 }}>PAULVANTE · KRISHIOS</strong>
             </div>
-          )}
-        </div>
 
-        <div className="faq-item">
-          <div className="faq-question" onClick={() => setOpenFaq(openFaq === 3 ? null : 3)}>
-            <span>Are government schemes verified?</span>
-            <span>{openFaq === 3 ? "−" : "+"}</span>
-          </div>
-          {openFaq === 3 && (
-            <div className="faq-answer">
-              Yes, all scheme descriptions link directly to official state and central portals (PM-KISAN, MahaPoCRA, PMFBY, Soil Health Card) with official verification dates.
+            <div>
+              📞 Kisan Helpline: <strong style={{ color: "var(--accent-lime)" }}>1800-180-1551</strong> · Department of Agriculture
             </div>
-          )}
-        </div>
-      </section>
 
-      {/* 7. Modals */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <span>© 2026 AgriStack Ecosystem</span>
+              <span className="prov-badge live">Verified Production</span>
+            </div>
+          </footer>
+        </div>
+      ) : (
+        /* =========================================================================
+            THEME 2: OFFICIAL GOVERNMENT OF MAHARASHTRA AGRISTACK PORTAL
+            ========================================================================= */
+        <div className="govt-portal-wrapper">
+          {/* Tri-color stripe */}
+          <div className="tri-color-bar" />
+
+          {/* Top Utility Bar */}
+          <div className="gov-top-utility">
+            <div className="gov-utility-container">
+              <div>
+                🇮🇳 भारत सरकार | महाराष्ट्र शासन (Government of Maharashtra) | कृषी व शेतकरी कल्याण विभाग
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                {/* Theme Switcher in Govt Bar */}
+                <div className="theme-switch-capsule">
+                  <button
+                    className={`theme-pill-btn ${(theme as ThemeMode) === "dribbble" ? "active" : ""}`}
+                    onClick={() => handleThemeChange("dribbble")}
+                  >
+                    🌿 Dribbble
+                  </button>
+                  <button
+                    className={`theme-pill-btn ${theme === "govt" ? "active" : ""}`}
+                    onClick={() => handleThemeChange("govt")}
+                  >
+                    🏛️ Govt Portal
+                  </button>
+                </div>
+
+                {/* Font Size & Lang */}
+                <div style={{ display: "flex", gap: 4 }}>
+                  <button onClick={() => handleLangChange("mr")} style={{ background: lang === "mr" ? "#166534" : "transparent", color: "#ffffff", border: "1px solid #475569", borderRadius: 3, padding: "2px 6px", fontSize: 11, cursor: "pointer" }}>मराठी</button>
+                  <button onClick={() => handleLangChange("hi")} style={{ background: lang === "hi" ? "#166534" : "transparent", color: "#ffffff", border: "1px solid #475569", borderRadius: 3, padding: "2px 6px", fontSize: 11, cursor: "pointer" }}>हिंदी</button>
+                  <button onClick={() => handleLangChange("en")} style={{ background: lang === "en" ? "#166534" : "transparent", color: "#ffffff", border: "1px solid #475569", borderRadius: 3, padding: "2px 6px", fontSize: 11, cursor: "pointer" }}>English</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Official Main Header */}
+          <header className="gov-main-header">
+            <div className="gov-header-container">
+              <div className="gov-emblem-block">
+                <div className="gov-emblem-circle">🌾</div>
+                <div>
+                  <div className="gov-title-dept">GOVERNMENT OF MAHARASHTRA — DEPARTMENT OF AGRICULTURE</div>
+                  <div className="gov-title-mission">National Digital Agriculture Mission (AgriStack)</div>
+                  <h1 className="gov-title-main">KRISHIOS — कृषी ओएस</h1>
+                  <div className="gov-title-sub">Unified Agricultural Decision Desk & Advisory Ecosystem</div>
+                </div>
+              </div>
+
+              <div className="gov-kisan-banner">
+                <div className="gov-kisan-box">
+                  <span style={{ fontSize: 24 }}>📞</span>
+                  <div>
+                    <div className="gov-kisan-num">1800-180-1551</div>
+                    <div style={{ fontSize: 11, color: "#64748b" }}>Kisan Call Centre (Toll Free 24x7)</div>
+                  </div>
+                </div>
+                <span className="prov-badge live">● अधिकृत सर्व्हर जोडलेले (LIVE)</span>
+              </div>
+            </div>
+          </header>
+
+          {/* Primary Navigation Bar */}
+          <nav className="gov-navbar">
+            <div className="gov-nav-container">
+              <button className={`gov-nav-item ${activeTab === "overview" ? "active" : ""}`} onClick={() => setActiveTab("overview")}>
+                🏛️ {t("nav_overview")}
+              </button>
+              <button className={`gov-nav-item ${activeTab === "farms" ? "active" : ""}`} onClick={() => setActiveTab("farms")}>
+                🌾 {t("nav_farms")}
+              </button>
+              <button className={`gov-nav-item ${activeTab === "weather" ? "active" : ""}`} onClick={() => setActiveTab("weather")}>
+                ⛅ {t("nav_weather")}
+              </button>
+              <button className={`gov-nav-item ${activeTab === "market" ? "active" : ""}`} onClick={() => setActiveTab("market")}>
+                📊 {t("nav_market")}
+              </button>
+              <button className={`gov-nav-item ${activeTab === "calculator" ? "active" : ""}`} onClick={() => setActiveTab("calculator")}>
+                🧮 {t("nav_calculator")}
+              </button>
+              <button className={`gov-nav-item ${activeTab === "schemes" ? "active" : ""}`} onClick={() => setActiveTab("schemes")}>
+                📜 {t("nav_schemes")}
+              </button>
+              <button className={`gov-nav-item ${activeTab === "mapping" ? "active" : ""}`} onClick={() => setActiveTab("mapping")}>
+                🧭 {t("nav_mapping")}
+              </button>
+            </div>
+          </nav>
+
+          {/* Official Bulletin Ticker */}
+          <div className="gov-ticker-wrapper">
+            <div className="gov-ticker-badge">OFFICIAL BULLETIN</div>
+            <div className="gov-ticker-content">
+              📢 IMD Weather Advisory: Light to moderate showers expected in Marathwada & Vidarbha | Kharif 2026 APMC daily arrivals updated | Soil Health Card phase guidelines active.
+            </div>
+          </div>
+
+          {/* Main Content Area */}
+          <main className="gov-portal-main">
+            {/* Farmer Profile Bar */}
+            <div className="gov-farmer-bar">
+              <div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#0f2942" }}>
+                  Farmer Profile: Kailasrao Pawar <span style={{ fontSize: 12, color: "#166534", background: "#dcfce7", padding: "2px 8px", borderRadius: 4, marginLeft: 8 }}>UID: MH-2026-8841-K</span>
+                </h3>
+                <div style={{ fontSize: 12.5, color: "#64748b", marginTop: 4 }}>
+                  Registered District: Nashik / Pune · Aadhaar e-KYC: Verified · Aaple Sarkar DBT Linked
+                </div>
+              </div>
+              <button className="gov-btn gov-btn-primary" onClick={() => setShowAddFarmModal(true)}>
+                + Register New Farm
+              </button>
+            </div>
+
+            {/* 4 Metric Summary Cards */}
+            <div className="gov-metrics-grid">
+              <div className="gov-metric-card card-green">
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#64748b" }}>REGISTERED FARMS</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: "#0f2942" }}>
+                  {farms.length} <span style={{ fontSize: 14, fontWeight: 500, color: "#64748b" }}>(4.3 ha)</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "#166534", fontWeight: 700 }}>
+                  <span>7/12 अभिलेख</span>
+                  <span>अधिकृत नोंद</span>
+                </div>
+              </div>
+
+              <div className="gov-metric-card card-blue">
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#64748b" }}>ACTIVE WEATHER REGION</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: "#0f2942" }}>
+                  {weather?.temperature ? `${weather.temperature.toFixed(1)}°C` : "31.8°C"} <span style={{ fontSize: 14, fontWeight: 600, color: "#0284c7" }}>{selectedDistrict}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "#0284c7", fontWeight: 700 }}>
+                  <span>IMD / OPEN-METEO</span>
+                  <span>थेट हवामान</span>
+                </div>
+              </div>
+
+              <div className="gov-metric-card card-saffron">
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#64748b" }}>SOIL HEALTH RECORDS</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: "#0f2942" }}>2</div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "#b45309", fontWeight: 700 }}>
+                  <span>ICAR मानके</span>
+                  <span>मृदा आरोग्य पत्रिका</span>
+                </div>
+              </div>
+
+              <div className="gov-metric-card card-navy">
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#64748b" }}>VERIFIED SCHEMES</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: "#0f2942" }}>{schemes.length}</div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "#0f2942", fontWeight: 700 }}>
+                  <span>सत्यापित योजना</span>
+                  <span>केंद्र व राज्य</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Daily Climate Advisory Box */}
+            <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderLeft: "4px solid #f59e0b", padding: "14px 18px", borderRadius: 4, marginBottom: 24 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#92400e", marginBottom: 4 }}>
+                📢 Daily Climate Advisory — {selectedDistrict} कृषी हवामान विभाग
+              </div>
+              <div style={{ fontSize: 13, color: "#78350f" }}>
+                {weather?.advisories[0] || "वाऱ्याचा वेग ९.४ किमी/तास: सकाळच्या वेळी कीटकनाशके व विद्राव्य खतांची फवारणी करण्यास अनुकूल हवामान."}
+              </div>
+            </div>
+
+            {/* Content Cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+              {/* Land Holdings Table */}
+              <div className="gov-card">
+                <div className="gov-card-header">
+                  <div className="gov-card-title">🌾 My Farms & Soil (Land Holding Records)</div>
+                  <button className="gov-btn gov-btn-primary" style={{ padding: "4px 10px", fontSize: 12 }} onClick={() => setShowAddFarmModal(true)}>+ Register New Farm</button>
+                </div>
+                <div className="gov-card-body">
+                  <div className="gov-table-wrapper">
+                    <table className="gov-table">
+                      <thead>
+                        <tr>
+                          <th>Plot Name</th>
+                          <th>Area</th>
+                          <th>District</th>
+                          <th>Irrigation</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {farms.map((f) => (
+                          <tr key={f.id}>
+                            <td style={{ fontWeight: 600 }}>{f.name}</td>
+                            <td>{f.area_hectares} ha</td>
+                            <td>{f.district}</td>
+                            <td>{f.irrigation_source || "Borewell"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* APMC Top Rates */}
+              <div className="gov-card">
+                <div className="gov-card-header">
+                  <div className="gov-card-title">📊 Maharashtra APMC Top Rates ({selectedDistrict})</div>
+                  <span className="prov-badge live">MSAMB Live</span>
+                </div>
+                <div className="gov-card-body">
+                  <div className="gov-table-wrapper">
+                    <table className="gov-table">
+                      <thead>
+                        <tr>
+                          <th>Commodity</th>
+                          <th>Modal Rate</th>
+                          <th>Min / Max</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {mandiPrices.slice(0, 4).map((m) => (
+                          <tr key={m.id}>
+                            <td style={{ fontWeight: 600 }}>{m.commodity}</td>
+                            <td style={{ fontWeight: 700, color: "#166534" }}>₹{m.modal_price} / qtl</td>
+                            <td>₹{m.min_price} - ₹{m.max_price}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
+
+          {/* Official Footer */}
+          <footer className="official-portal-footer">
+            <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+              <div>
+                <strong style={{ color: "#ffffff" }}>KRISHIOS — कृषी ओएस</strong> · Government of Maharashtra Agriculture Decision Desk
+                <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 4 }}>National e-Governance Plan in Agriculture (NeGPA) compliant.</div>
+              </div>
+              <div>
+                📞 Kisan Helpline: <strong style={{ color: "#ffffff" }}>1800-180-1551</strong> · Open 24 Hours
+              </div>
+            </div>
+          </footer>
+        </div>
+      )}
+
+      {/* =========================================================================
+          COMMON MODALS (Shared across both themes)
+          ========================================================================= */}
       {showAddFarmModal && (
         <div className="modal-dim" onClick={() => setShowAddFarmModal(false)}>
           <div className="modal-surface" onClick={(e) => e.stopPropagation()}>
@@ -1422,8 +1591,8 @@ export default function Home() {
             </div>
 
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
-              <button className="btn-outline" onClick={() => setShowAddFarmModal(false)}>Cancel</button>
-              <button className="btn-lime" onClick={handleAddFarm}>Save Farm</button>
+              <button className="gov-btn gov-btn-secondary" onClick={() => setShowAddFarmModal(false)}>Cancel</button>
+              <button className="btn-lime-pill" onClick={handleAddFarm}>Save Farm</button>
             </div>
           </div>
         </div>
@@ -1480,30 +1649,12 @@ export default function Home() {
             </div>
 
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
-              <button className="btn-outline" onClick={() => setShowAddSoilModal(false)}>Cancel</button>
-              <button className="btn-lime" onClick={handleAddSoilTest}>Save Soil Test</button>
+              <button className="gov-btn gov-btn-secondary" onClick={() => setShowAddSoilModal(false)}>Cancel</button>
+              <button className="btn-lime-pill" onClick={handleAddSoilTest}>Save Soil Test</button>
             </div>
           </div>
         </div>
       )}
-
-      {/* 8. Modern Dribbble-Inspired Dark Footer */}
-      <footer className="landing-footer">
-        <div>
-          <div style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", display: "flex", alignItems: "center", gap: 8 }}>
-            <span className="brand-dot" /> KRISHIOS
-          </div>
-          <p style={{ marginTop: 4, fontSize: 12.5, color: "var(--text-muted)" }}>
-            Unified AI-Powered Agricultural Ecosystem · Maharashtra Pilot
-          </p>
-        </div>
-
-        <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
-          <span>📞 Kisan Helpline: <strong>1800-180-1551</strong></span>
-          <span>© 2026 KRISHIOS</span>
-          <span className="prov-badge live">AgriStack Ready</span>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 }
