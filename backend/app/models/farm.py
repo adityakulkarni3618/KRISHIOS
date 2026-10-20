@@ -13,6 +13,7 @@ def _now():
 class Farmer(Base):
     __tablename__ = "farmers"
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     name: Mapped[str] = mapped_column(String(120))
     preferred_language: Mapped[str] = mapped_column(String(2), default="mr")  # mr | hi | en
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
@@ -23,6 +24,7 @@ class Farm(Base):
     __tablename__ = "farms"
     id: Mapped[int] = mapped_column(primary_key=True)
     farmer_id: Mapped[int] = mapped_column(ForeignKey("farmers.id"))
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     name: Mapped[str] = mapped_column(String(120))
     area_hectares: Mapped[float] = mapped_column(Float)
     state: Mapped[str] = mapped_column(String(60), default="Maharashtra")

@@ -1,8 +1,43 @@
-from datetime import date
+from datetime import date, datetime
+from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 
 
+# User / Auth Schemas
+class UserRegister(BaseModel):
+    username: str = Field(min_length=3, max_length=50, pattern=r"^[a-zA-Z0-9_\-]+$")
+    email: EmailStr | str = Field(min_length=5, max_length=120)
+    password: str = Field(min_length=6, max_length=128)
+    full_name: str = Field(default="", max_length=120)
+    role: Literal["farmer", "expert", "fpo", "provider", "researcher", "admin"] = "farmer"
+
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    role: str
+    username: str
+    user_id: int
+
+
+class UserOut(BaseModel):
+    id: int
+    username: str
+    email: str
+    full_name: str
+    role: str
+    is_active: bool
+    created_at: datetime
+    model_config = {"from_attributes": True}
+
+
+# Farm / Farmer Schemas
 class FarmerIn(BaseModel):
     name: str = Field(min_length=1, max_length=120)
     preferred_language: str = Field(default="mr", pattern="^(mr|hi|en)$")
@@ -10,6 +45,7 @@ class FarmerIn(BaseModel):
 
 class FarmerOut(FarmerIn):
     id: int
+    user_id: int | None = None
     model_config = {"from_attributes": True}
 
 
@@ -27,6 +63,7 @@ class FarmIn(BaseModel):
 class FarmOut(FarmIn):
     id: int
     farmer_id: int
+    user_id: int | None = None
     model_config = {"from_attributes": True}
 
 

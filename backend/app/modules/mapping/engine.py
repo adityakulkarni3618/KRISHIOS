@@ -19,7 +19,7 @@ class Coverage(str, Enum):
 
 # Honest status of each module. Update ONLY when evidence (code + tests) exists.
 CAPABILITIES: dict[str, Coverage] = {
-    "A_farm_management": Coverage.PARTIALLY_IMPLEMENTED,  # farmers/farms/soil-test records, no auth yet
+    "A_farm_management": Coverage.TESTED,  # farmers/farms/soil-test records, argon2 auth & role isolation
     "B_crop_recommendation": Coverage.NOT_IMPLEMENTED,
     "C_soil_health": Coverage.PARTIALLY_IMPLEMENTED,      # record keeping only, no interpretation
     "D_disease_pest": Coverage.NOT_IMPLEMENTED,
