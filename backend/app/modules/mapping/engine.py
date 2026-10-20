@@ -28,7 +28,7 @@ CAPABILITIES: dict[str, Coverage] = {
     "G_fertilizer": Coverage.NOT_IMPLEMENTED,
     "H_yield": Coverage.NOT_IMPLEMENTED,
     "I_market": Coverage.TESTED,                          # APMC mandi price query with MSAMB/Agmarknet schema and min/modal/max
-    "J_finance": Coverage.NOT_IMPLEMENTED,
+    "J_finance": Coverage.TESTED,                         # Farm economics calculator, break-even price/yield & sensitivity matrix
     "K_schemes": Coverage.NOT_IMPLEMENTED,
     "L_insurance": Coverage.NOT_IMPLEMENTED,
     "M_remote_sensing": Coverage.NOT_IMPLEMENTED,
