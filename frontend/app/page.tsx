@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import SchemesCorridor3D from "./schemes/SchemesCorridor3D";
 import enMessages from "../messages/en.json";
 import mrMessages from "../messages/mr.json";
 import hiMessages from "../messages/hi.json";
@@ -143,6 +144,13 @@ export default function Home() {
       setCursorPos({ x: e.clientX, y: e.clientY });
     };
     window.addEventListener("mousemove", handleMouseMove);
+
+    if (typeof window !== "undefined" && window.location.hash === "#schemes") {
+      setActiveTab("schemes");
+      const el = document.getElementById("agritech-console");
+      el?.scrollIntoView({ behavior: "smooth" });
+    }
+
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
@@ -685,6 +693,25 @@ export default function Home() {
                   style={{ padding: "12px 24px", fontSize: 14 }}
                 >
                   <span>Explore Our Farms</span>
+                  <span className="circle-arrow-icon">↗</span>
+                </button>
+
+                <button
+                  className="btn-lime-pill"
+                  onClick={() => {
+                    setActiveTab("schemes");
+                    const el = document.getElementById("agritech-console");
+                    el?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  style={{
+                    padding: "12px 24px",
+                    fontSize: 14,
+                    background: "rgba(16, 185, 129, 0.15)",
+                    border: "1px solid #10b981",
+                    color: "#34d399",
+                  }}
+                >
+                  <span>🪐 3D Schemes Corridor</span>
                   <span className="circle-arrow-icon">↗</span>
                 </button>
               </div>
@@ -1424,30 +1451,8 @@ export default function Home() {
 
             {/* TAB: Schemes */}
             {activeTab === "schemes" && (
-              <div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 16 }}>
-                  {schemes.map((s) => (
-                    <div key={s.id} style={{ background: "var(--bg-card-subtle)", border: "1px solid var(--border-card)", borderRadius: "var(--radius-md)", padding: 20 }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-                        <h5 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)" }}>{s.name}</h5>
-                        <span className="prov-badge live">{s.sponsor}</span>
-                      </div>
-                      <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 14 }}>
-                        {lang === "mr" ? s.benefit_summary_mr : s.benefit_summary}
-                      </p>
-                      <a
-                        href={s.official_portal_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="btn-lime-pill"
-                        style={{ padding: "6px 14px", fontSize: 12, width: "fit-content" }}
-                      >
-                        <span>Apply on Official Portal</span>
-                        <span className="circle-arrow-icon" style={{ width: 16, height: 16, fontSize: 10 }}>↗</span>
-                      </a>
-                    </div>
-                  ))}
-                </div>
+              <div style={{ width: "100%" }}>
+                <SchemesCorridor3D lang={lang} />
               </div>
             )}
 
