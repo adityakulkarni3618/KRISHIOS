@@ -23,7 +23,7 @@ CAPABILITIES: dict[str, Coverage] = {
     "B_crop_recommendation": Coverage.NOT_IMPLEMENTED,
     "C_soil_health": Coverage.PARTIALLY_IMPLEMENTED,      # record keeping only, no interpretation
     "D_disease_pest": Coverage.NOT_IMPLEMENTED,
-    "E_weather": Coverage.NOT_IMPLEMENTED,
+    "E_weather": Coverage.TESTED,                         # live Open-Meteo adapter with caching, resilience, agro-advisories
     "F_irrigation": Coverage.NOT_IMPLEMENTED,
     "G_fertilizer": Coverage.NOT_IMPLEMENTED,
     "H_yield": Coverage.NOT_IMPLEMENTED,
