@@ -183,5 +183,13 @@ class SchemesService:
     def get_categories(self) -> list[str]:
         return sorted(list({s["category"] for s in self._catalog}))
 
+    def get_scheme(self, scheme_id: str) -> GovernmentScheme | None:
+        target = scheme_id.strip().lower().replace("-", "").replace("_", "")
+        for s in self._catalog:
+            sid = s["id"].lower().replace("-", "").replace("_", "")
+            if sid == target or target in sid:
+                return GovernmentScheme(**s)
+        return None
+
 
 schemes_service = SchemesService()
