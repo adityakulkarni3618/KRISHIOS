@@ -509,20 +509,22 @@ export default function Home() {
 
             <div className="dribbble-nav-right">
               {/* Dual-Theme Switcher Pill */}
-              <div className="theme-switch-capsule">
+              <div className="theme-switch-capsule" role="group" aria-label="Theme Switcher">
                 <button
                   className={`theme-pill-btn ${theme === "dribbble" ? "active" : ""}`}
                   onClick={() => handleThemeChange("dribbble")}
                   title="Dribbble Agriculture Modern Aesthetic"
+                  aria-label="Dribbble Modern Theme"
                 >
-                  🌿 Dribbble
+                  🌿
                 </button>
                 <button
                   className={`theme-pill-btn ${(theme as ThemeMode) === "govt" ? "active" : ""}`}
                   onClick={() => handleThemeChange("govt")}
                   title="Government of Maharashtra Official AgriStack Portal"
+                  aria-label="Government Portal Theme"
                 >
-                  🏛️ Govt Portal
+                  🏛️
                 </button>
               </div>
 
@@ -1294,18 +1296,22 @@ export default function Home() {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                 {/* Theme Switcher in Govt Bar */}
-                <div className="theme-switch-capsule">
+                <div className="theme-switch-capsule" role="group" aria-label="Theme Switcher">
                   <button
                     className={`theme-pill-btn ${(theme as ThemeMode) === "dribbble" ? "active" : ""}`}
                     onClick={() => handleThemeChange("dribbble")}
+                    title="Dribbble Agriculture Modern Aesthetic"
+                    aria-label="Dribbble Modern Theme"
                   >
-                    🌿 Dribbble
+                    🌿
                   </button>
                   <button
                     className={`theme-pill-btn ${theme === "govt" ? "active" : ""}`}
                     onClick={() => handleThemeChange("govt")}
+                    title="Government of Maharashtra Official AgriStack Portal"
+                    aria-label="Government Portal Theme"
                   >
-                    🏛️ Govt Portal
+                    🏛️
                   </button>
                 </div>
 
