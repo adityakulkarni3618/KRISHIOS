@@ -22,8 +22,9 @@ export default function SchemesCorridor3D({
   const [activePortalIndex, setActivePortalIndex] = useState(0);
 
   // 3D Corridor Physics State
-  const SPACING = 680; // Distance between portals in Z depth
-  const maxZ = (SCHEMES_DATA.length - 1) * SPACING;
+  const ENTRANCE_OFFSET = 820; // Grand hero entrance title at Z=0, cards start after
+  const SPACING = 720; // Distance between portals in Z depth
+  const maxZ = ENTRANCE_OFFSET + (SCHEMES_DATA.length - 1) * SPACING;
 
   const currentZRef = useRef(0);
   const targetZRef = useRef(0);
@@ -45,7 +46,7 @@ export default function SchemesCorridor3D({
 
       // Auto-tour progression
       if (autoTour && !isDraggingRef.current) {
-        targetZRef.current += 1.6;
+        targetZRef.current += 1.8;
         if (targetZRef.current > maxZ + 200) {
           targetZRef.current = 0;
           currentZRef.current = 0;
@@ -56,26 +57,44 @@ export default function SchemesCorridor3D({
       const diff = targetZRef.current - currentZRef.current;
       currentZRef.current += diff * 0.085;
 
-      // Calculate which portal is closest to viewer focus
+      // 1. Grand Entrance Hero 3D Lerp (Techkriti reference style)
+      const entranceEl = document.getElementById("corridor-entrance-hero");
+      if (entranceEl) {
+        const relZ = currentZRef.current;
+        if (relZ < 650) {
+          const entranceOpacity = Math.max(0, 1 - Math.pow(Math.max(0, relZ) / 440, 1.25));
+          const entranceScale = 1 + (Math.max(0, relZ) / 440) * 0.28;
+          entranceEl.style.opacity = entranceOpacity.toFixed(3);
+          entranceEl.style.transform = `translate3d(-50%, -50%, ${relZ * 0.35}px) scale(${entranceScale})`;
+          entranceEl.style.pointerEvents = entranceOpacity > 0.15 ? "auto" : "none";
+          entranceEl.style.visibility = "visible";
+        } else {
+          entranceEl.style.opacity = "0";
+          entranceEl.style.visibility = "hidden";
+          entranceEl.style.pointerEvents = "none";
+        }
+      }
+
+      // 2. Calculate which portal is closest to viewer focus
       const closestIdx = Math.max(
         0,
         Math.min(
           SCHEMES_DATA.length - 1,
-          Math.round(currentZRef.current / SPACING)
+          Math.round(Math.max(0, currentZRef.current - ENTRANCE_OFFSET) / SPACING)
         )
       );
       setActivePortalIndex(closestIdx);
 
-      // Apply 3D transforms to cards
+      // 3. Apply 3D transforms to cards along the corridor
       SCHEMES_DATA.forEach((scheme, i) => {
         const el = document.getElementById(`corridor-card-${scheme.id}`);
         if (!el) return;
 
-        const cardZ = i * SPACING;
+        const cardZ = ENTRANCE_OFFSET + i * SPACING;
         const relZ = currentZRef.current - cardZ;
 
-        // Is card within visible corridor range (-2200 to +350)
-        if (relZ < -2400 || relZ > 400) {
+        // Is card within visible corridor range (-2400 to +380)
+        if (relZ < -2400 || relZ > 420) {
           el.style.opacity = "0";
           el.style.pointerEvents = "none";
           el.style.visibility = "hidden";
@@ -87,10 +106,10 @@ export default function SchemesCorridor3D({
         // Responsive X offset based on viewport width
         const isMobile = window.innerWidth < 768;
         const isTablet = window.innerWidth < 1100;
-        const baseOffset = isMobile ? 0 : isTablet ? 240 : 390;
+        const baseOffset = isMobile ? 0 : isTablet ? 250 : 410;
         const xOffset = i % 2 === 0 ? -baseOffset : baseOffset;
-        const yOffset = isMobile ? 0 : (i % 2 === 0 ? -12 : 12);
-        const yAngle = isMobile ? 0 : (i % 2 === 0 ? 11 : -11);
+        const yOffset = isMobile ? 0 : (i % 2 === 0 ? -10 : 10);
+        const yAngle = isMobile ? 0 : (i % 2 === 0 ? 12 : -12);
 
         let opacity = 1;
         let scale = 1;
@@ -98,14 +117,14 @@ export default function SchemesCorridor3D({
 
         if (relZ > 0) {
           // Card passing camera into foreground
-          opacity = Math.max(0, 1 - relZ / 350);
-          scale = 1 + (relZ / 350) * 0.15;
+          opacity = Math.max(0, 1 - relZ / 360);
+          scale = 1 + (relZ / 360) * 0.16;
           el.style.pointerEvents = opacity < 0.25 ? "none" : "auto";
         } else {
           // Card deep in corridor
           const dist = Math.abs(relZ);
-          opacity = Math.max(0.12, 1 - Math.pow(dist / 2100, 1.3));
-          scale = Math.max(0.48, 1 - dist / 2800);
+          opacity = Math.max(0.10, 1 - Math.pow(dist / 2200, 1.3));
+          scale = Math.max(0.46, 1 - dist / 2800);
           blur = Math.min(6, dist / 380);
           el.style.pointerEvents = "auto";
         }
@@ -164,11 +183,15 @@ export default function SchemesCorridor3D({
   // Jump to specific portal index
   const jumpToPortal = (index: number) => {
     setAutoTour(false);
-    targetZRef.current = Math.max(0, Math.min(maxZ, index * SPACING));
+    targetZRef.current = Math.max(0, Math.min(maxZ, ENTRANCE_OFFSET + index * SPACING));
   };
 
   const handlePrev = () => {
-    jumpToPortal(Math.max(0, activePortalIndex - 1));
+    if (activePortalIndex === 0) {
+      targetZRef.current = 0; // Return to grand entrance hero
+    } else {
+      jumpToPortal(Math.max(0, activePortalIndex - 1));
+    }
   };
 
   const handleNext = () => {
@@ -235,6 +258,42 @@ export default function SchemesCorridor3D({
               >
                 <span>▦ Grid View</span>
               </button>
+            </div>
+          </div>
+
+          {/* Grand Entrance Hero Screen (Techkriti reference style) */}
+          <div
+            id="corridor-entrance-hero"
+            className="corridor-entrance-hero"
+            onClick={() => {
+              targetZRef.current = ENTRANCE_OFFSET;
+            }}
+          >
+            <div className="entrance-eyebrow">
+              KRISHIOS · MAHARASHTRA AGRI-TECH
+            </div>
+            <h1 className="entrance-main-title">
+              {lang === "mr" ? "योजना" : lang === "hi" ? "योजनाएं" : "SCHEMES"}
+            </h1>
+            <p className="entrance-description">
+              {lang === "mr"
+                ? `${SCHEMES_DATA.length} दालने, प्रत्येक एक स्वतंत्र टप्पा. कॉरिडॉरमध्ये चाला आणि तुमची योजना निवडा.`
+                : lang === "hi"
+                ? `${SCHEMES_DATA.length} पोर्टल्स, प्रत्येक एक अलग चरण। कॉरिडोर में चलें और अपनी योजना खोजें।`
+                : `${SCHEMES_DATA.length} portals, each a different stage. Walk the corridor and find your scheme.`}
+            </p>
+            <div className="entrance-scroll-prompt">
+              <div className="entrance-mouse-icon">
+                <div className="entrance-wheel-dot" />
+              </div>
+              <span className="entrance-scroll-label">
+                {lang === "mr"
+                  ? "प्रवेश करण्यासाठी स्क्रोल करा"
+                  : lang === "hi"
+                  ? "प्रवेश के लिए स्क्रॉल करें"
+                  : "SCROLL TO ENTER"}
+              </span>
+              <div className="entrance-vertical-line" />
             </div>
           </div>
 

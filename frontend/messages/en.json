@@ -74,5 +74,16 @@
   "mapping_domains": "Matched Agricultural Domains",
   "mapping_modules": "Relevant Ecosystem Modules",
   "mapping_coverage": "Verified Module Capabilities",
-  "provenance_note": "Rule #2: Every metric displays honest provenance. No unverified estimates."
+  "provenance_note": "Rule #2: Every metric displays honest provenance. No unverified estimates.",
+  "nav_doctor": "AI Crop Doctor",
+  "nav_forecast": "Mandi Forecast & Hold/Sell",
+  "nav_irrigation": "Smart Jal-Mitra (Irrigation)",
+  "mode_kisan": "🌾 Easy Kisan Mode",
+  "mode_pro": "💻 AgTech Pro",
+  "kisan_spray_q": "Can I Spray Today?",
+  "kisan_disease_q": "Diagnose Crop Disease",
+  "kisan_mandi_q": "Today's Mandi Rates",
+  "kisan_helpline": "24x7 Kisan Call Centre 1800-180-1551",
+  "tts_listen": "Listen to Advisory 🔊",
+  "share_whatsapp": "Share on WhatsApp 📲"
 }
