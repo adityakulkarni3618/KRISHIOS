@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from app.core.config import settings
 from app.db import Base, engine
-from app.routers import auth, calculator, farms, mapping, market, schemes, soil, weather
+from app.routers import auth, calculator, disease, farms, mapping, market, schemes, soil, weather
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -25,6 +25,7 @@ app.include_router(market.router)
 app.include_router(calculator.router)
 app.include_router(soil.router)
 app.include_router(schemes.router)
+app.include_router(disease.router)
 
 
 @app.get("/health", tags=["system"])
