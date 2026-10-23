@@ -94,3 +94,14 @@ def test_schemes_api_endpoints(client):
     r_cats = client.get("/schemes/categories")
     assert r_cats.status_code == 200
     assert "Direct Income" in r_cats.json()["categories"]
+
+    # Test single scheme endpoint
+    r_single = client.get("/schemes/SCH-PM-KISAN")
+    assert r_single.status_code == 200
+    data = r_single.json()
+    assert "PM-KISAN" in data["name"]
+    assert "₹6,000" in data["benefit_summary"]
+
+    # Test 404 for nonexistent scheme
+    r_404 = client.get("/schemes/SCH-NONEXISTENT")
+    assert r_404.status_code == 404

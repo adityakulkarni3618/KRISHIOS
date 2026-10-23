@@ -3,7 +3,7 @@
 > Tailored for Maharashtra farmers, Farmer Producer Organizations (FPOs), and agricultural researchers.  
 > Native Multilingual Support: **Marathi (मराठी)**, **Hindi (हिन्दी)**, and **English (EN)**.
 
-[![Tests](https://img.shields.io/badge/pytest-37%2F37%20passing-brightgreen)](file:///backend/tests)
+[![Tests](https://img.shields.io/badge/pytest-41%2F41%20passing-brightgreen)](file:///backend/tests)
 [![Frontend](https://img.shields.io/badge/Next.js-14.2.15-black)](file:///frontend)
 [![Backend](https://img.shields.io/badge/FastAPI-0.115.6-009688)](file:///backend)
 [![Provenance](https://img.shields.io/badge/Data%20Provenance-Enforced-blue)](#data-provenance-framework)
@@ -19,20 +19,27 @@ Built with strict adherence to data integrity, KRISHIOS guarantees that **no met
 
 ---
 
-## 🎨 Dual-Theme Architecture
+## 🎨 Dual-Theme Architecture & Accessibility
 
-KRISHIOS features a seamless **Dual-Theme System** switchable instantly with zero reload via the icon toggle `[ 🌿 | 🏛️ ]` or by clicking the website brand logo:
+KRISHIOS features a seamless **Dual-Theme System** and **Rural-First Accessibility Suite**:
 
 1. **🌿 Dribbble Modern Precision AgTech:**
    - Inspired by Ahmad Fabian's award-winning OnPoint Studio design.
    - Deep forest green (`#08160c`), elevated cards (`#0f2214`), and vibrant chartreuse lime accents (`#d4f936`).
-   - Floating capsule navigation, full-width cinematic hero showcase with real-time telemetry pill, verified partner strip (FocalPoint, Screentime, Segment, Shutterframe, Lightspeed, Mastermail).
-   - High-contrast visual stats (`100% Customer Satisfaction`, `20+ Years of Experience`), aerial drone precision agriculture showcase, and interactive FAQ accordion.
+   - Floating capsule navigation, full-width cinematic hero showcase with real-time telemetry pill.
 
 2. **🏛️ Official Government of Maharashtra AgriStack Portal:**
    - Standard Indian e-Governance interface compliant with National e-Governance Plan in Agriculture (NeGPA).
    - Tri-color saffron/white/green accent stripe, official Department of Agriculture seal, and Kisan Call Centre 24x7 toll-free helpline (`1800-180-1551`).
-   - Live ticker bulletin marquee, verified farmer profile banner (`UID: MH-2026-8841-K`), 4-metric summary cards, and official tabular records.
+
+3. **🌾 Easy Kisan Mode (सुलभ शेतकरी मोड):**
+   - Single-tap toggle for farmers with lower digital literacy: presents 4 high-contrast, card-based questions:
+     - 🌦️ *आज फवारणी करू का? (Can I Spray Today?)* — Traffic-light Safe/Warning/Hazard status.
+     - 🔬 *पिकाला काय रोग झाला? (Crop Doctor Diagnostic)* — Instant camera photo check.
+     - 💰 *आजचा बाजारभाव काय? (Today's Mandi Rate & Hold/Sell Advice)*.
+     - 📞 *२४x७ किसान हेल्पलाइन (Toll-free 1800-180-1551)* — Direct one-tap phone call.
+   - **🔊 Voice-First Text-to-Speech (TTS):** Browser SpeechSynthesis reads out weather advisories and spray prescriptions in Marathi, Hindi, or English.
+   - **📲 Instant WhatsApp Share:** One-click sharing of prescriptions, mandi trends, and weather warnings to farmer groups and Krishi Seva Kendra shops.
 
 ---
 
@@ -40,32 +47,37 @@ KRISHIOS features a seamless **Dual-Theme System** switchable instantly with zer
 
 ### 1. ⛅ Agro-Meteorology & Spray Advisory Module
 - **Live Upstream:** Integrated with Open-Meteo & IMD agro-meteorological feeds across all 36 Maharashtra districts.
-- **Resilience & Caching:** In-memory TTL caching with graceful fallbacks and strict timeout resilience.
-- **Decision Engine:** Evaluates wind speed, relative humidity, and precipitation probability to issue specific spray windows and irrigation timing warnings.
+- **Decision Engine:** Evaluates wind speed, relative humidity, and precipitation probability to issue specific spray windows with audio readout and WhatsApp sharing.
 
-### 2. 📊 APMC Mandi Rate Board
+### 2. 📊 APMC Mandi Rate Board & 🔮 30-Day Price Forecaster
 - **Market Schema:** Compatible with Agmarknet and Maharashtra State Agricultural Marketing Board (MSAMB).
-- **Price Benchmarking:** Displays Minimum, Modal, and Maximum rates (₹/quintal) for high-value commodities (Soybean, Onion, Cotton, Gram, Maize, Pomegranate).
-- **Search & Filter:** Instant real-time filtering with provenance verification.
+- **Price Forecasting:** 7, 15, and 30-day projected commodity curves based on arrivals and export tariffs.
+- **Hold vs. Sell Engine:** Computes warehouse storage carrying costs, shrinkage loss %, and net gain to protect farmers from distress selling.
 
-### 3. 🧮 Farm Economics & Sensitivity Calculator
-- **Mathematical Integrity:** Hand-calculated arithmetic formulas for total production cost, cost per hectare, gross revenue, net profit, return on investment (ROI %), and break-even price/yield.
-- **5×5 Sensitivity Matrix:** Computes outcome variability across price variations (-20% to +20%) and yield fluctuations (-20% to +20%).
+### 3. 🔬 AI Crop Doctor & Multimodal Leaf Pathology Lab
+- **ICAR Benchmarking:** Visual and symptom-based diagnosis for Maharashtra crops (Cotton, Soybean, Tomato, Sugarcane, Onion).
+- **Dual Remedy:** Side-by-side Organic/Bio-control (Neem, Jeevamrut, Dashparni) vs. Targeted Chemical control.
+- **Pump Dosage Calculator:** Formulated strictly **per 15-litre knapsack pump** with CIBRC Pre-Harvest Interval (PHI) waiting periods.
 
-### 4. 🔬 ICAR Soil Health Interpretation Engine
-- **Agronomic Standards:** Benchmarked against Indian Council of Agricultural Research (ICAR) and State Agricultural Universities (MPKV Rahuri, PDKV Akola).
-- **Corrective Guidance:** Interprets soil pH (acidic, optimal, alkaline) and organic carbon percentage, providing verified corrective amendments (agricultural lime, gypsum, FYM/compost, green manuring).
+### 4. 💧 Smart Jal-Mitra: Precision Drip Irrigation & Water Budgeting
+- **Evapotranspiration ($ET_c$):** Integrates temperature, humidity, crop coefficient ($K_c$), and soil water-holding capacity.
+- **Execution Guidance:** Outputs exact daily drip runtime in minutes (e.g. 54 mins at 5:00 PM) and farm pond reserve countdown days.
 
-### 5. 📜 Government Schemes & DBT Directory
-- **Verified Catalog:** Central & Maharashtra state farmer initiatives (PM-KISAN, PMFBY ₹1 Crop Insurance, Nanaji Deshmukh Krishi Sanjivani Yojana / PoCRA, Magel Tyala Shet Tale, Soil Health Card, Kisan Credit Card).
-- **Actionable Details:** Eligibility checklists, documentation requirements, direct portal links, and last-verified timestamps.
+### 5. 🧮 Farm Economics & Sensitivity Calculator
+- **Mathematical Integrity:** Hand-calculated arithmetic formulas for total cost, gross revenue, net profit, ROI %, and break-even price/yield.
+- **5×5 Sensitivity Matrix:** Computes outcome variability across price and yield fluctuations (-20% to +20%).
 
-### 6. 🌾 Farm & Soil Holding Records (7/12 Integration)
-- **Farmer Isolation:** Multi-tenant role-based access control protecting farmer ownership of land and soil records.
-- **Offline Sync:** Automatic local storage synchronization for seamless performance in low-connectivity rural areas.
+### 6. 🔬 ICAR Soil Health Interpretation Engine
+- **Agronomic Standards:** Interprets soil pH and organic carbon percentage, providing verified corrective amendments (agricultural lime, gypsum, compost).
 
-### 7. 🧭 Problem Mapping & Agronomic Classifier
-- **Evidence-Driven:** Categorizes farmer challenges against a verified taxonomy of 13 agricultural domains, transparently flagging whether recommendations require human expert review.
+### 7. 📜 Government Schemes & DBT Directory (3D Corridor)
+- **Verified Catalog:** Central & Maharashtra state initiatives (PM-KISAN, PMFBY ₹1 Crop Insurance, PoCRA, Magel Tyala Shet Tale).
+
+### 8. 🌾 Farm & Soil Holding Records (7/12 Integration)
+- **Farmer Isolation:** Multi-tenant access control with offline IndexedDB/LocalStorage synchronization.
+
+### 9. 🧭 Problem Mapping & Agronomic Classifier
+- **Evidence-Driven:** Categorizes farmer challenges against a verified taxonomy of 13 agricultural domains.
 
 ---
 

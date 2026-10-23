@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query, status
 
 from app.modules.schemes.catalog import GovernmentScheme, schemes_service
 
@@ -16,3 +16,14 @@ def list_government_schemes(
 @router.get("/categories")
 def list_categories():
     return {"categories": schemes_service.get_categories()}
+
+
+@router.get("/{scheme_id}", response_model=GovernmentScheme)
+def get_government_scheme(scheme_id: str):
+    scheme = schemes_service.get_scheme(scheme_id)
+    if not scheme:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Scheme '{scheme_id}' not found in catalog",
+        )
+    return scheme

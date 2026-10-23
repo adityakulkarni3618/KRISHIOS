@@ -1828,3 +1828,301 @@ body.theme-govt-active .modal-surface {
   box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
 }
 
+/* ========================================================
+   12. KISAN EASY MODE & ACCESSIBILITY STYLES
+   ======================================================== */
+.kisan-mode-toggle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(212, 249, 54, 0.12);
+  border: 1.5px solid var(--accent-lime);
+  color: var(--accent-lime);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kisan-mode-toggle-pill:hover {
+  background: var(--accent-lime);
+  color: #08160c;
+  transform: scale(1.03);
+}
+
+.kisan-easy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin: 28px 0;
+}
+
+.kisan-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.kisan-card:hover {
+  border-color: var(--accent-lime);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.kisan-card-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+  background: rgba(212, 249, 54, 0.1);
+  width: 68px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+}
+
+.kisan-card-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.kisan-card-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.kisan-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.kisan-status-badge.safe {
+  background: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+  border: 1px solid #4ade80;
+}
+
+.kisan-status-badge.warning {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border: 1px solid #fbbf24;
+}
+
+.kisan-status-badge.danger {
+  background: rgba(248, 113, 113, 0.2);
+  color: #f87171;
+  border: 1px solid #f87171;
+}
+
+/* Audio TTS & WhatsApp Buttons */
+.tts-audio-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tts-audio-btn:hover {
+  background: #38bdf8;
+  color: #08160c;
+}
+
+.whatsapp-share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #25D366;
+  color: #ffffff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.whatsapp-share-btn:hover {
+  background: #1ebd5a;
+  transform: scale(1.03);
+}
+
+/* ========================================================
+   13. CROP DOCTOR & LEAF SCANNER STYLES
+   ======================================================== */
+.crop-doctor-container {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .crop-doctor-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.leaf-upload-zone {
+  border: 2px dashed var(--border-lime);
+  background: rgba(212, 249, 54, 0.03);
+  border-radius: 16px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.leaf-upload-zone:hover {
+  background: rgba(212, 249, 54, 0.08);
+  border-color: var(--accent-lime);
+}
+
+.scan-line-anim {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent-lime);
+  box-shadow: 0 0 15px var(--accent-lime);
+  animation: scanLine 2s infinite ease-in-out;
+}
+
+@keyframes scanLine {
+  0% { top: 5%; opacity: 0.2; }
+  50% { top: 90%; opacity: 1; }
+  100% { top: 5%; opacity: 0.2; }
+}
+
+.dosage-pump-pill {
+  background: rgba(212, 249, 54, 0.12);
+  border: 1px solid var(--border-lime);
+  color: var(--accent-lime);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ========================================================
+   14. MANDI FORECAST & HOLD/SELL STYLES
+   ======================================================== */
+.forecast-curve-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 20px 0;
+}
+
+@media (max-width: 768px) {
+  .forecast-curve-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.forecast-card-item {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-card);
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.forecast-card-item:hover {
+  border-color: var(--accent-lime);
+  transform: translateY(-2px);
+}
+
+.advice-badge-big {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 900;
+  padding: 10px 20px;
+  border-radius: 14px;
+  letter-spacing: 0.5px;
+}
+
+.advice-badge-big.hold {
+  background: #14532d;
+  color: #4ade80;
+  border: 1.5px solid #22c55e;
+}
+
+.advice-badge-big.sell {
+  background: #7f1d1d;
+  color: #fca5a5;
+  border: 1.5px solid #ef4444;
+}
+
+/* Light Theme Overrides for New Modules */
+body.theme-light .kisan-card,
+body.theme-govt-active .kisan-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+body.theme-light .kisan-card:hover,
+body.theme-govt-active .kisan-card:hover {
+  border-color: #166534;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
+}
+
+body.theme-light .dosage-pump-pill,
+body.theme-govt-active .dosage-pump-pill {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+body.theme-light .advice-badge-big.hold,
+body.theme-govt-active .advice-badge-big.hold {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #86efac;
+}
+
+body.theme-light .forecast-card-item,
+body.theme-govt-active .forecast-card-item {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+
