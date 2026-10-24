@@ -3,7 +3,7 @@
 > Tailored for Maharashtra farmers, Farmer Producer Organizations (FPOs), and agricultural researchers.  
 > Native Multilingual Support: **Marathi (मराठी)**, **Hindi (हिन्दी)**, and **English (EN)**.
 
-[![Tests](https://img.shields.io/badge/pytest-41%2F41%20passing-brightgreen)](file:///backend/tests)
+[![Tests](https://img.shields.io/badge/pytest-55%2F55%20passing-brightgreen)](file:///backend/tests)
 [![Frontend](https://img.shields.io/badge/Next.js-14.2.15-black)](file:///frontend)
 [![Backend](https://img.shields.io/badge/FastAPI-0.115.6-009688)](file:///backend)
 [![Provenance](https://img.shields.io/badge/Data%20Provenance-Enforced-blue)](#data-provenance-framework)
@@ -33,12 +33,16 @@ KRISHIOS features a seamless **Dual-Theme System** and **Rural-First Accessibili
    - Tri-color saffron/white/green accent stripe, official Department of Agriculture seal, and Kisan Call Centre 24x7 toll-free helpline (`1800-180-1551`).
 
 3. **🌾 Easy Kisan Mode (सुलभ शेतकरी मोड):**
-   - Single-tap toggle for farmers with lower digital literacy: presents 4 high-contrast, card-based questions:
+   - Single-tap toggle for farmers with lower digital literacy: presents 8 high-contrast, card-based questions:
      - 🌦️ *आज फवारणी करू का? (Can I Spray Today?)* — Traffic-light Safe/Warning/Hazard status.
      - 🔬 *पिकाला काय रोग झाला? (Crop Doctor Diagnostic)* — Instant camera photo check.
      - 💰 *आजचा बाजारभाव काय? (Today's Mandi Rate & Hold/Sell Advice)*.
      - 📞 *२४x७ किसान हेल्पलाइन (Toll-free 1800-180-1551)* — Direct one-tap phone call.
-   - **🔊 Voice-First Text-to-Speech (TTS):** Browser SpeechSynthesis reads out weather advisories and spray prescriptions in Marathi, Hindi, or English.
+     - 🎙️ *कृषी मित्राशी बोला (AI Krishi Mitra)* — Voice-first query in Marathi, Hindi, or English.
+     - 🛡️ *₹१ पीक विमा क्लेम (PMFBY Claim Assistance)* — 72-hour disaster intimation guide.
+     - 🧪 *खताची मात्रा व वेळापत्रक (Fertilizer Bags)* — NPK split dosing schedule.
+     - 📄 *७/१२ उतारा व हेल्थ कार्ड (7/12 Digital Card)* — Printable official Farm Health Card.
+   - **🔊 Voice-First Text-to-Speech (TTS):** Browser SpeechSynthesis reads out advisories in Marathi, Hindi, or English.
    - **📲 Instant WhatsApp Share:** One-click sharing of prescriptions, mandi trends, and weather warnings to farmer groups and Krishi Seva Kendra shops.
 
 ---
@@ -73,11 +77,41 @@ KRISHIOS features a seamless **Dual-Theme System** and **Rural-First Accessibili
 ### 7. 📜 Government Schemes & DBT Directory (3D Corridor)
 - **Verified Catalog:** Central & Maharashtra state initiatives (PM-KISAN, PMFBY ₹1 Crop Insurance, PoCRA, Magel Tyala Shet Tale).
 
-### 8. 🌾 Farm & Soil Holding Records (7/12 Integration)
-- **Farmer Isolation:** Multi-tenant access control with offline IndexedDB/LocalStorage synchronization.
+### 8. 🌱 Scientific Crop Recommendation & Intercropping Planner (`B_crop_recommendation`)
+- **Agro-Climatic Benchmarking:** Evaluates Maharashtra's 9 agro-climatic zones, soil texture, pH, and rainfall/irrigation conditions.
+- **Intercrop Multiplier:** Recommends scientifically validated row ratios (e.g. *Soybean + Pigeonpea 4:2*, *Cotton + Mung 1:2*) to maximize land equivalent ratio (LER) and build soil nitrogen.
 
-### 9. 🧭 Problem Mapping & Agronomic Classifier
-- **Evidence-Driven:** Categorizes farmer challenges against a verified taxonomy of 13 agricultural domains.
+### 9. 🧪 Fertilizer & N-P-K Split Dosage Engine (`G_fertilizer`)
+- **Soil Health Card Adjusted:** Calculates exact bags of DAP, Urea, MOP, and SSP tailored to specific acreages.
+- **3-Stage Split Schedule:** Prepares Basal, 30 DAS Vegetative, and 60 DAS Flowering top-dressing schedules with micronutrient advisories.
+
+### 10. 🛡️ PMFBY ₹1 Crop Insurance & Emergency Claim Desk (`L_insurance`)
+- **Maharashtra ₹1 Policy Guarantee:** Calculates farmer token premium (₹1) vs. state actuarial subsidy.
+- **72-Hour Disaster Intimation:** Emergency countdown, localized damage assessment, panchnama checklist, and toll-free helpline (14447).
+
+### 11. 🚜 Custom Hiring Center (CHC) Farm Machinery Rental (`O_equipment`)
+- **Mechanization Suite:** Standardized rental tariffs for RTK spray drones (16L), 45HP 4WD tractors, rotavators, and combine harvesters.
+- **Cost & Fuel Estimator:** Detailed breakdown of rental, diesel consumption, and certified operator costs with local FPO hub contacts.
+
+### 12. 🐄 Pashu-Mitra Dairy & Vaccination Companion (`P_livestock`)
+- **Total Mixed Ration (TMR):** Calculates dry matter, green fodder, dry straw, and cattle feed concentrate requirements based on body weight and milk yield.
+- **Vaccination Tracker:** Bi-annual Foot and Mouth Disease (FMD), Lumpy Skin Disease (LSD), and Haemorrhagic Septicaemia (HS) calendars.
+
+### 13. 🛰️ Sentinel-2 Satellite NDVI Canopy Explorer (`M_remote_sensing`)
+- **10m Multispectral Imagery:** Computes NDVI, NDRE, and NDWI indices to identify spatial crop vigor and moisture stress zones.
+- **Actionable Agronomy:** Generates targeted field interventions to equalize yield across all farm quadrants.
+
+### 14. 📦 MSWC Warehouses & e-NWR Pledge Financing (`N_postharvest`)
+- **State Warehouse Directory:** Direct contacts and capacity details for Maharashtra State Warehousing Corporation (MSWC) and CWC godowns.
+- **Pledge Loan Calculator:** Enables farmers to unlock up to 75% advance liquidity at 7% subvented interest instead of distress selling.
+
+### 15. 🎙️ Voice-First Multilingual AI Krishi Mitra Advisor (`Q_assistant`)
+- **Native Speech & Dialogue:** Speaks and listens in Marathi, Hindi, and English.
+- **Zero-Hallucination Grounding:** Cites specific packages of practices from MPKV Rahuri, PDKV Akola, and VNMKV Parbhani.
+
+### 16. 📄 Mahabhulekh Digital 7/12 & Farm Health Card Exporter
+- **Land Registry Sync:** Standardized 7/12 Gat number and E-Pik Pahani digital record keeper.
+- **Official Print Export:** One-click printable Farm Health Card for bank loan submissions and dealer fertilizer subsidies.
 
 ---
 

@@ -3,6 +3,15 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import SchemesCorridor3D from "./schemes/SchemesCorridor3D";
+import CropsModule from "./components/CropsModule";
+import FertilizerModule from "./components/FertilizerModule";
+import InsuranceModule from "./components/InsuranceModule";
+import EquipmentModule from "./components/EquipmentModule";
+import LivestockModule from "./components/LivestockModule";
+import RemoteSensingModule from "./components/RemoteSensingModule";
+import PostharvestModule from "./components/PostharvestModule";
+import AssistantVoiceModule from "./components/AssistantVoiceModule";
+import SatbaraModule from "./components/SatbaraModule";
 import enMessages from "../messages/en.json";
 import mrMessages from "../messages/mr.json";
 import hiMessages from "../messages/hi.json";
@@ -1047,6 +1056,54 @@ export default function Home() {
                       ☎️ {lang === "mr" ? "कॉल करण्यासाठी दाबा" : "TAP TO CALL NOW"}
                     </div>
                   </a>
+
+                  {/* Card 5: AI Krishi Mitra Voice */}
+                  <div className="kisan-card" onClick={() => { setActiveTab("assistant"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
+                    <div className="kisan-card-icon" style={{ background: "rgba(212, 249, 54, 0.2)" }}>🎙️</div>
+                    <div className="kisan-card-title">{lang === "mr" ? "कृषी मित्राशी बोला" : "Talk to AI Krishi Mitra"}</div>
+                    <div className="kisan-card-desc">
+                      {lang === "mr" ? "माईकवर मराठीत शेतीचा कोणताही प्रश्न विचारा, राहुरी विद्यापीठाचा अधिकृत सल्ला त्वरित ऐका." : "Speak your query in Marathi, Hindi, or English for instant university-cited answers."}
+                    </div>
+                    <div className="kisan-status-badge safe">
+                      🔊 {lang === "mr" ? "माईक सुरू करा" : "START VOICE CHAT"}
+                    </div>
+                  </div>
+
+                  {/* Card 6: PMFBY 1 Rupee Insurance */}
+                  <div className="kisan-card" onClick={() => { setActiveTab("insurance"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
+                    <div className="kisan-card-icon" style={{ background: "rgba(245, 158, 11, 0.2)" }}>🛡️</div>
+                    <div className="kisan-card-title">{lang === "mr" ? "₹१ पीक विमा व क्लेम" : "₹1 Crop Insurance Claim"}</div>
+                    <div className="kisan-card-desc">
+                      {lang === "mr" ? "अतिवृष्टी किंवा पूर आल्यास ७२ तासांच्या आत नुकसानीची नोंदणी करा व भरपाईची रक्कम तपासा." : "72-hour disaster intimation guide and localized loss payout calculation."}
+                    </div>
+                    <div className="kisan-status-badge warning">
+                      ⏱️ {lang === "mr" ? "७२ तासांत क्लेम करा" : "72-HR INTIMATION"}
+                    </div>
+                  </div>
+
+                  {/* Card 7: Fertilizer Split Calculator */}
+                  <div className="kisan-card" onClick={() => { setActiveTab("fertilizer"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
+                    <div className="kisan-card-icon" style={{ background: "rgba(56, 189, 248, 0.2)" }}>🧪</div>
+                    <div className="kisan-card-title">{lang === "mr" ? "खताची पोती व वेळापत्रक" : "Fertilizer Bags & Doses"}</div>
+                    <div className="kisan-card-desc">
+                      {lang === "mr" ? "माती परीक्षणानुसार डीएपी, युरिया व पोटॅशची आवश्यक पोती आणि ३ टप्प्यांचे वेळापत्रक." : "Soil test adjusted NPK bags and 3-stage split application dates."}
+                    </div>
+                    <div className="kisan-status-badge safe">
+                      📊 {lang === "mr" ? "खताची मात्रा काढा" : "CALCULATE BAGS"}
+                    </div>
+                  </div>
+
+                  {/* Card 8: 7/12 Land Record & Health Card */}
+                  <div className="kisan-card" onClick={() => { setActiveTab("satbara"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
+                    <div className="kisan-card-icon" style={{ background: "rgba(16, 185, 129, 0.2)" }}>📄</div>
+                    <div className="kisan-card-title">{lang === "mr" ? "७/१२ उतारा व हेल्थ कार्ड" : "7/12 Digital Health Card"}</div>
+                    <div className="kisan-card-desc">
+                      {lang === "mr" ? "महाभूलेख सुसंगत गट नंबर नोंदणी करा आणि बँकेच्या कर्जासाठी अधिकृत हेल्थ कार्ड प्रिंट करा." : "Official Mahabhulekh land record registry with printable Farm Health Card."}
+                    </div>
+                    <div className="kisan-status-badge safe">
+                      🖨️ {lang === "mr" ? "कार्ड डाऊनलोड करा" : "PRINT HEALTH CARD"}
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>
@@ -1600,6 +1657,30 @@ export default function Home() {
 
             <div className="console-nav-tabs">
               <button
+                className={`console-tab-btn ${activeTab === "assistant" ? "active" : ""}`}
+                onClick={() => setActiveTab("assistant")}
+              >
+                🎙️ {t("nav_assistant")}
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "crops" ? "active" : ""}`}
+                onClick={() => setActiveTab("crops")}
+              >
+                🌱 {t("nav_crops")}
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "fertilizer" ? "active" : ""}`}
+                onClick={() => setActiveTab("fertilizer")}
+              >
+                🧪 {t("nav_fertilizer")}
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "insurance" ? "active" : ""}`}
+                onClick={() => setActiveTab("insurance")}
+              >
+                🛡️ {t("nav_insurance")}
+              </button>
+              <button
                 className={`console-tab-btn ${activeTab === "doctor" ? "active" : ""}`}
                 onClick={() => setActiveTab("doctor")}
               >
@@ -1618,28 +1699,58 @@ export default function Home() {
                 💧 {t("nav_irrigation")}
               </button>
               <button
+                className={`console-tab-btn ${activeTab === "remotesensing" ? "active" : ""}`}
+                onClick={() => setActiveTab("remotesensing")}
+              >
+                🛰️ {t("nav_remote_sensing")}
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "equipment" ? "active" : ""}`}
+                onClick={() => setActiveTab("equipment")}
+              >
+                🚜 {t("nav_equipment")}
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "livestock" ? "active" : ""}`}
+                onClick={() => setActiveTab("livestock")}
+              >
+                🐄 {t("nav_livestock")}
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "postharvest" ? "active" : ""}`}
+                onClick={() => setActiveTab("postharvest")}
+              >
+                📦 {t("nav_postharvest")}
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "satbara" ? "active" : ""}`}
+                onClick={() => setActiveTab("satbara")}
+              >
+                📄 {t("nav_satbara")}
+              </button>
+              <button
                 className={`console-tab-btn ${activeTab === "overview" || activeTab === "weather" ? "active" : ""}`}
                 onClick={() => setActiveTab("weather")}
               >
-                ⛅ Weather & Spray Advisory
+                ⛅ Weather & Spray
               </button>
               <button
                 className={`console-tab-btn ${activeTab === "calculator" ? "active" : ""}`}
                 onClick={() => setActiveTab("calculator")}
               >
-                🧮 Economics Calculator
+                🧮 Economics
               </button>
               <button
                 className={`console-tab-btn ${activeTab === "farms" ? "active" : ""}`}
                 onClick={() => setActiveTab("farms")}
               >
-                🌾 My Farms & Soil Tests
+                🌾 Farms & Soil
               </button>
               <button
                 className={`console-tab-btn ${activeTab === "schemes" ? "active" : ""}`}
                 onClick={() => setActiveTab("schemes")}
               >
-                📜 Government Schemes
+                📜 Schemes
               </button>
               <button
                 className={`console-tab-btn ${activeTab === "mapping" ? "active" : ""}`}
@@ -2432,6 +2543,89 @@ export default function Home() {
                   </div>
                 )}
               </div>
+            )}
+
+            {/* TAB: AI Krishi Mitra Voice Assistant */}
+            {activeTab === "assistant" && (
+              <AssistantVoiceModule
+                district={selectedDistrict}
+                lang={lang}
+                apiUrl={API_URL}
+                onNavigateTab={(tab) => {
+                  setActiveTab(tab);
+                  document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                speakText={speakText}
+              />
+            )}
+
+            {/* TAB: Crop Recommendation & Sowing Window */}
+            {activeTab === "crops" && (
+              <CropsModule
+                district={selectedDistrict}
+                lang={lang}
+                apiUrl={API_URL}
+              />
+            )}
+
+            {/* TAB: Fertilizer & NPK Split Dosage */}
+            {activeTab === "fertilizer" && (
+              <FertilizerModule
+                lang={lang}
+                apiUrl={API_URL}
+              />
+            )}
+
+            {/* TAB: PMFBY ₹1 Crop Insurance */}
+            {activeTab === "insurance" && (
+              <InsuranceModule
+                district={selectedDistrict}
+                lang={lang}
+                apiUrl={API_URL}
+              />
+            )}
+
+            {/* TAB: Remote Sensing Sentinel-2 NDVI */}
+            {activeTab === "remotesensing" && (
+              <RemoteSensingModule
+                district={selectedDistrict}
+                lang={lang}
+                apiUrl={API_URL}
+              />
+            )}
+
+            {/* TAB: Custom Hiring Center (CHC) Equipment Rental */}
+            {activeTab === "equipment" && (
+              <EquipmentModule
+                district={selectedDistrict}
+                lang={lang}
+                apiUrl={API_URL}
+              />
+            )}
+
+            {/* TAB: Livestock Pashu-Mitra Dairy & Vaccination */}
+            {activeTab === "livestock" && (
+              <LivestockModule
+                lang={lang}
+                apiUrl={API_URL}
+              />
+            )}
+
+            {/* TAB: MSWC Warehouses & e-NWR Pledge Loans */}
+            {activeTab === "postharvest" && (
+              <PostharvestModule
+                district={selectedDistrict}
+                lang={lang}
+                apiUrl={API_URL}
+              />
+            )}
+
+            {/* TAB: 7/12 Land Record Digitizer & Farm Health Card */}
+            {activeTab === "satbara" && (
+              <SatbaraModule
+                district={selectedDistrict}
+                lang={lang}
+              />
             )}
           </section>
 

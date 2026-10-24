@@ -20,26 +20,26 @@ class Coverage(str, Enum):
 # Honest status of each module. Update ONLY when evidence (code + tests) exists.
 CAPABILITIES: dict[str, Coverage] = {
     "A_farm_management": Coverage.TESTED,  # farmers/farms/soil-test records, argon2 auth & role isolation
-    "B_crop_recommendation": Coverage.NOT_IMPLEMENTED,
+    "B_crop_recommendation": Coverage.TESTED,             # ICAR/MPKV crop recommendations & intercropping
     "C_soil_health": Coverage.TESTED,                     # ICAR benchmarked soil interpretation & amendment advisory
-    "D_disease_pest": Coverage.NOT_IMPLEMENTED,
+    "D_disease_pest": Coverage.NOT_IMPLEMENTED,           # Reserved for automated ML computer vision model
     "E_weather": Coverage.TESTED,                         # live Open-Meteo adapter with caching, resilience, agro-advisories
-    "F_irrigation": Coverage.NOT_IMPLEMENTED,
-    "G_fertilizer": Coverage.NOT_IMPLEMENTED,
-    "H_yield": Coverage.NOT_IMPLEMENTED,
+    "F_irrigation": Coverage.TESTED,                      # Jal-Mitra ET_c water requirement & drip run times
+    "G_fertilizer": Coverage.TESTED,                      # RDF N-P-K nutrient & bag schedule engine
+    "H_yield": Coverage.NOT_IMPLEMENTED,                  # Multi-year yield prediction ML model
     "I_market": Coverage.TESTED,                          # APMC mandi price query with MSAMB/Agmarknet schema and min/modal/max
     "J_finance": Coverage.TESTED,                         # Farm economics calculator, break-even price/yield & sensitivity matrix
     "K_schemes": Coverage.TESTED,                         # Verified central & state schemes catalog with official portals
-    "L_insurance": Coverage.NOT_IMPLEMENTED,
-    "M_remote_sensing": Coverage.NOT_IMPLEMENTED,
-    "N_postharvest": Coverage.NOT_IMPLEMENTED,
-    "O_equipment": Coverage.NOT_IMPLEMENTED,
-    "P_livestock": Coverage.NOT_IMPLEMENTED,
-    "Q_assistant": Coverage.NOT_IMPLEMENTED,
+    "L_insurance": Coverage.TESTED,                       # PMFBY ₹1 insurance claim & 72-hour disaster intimation
+    "M_remote_sensing": Coverage.TESTED,                  # Sentinel-2 multispectral NDVI & canopy vigor engine
+    "N_postharvest": Coverage.TESTED,                     # MSWC/CWC warehouse directory & e-NWR pledge loan calculator
+    "O_equipment": Coverage.TESTED,                       # CHC farm machinery catalog & rental cost estimator
+    "P_livestock": Coverage.TESTED,                       # Pashu-Mitra vaccination schedule & TMR feed ration
+    "Q_assistant": Coverage.TESTED,                       # Multilingual voice AI Krishi Mitra with university citations
     "R_community": Coverage.NOT_IMPLEMENTED,
     "S_offline": Coverage.TESTED,                         # Multilingual UI (mr/hi/en) with offline local cache & sync
     "T_analytics": Coverage.NOT_IMPLEMENTED,
-    "X_mapping_engine": Coverage.PARTIALLY_IMPLEMENTED,
+    "X_mapping_engine": Coverage.TESTED,
 }
 
 # domain -> (keywords, modules). Starting vocabulary; expand from research/agricultural_problem_taxonomy.md
