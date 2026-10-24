@@ -11,12 +11,16 @@ from app.routers import (
     equipment,
     farms,
     fertilizer,
+    institutional,
     insurance,
     livestock,
     mapping,
     market,
+    market_linkage,
+    operations,
     postharvest,
     remote_sensing,
+    rural_ops,
     schemes,
     soil,
     weather,
@@ -52,6 +56,10 @@ app.include_router(livestock.router)
 app.include_router(remote_sensing.router)
 app.include_router(postharvest.router)
 app.include_router(assistant.router)
+app.include_router(rural_ops.router)
+app.include_router(operations.router)
+app.include_router(market_linkage.router)
+app.include_router(institutional.router)
 
 
 @app.get("/health", tags=["system"])
