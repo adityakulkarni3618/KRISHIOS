@@ -2,46 +2,43 @@
 
 import React, { useState, useEffect } from "react";
 
-interface ProduceListing {
+interface FarmProduceListing {
   id: string;
-  farmer_name: string;
-  contact_phone: string;
-  whatsapp_number: string;
-  district: string;
-  taluka: string;
-  village: string;
+  farmer_or_fpo_name: string;
   commodity: string;
   commodity_mr: string;
   variety: string;
-  quantity_available_quintals: number;
-  expected_price_per_quintal_inr: number;
-  apmc_current_rate_inr: number;
-  premium_over_mandi_pct: number;
+  quantity_available: string;
+  expected_price_per_unit: string;
   quality_grade: string;
   harvest_date: string;
-  is_organic_certified: boolean;
-  has_gi_tag: boolean;
-  notes_mr: string;
-  notes_en: string;
-  provenance: string;
+  village: string;
+  taluka: string;
+  district: string;
+  contact_phone: string;
+  whatsapp_enabled: boolean;
+  fpo_verified: boolean;
 }
 
-interface FoodProcessingProfile {
+interface ProcessingUnitProfile {
   id: string;
-  unit_name: string;
-  unit_name_mr: string;
-  target_raw_material: string;
-  finished_products: string[];
+  project_title: string;
+  project_title_mr: string;
+  target_commodities: string[];
+  capacity: string;
+  capacity_mr: string;
   total_project_cost_inr: number;
-  pmfme_capital_subsidy_pct: number;
-  max_subsidy_amount_inr: number;
-  farmer_own_contribution_pct: number;
+  pmfme_govt_subsidy_35_pct_inr: number;
   bank_term_loan_inr: number;
-  estimated_monthly_profit_inr: number;
+  farmer_own_margin_money_inr: number;
+  estimated_annual_net_profit_inr: number;
   payback_period_years: number;
-  key_machinery_list: string[];
-  official_portal: string;
+  key_machinery_required: string[];
+  key_machinery_required_mr: string[];
+  market_demand_summary: string;
+  market_demand_summary_mr: string;
   provenance: string;
+  source_citation: string;
 }
 
 interface KisanBazaarModuleProps {
@@ -52,27 +49,27 @@ interface KisanBazaarModuleProps {
 
 export default function KisanBazaarModule({ district, lang, apiUrl }: KisanBazaarModuleProps) {
   const [subTab, setSubTab] = useState<"bazaar" | "pmfme">("bazaar");
-  const [listings, setListings] = useState<ProduceListing[]>([]);
-  const [profiles, setProfiles] = useState<FoodProcessingProfile[]>([]);
+  const [listings, setListings] = useState<FarmProduceListing[]>([]);
+  const [profiles, setProfiles] = useState<ProcessingUnitProfile[]>([]);
   const [loading, setLoading] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
 
   // New Listing Form State
-  const [newCommodity, setNewCommodity] = useState("Soybean");
-  const [newVariety, setNewVariety] = useState("JS-335");
-  const [newQty, setNewQty] = useState(40);
-  const [newPrice, setNewPrice] = useState(4900);
-  const [newFarmer, setNewFarmer] = useState("Aditya Farmer");
-  const [newPhone, setNewPhone] = useState("9822012345");
-  const [submitting, setSubmitting] = useState(false);
+  const [newCommodity, setNewCommodity] = useState("Red Onion (कांदा)");
+  const [newVariety, setNewVariety] = useState("Bhima Super");
+  const [newQty, setNewQty] = useState("100 Quintals");
+  const [newPrice, setNewPrice] = useState("₹2,200 / Quintal");
+  const [newFarmer, setNewFarmer] = useState("Aditya Farmer Group");
+  const [newPhone, setNewPhone] = useState("9823901234");
+  const [newVillage, setNewVillage] = useState("Khed");
 
   useEffect(() => {
     const fetchBazaarData = async () => {
       setLoading(true);
       try {
         const [listRes, profRes] = await Promise.all([
-          fetch(`${apiUrl}/market-linkage/kisan-bazaar/listings?district=${encodeURIComponent(district)}`),
-          fetch(`${apiUrl}/market-linkage/food-processing/profiles`),
+          fetch(`${apiUrl}/market-linkage/bazaar-listings?district=${encodeURIComponent(district)}`),
+          fetch(`${apiUrl}/market-linkage/processing-profiles`),
         ]);
 
         if (listRes.ok) setListings(await listRes.json());
@@ -87,44 +84,27 @@ export default function KisanBazaarModule({ district, lang, apiUrl }: KisanBazaa
     fetchBazaarData();
   }, [apiUrl, district]);
 
-  const handleCreateListing = async (e: React.FormEvent) => {
+  const handleCreateListing = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-    try {
-      const res = await fetch(`${apiUrl}/market-linkage/kisan-bazaar/listings`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          farmer_name: newFarmer,
-          contact_phone: newPhone,
-          whatsapp_number: newPhone,
-          district: district,
-          taluka: "Dindori",
-          village: "Khed",
-          commodity: newCommodity,
-          commodity_mr: newCommodity === "Soybean" ? "सोयाबीन" : newCommodity,
-          variety: newVariety,
-          quantity_available_quintals: Number(newQty),
-          expected_price_per_quintal_inr: Number(newPrice),
-          apmc_current_rate_inr: Number(newPrice) - 200,
-          quality_grade: "Grade A Export",
-          is_organic_certified: false,
-          has_gi_tag: false,
-          notes_mr: "थेट बांधावरून विक्री, उत्कृष्ट सुकवलेला माल.",
-          notes_en: "Farm-gate direct sale lot with high test weight.",
-        }),
-      });
-
-      if (res.ok) {
-        const created = await res.json();
-        setListings([created, ...listings]);
-        setShowAddForm(false);
-      }
-    } catch (e) {
-      console.error("Listing create error:", e);
-    } finally {
-      setSubmitting(false);
-    }
+    const newLot: FarmProduceListing = {
+      id: `listing_${Date.now()}`,
+      farmer_or_fpo_name: newFarmer,
+      commodity: newCommodity,
+      commodity_mr: newCommodity,
+      variety: newVariety,
+      quantity_available: newQty,
+      expected_price_per_unit: newPrice,
+      quality_grade: "Grade A Export / सुपर क्वालिटी",
+      harvest_date: "Ready for immediate delivery",
+      village: newVillage,
+      taluka: "Dindori",
+      district: district,
+      contact_phone: newPhone,
+      whatsapp_enabled: true,
+      fpo_verified: true,
+    };
+    setListings([newLot, ...listings]);
+    setShowAddForm(false);
   };
 
   return (
@@ -170,11 +150,11 @@ export default function KisanBazaarModule({ district, lang, apiUrl }: KisanBazaa
         <div className="glass-card add-produce-card">
           <div className="form-head">
             <h4>🌾 {lang === "mr" ? "तुमचा शेतीमाल थेट खरेदीदारांसाठी नोंदवा" : "Post a Farm-Gate Produce Lot"}</h4>
-            <button className="close-btn" onClick={() => setShowAddForm(false)}>✕</button>
+            <button className="close-btn" onClick={() => setShowAddForm(false)} style={{ background: "none", border: "none", fontSize: 18, color: "var(--text-secondary)", cursor: "pointer" }}>✕</button>
           </div>
           <form onSubmit={handleCreateListing} className="produce-form-grid">
             <div className="form-group">
-              <label>{lang === "mr" ? "शेतकऱ्याचे नाव" : "Farmer Name"}</label>
+              <label>{lang === "mr" ? "शेतकऱ्याचे किंवा FPO चे नाव" : "Farmer / FPO Name"}</label>
               <input type="text" value={newFarmer} onChange={(e) => setNewFarmer(e.target.value)} required />
             </div>
             <div className="form-group">
@@ -182,13 +162,17 @@ export default function KisanBazaarModule({ district, lang, apiUrl }: KisanBazaa
               <input type="text" value={newPhone} onChange={(e) => setNewPhone(e.target.value)} required />
             </div>
             <div className="form-group">
+              <label>{lang === "mr" ? "गाव" : "Village"}</label>
+              <input type="text" value={newVillage} onChange={(e) => setNewVillage(e.target.value)} required />
+            </div>
+            <div className="form-group">
               <label>{lang === "mr" ? "पीक (Commodity)" : "Commodity"}</label>
               <select value={newCommodity} onChange={(e) => setNewCommodity(e.target.value)}>
-                <option value="Soybean">सोयाबीन (Soybean)</option>
-                <option value="Cotton">कापूस (Cotton)</option>
-                <option value="Onion">कांदा (Onion)</option>
-                <option value="Grapes">द्राक्षे (Grapes)</option>
-                <option value="Tur">तूर (Red Gram)</option>
+                <option value="Red Onion (कांदा)">कांदा (Red Onion)</option>
+                <option value="Soybean (सोयाबीन)">सोयाबीन (Soybean)</option>
+                <option value="Cotton (कापूस)">कापूस (Cotton)</option>
+                <option value="Grapes (द्राक्षे)">द्राक्षे (Grapes)</option>
+                <option value="Pigeonpea (तूर)">तूर (Pigeonpea)</option>
               </select>
             </div>
             <div className="form-group">
@@ -196,16 +180,16 @@ export default function KisanBazaarModule({ district, lang, apiUrl }: KisanBazaa
               <input type="text" value={newVariety} onChange={(e) => setNewVariety(e.target.value)} required />
             </div>
             <div className="form-group">
-              <label>{lang === "mr" ? "उपलब्ध प्रमाण (क्विंटल)" : "Quantity (Quintals)"}</label>
-              <input type="number" value={newQty} onChange={(e) => setNewQty(Number(e.target.value))} required />
+              <label>{lang === "mr" ? "उपलब्ध साठा (Quantity)" : "Quantity"}</label>
+              <input type="text" value={newQty} onChange={(e) => setNewQty(e.target.value)} required />
             </div>
             <div className="form-group">
-              <label>{lang === "mr" ? "अपेक्षित भाव (₹/क्विंटल)" : "Expected Price (₹/Qtl)"}</label>
-              <input type="number" value={newPrice} onChange={(e) => setNewPrice(Number(e.target.value))} required />
+              <label>{lang === "mr" ? "अपेक्षित दर (₹)" : "Expected Price"}</label>
+              <input type="text" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} required />
             </div>
-            <div className="form-actions">
-              <button type="submit" className="btn-submit-lot" disabled={submitting}>
-                {submitting ? "नोंदणी होत आहे..." : (lang === "mr" ? "✅ बाजारपेठेत माल दाखवा" : "Publish Lot")}
+            <div className="form-actions" style={{ gridColumn: "1 / -1", marginTop: 8 }}>
+              <button type="submit" className="btn-submit-lot">
+                {lang === "mr" ? "✅ बाजारपेठेत माल दाखवा" : "Publish Lot"}
               </button>
             </div>
           </form>
@@ -220,47 +204,44 @@ export default function KisanBazaarModule({ district, lang, apiUrl }: KisanBazaa
           {listings.map((item) => (
             <div key={item.id} className="glass-card produce-lot-card">
               <div className="lot-card-top">
-                <span className="source-chip">📍 {item.village}, {item.taluka}</span>
-                {item.is_organic_certified && <span className="organic-chip">🌿 Organic Certified</span>}
-                {item.has_gi_tag && <span className="gi-chip">🎖️ GI Tagged</span>}
+                <span className="source-chip">📍 {item.village}, {item.taluka}, {item.district}</span>
+                {item.fpo_verified && <span className="organic-chip" style={{ background: "rgba(34, 197, 94, 0.15)", color: "#4ade80", padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 700 }}>✓ FPO Verified</span>}
               </div>
 
-              <div className="lot-main-info">
-                <h3 className="lot-crop-name">{lang === "mr" ? item.commodity_mr : item.commodity}</h3>
-                <div className="lot-variety">{item.variety} • {item.quality_grade}</div>
+              <div className="lot-main-info" style={{ margin: "10px 0" }}>
+                <h3 className="lot-crop-name" style={{ fontSize: 18, fontWeight: 800, color: "var(--text-primary)" }}>{lang === "mr" ? item.commodity_mr : item.commodity}</h3>
+                <div className="lot-variety" style={{ fontSize: 13, color: "var(--text-secondary)" }}>{item.variety} • {item.quality_grade}</div>
               </div>
 
               <div className="lot-pricing-strip">
                 <div className="price-item">
-                  <span className="p-lbl">{lang === "mr" ? "शेतकरी अपेक्षित दर" : "Farm Price"}</span>
-                  <span className="p-val highlight">₹{item.expected_price_per_quintal_inr} <small>/क्विंटल</small></span>
-                </div>
-                <div className="price-item">
-                  <span className="p-lbl">{lang === "mr" ? "बाजार समिती सरासरी" : "Mandi Rate"}</span>
-                  <span className="p-val">₹{item.apmc_current_rate_inr}</span>
+                  <span className="p-lbl">{lang === "mr" ? "शेतकरी थेट भाव" : "Farm Price"}</span>
+                  <span className="p-val highlight">{item.expected_price_per_unit}</span>
                 </div>
                 <div className="price-item">
                   <span className="p-lbl">{lang === "mr" ? "उपलब्ध साठा" : "Quantity"}</span>
-                  <span className="p-val">{item.quantity_available_quintals} Qtl</span>
+                  <span className="p-val">{item.quantity_available}</span>
                 </div>
-              </div>
-
-              <div className="lot-notes">
-                <p>💬 {lang === "mr" ? item.notes_mr : item.notes_en}</p>
+                <div className="price-item">
+                  <span className="p-lbl">{lang === "mr" ? "लोडिंग स्थिती" : "Status"}</span>
+                  <span className="p-val" style={{ fontSize: 11 }}>{item.harvest_date}</span>
+                </div>
               </div>
 
               <div className="lot-contact-actions">
                 <a href={`tel:${item.contact_phone}`} className="btn-call-farmer">
-                  📞 {lang === "mr" ? `फोन करा (${item.farmer_name})` : `Call ${item.farmer_name}`}
+                  📞 {lang === "mr" ? `फोन करा (${item.farmer_or_fpo_name})` : `Call ${item.farmer_or_fpo_name}`}
                 </a>
-                <a
-                  href={`https://wa.me/91${item.whatsapp_number}?text=Namaskar%20${encodeURIComponent(item.farmer_name)},%20I%20am%20interested%20in%20your%20${encodeURIComponent(item.commodity)}%20lot%20on%20AgriNexus`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn-wa-farmer"
-                >
-                  💬 WhatsApp
-                </a>
+                {item.whatsapp_enabled && (
+                  <a
+                    href={`https://wa.me/91${item.contact_phone}?text=Namaskar%20${encodeURIComponent(item.farmer_or_fpo_name)},%20I%20am%20interested%20in%20your%20${encodeURIComponent(item.commodity)}%20lot%20on%20KRISHIOS`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn-wa-farmer"
+                  >
+                    💬 WhatsApp
+                  </a>
+                )}
               </div>
             </div>
           ))}
@@ -273,25 +254,26 @@ export default function KisanBazaarModule({ district, lang, apiUrl }: KisanBazaa
           {profiles.map((prof) => (
             <div key={prof.id} className="glass-card pmfme-card">
               <div className="card-top-header">
-                <span className="source-chip">🏛️ {prof.provenance}</span>
-                <span className="subsidy-chip">💰 {prof.pmfme_capital_subsidy_pct}% Subsidy</span>
+                <span className="source-chip">🏛️ {prof.provenance} • {prof.source_citation}</span>
+                <span className="subsidy-chip" style={{ background: "rgba(34, 197, 94, 0.2)", color: "#4ade80", padding: "3px 8px", borderRadius: 4, fontWeight: 800, fontSize: 12 }}>💰 ३५% शासकीय अनुदान</span>
               </div>
 
-              <h3 className="unit-title">{lang === "mr" ? prof.unit_name_mr : prof.unit_name}</h3>
-              <p className="unit-raw">🌾 {lang === "mr" ? "कच्चा माल" : "Raw Input"}: <strong>{prof.target_raw_material}</strong></p>
+              <h3 className="unit-title" style={{ fontSize: 18, fontWeight: 800, color: "var(--text-primary)", margin: "4px 0" }}>{lang === "mr" ? prof.project_title_mr : prof.project_title}</h3>
+              <p className="unit-raw" style={{ fontSize: 13, color: "var(--text-secondary)" }}>🌾 {lang === "mr" ? "कच्चा माल" : "Raw Input"}: <strong>{prof.target_commodities.join(", ")}</strong></p>
+              <div style={{ fontSize: 12, color: "var(--accent-lime)", marginBottom: 12 }}>⚡ {lang === "mr" ? "प्रकल्प क्षमता" : "Capacity"}: {lang === "mr" ? prof.capacity_mr : prof.capacity}</div>
 
               <div className="financial-breakdown-box">
                 <div className="f-row">
-                  <span>{lang === "mr" ? "एकूण प्रकल्प खर्च" : "Total Project Cost"}:</span>
+                  <span>{lang === "mr" ? "एकूण प्रकल्प भांडवल" : "Total Project Cost"}:</span>
                   <strong>₹{(prof.total_project_cost_inr / 100000).toFixed(2)} लाख</strong>
                 </div>
                 <div className="f-row highlight-subsidy">
                   <span>{lang === "mr" ? "शासकीय अनुदान (३५%)" : "PMFME Subsidy (35%)"}:</span>
-                  <strong>- ₹{(prof.max_subsidy_amount_inr / 100000).toFixed(2)} लाख</strong>
+                  <strong>- ₹{(prof.pmfme_govt_subsidy_35_pct_inr / 100000).toFixed(2)} लाख</strong>
                 </div>
                 <div className="f-row">
-                  <span>{lang === "mr" ? "शेतकरी स्वतःचे भांडवल (१०%)" : "Own Contribution (10%)"}:</span>
-                  <strong>₹{((prof.total_project_cost_inr * (prof.farmer_own_contribution_pct / 100)) / 100000).toFixed(2)} लाख</strong>
+                  <span>{lang === "mr" ? "शेतकरी स्वतःचे भांडवल (१०%)" : "Own Margin (10%)"}:</span>
+                  <strong>₹{(prof.farmer_own_margin_money_inr / 100000).toFixed(2)} लाख</strong>
                 </div>
                 <div className="f-row">
                   <span>{lang === "mr" ? "बँक मुदत कर्ज" : "Bank Term Loan"}:</span>
@@ -300,22 +282,22 @@ export default function KisanBazaarModule({ district, lang, apiUrl }: KisanBazaa
               </div>
 
               <div className="profit-metric-box">
-                <div className="profit-lbl">{lang === "mr" ? "अंदाजे निव्वळ मासिक नफा" : "Estimated Monthly Net Profit"}</div>
-                <div className="profit-val">₹{prof.estimated_monthly_profit_inr.toLocaleString()} <small>/month</small></div>
+                <div className="profit-lbl">{lang === "mr" ? "अंदाजे निव्वळ वार्षिक नफा" : "Estimated Annual Net Profit"}</div>
+                <div className="profit-val">₹{(prof.estimated_annual_net_profit_inr / 100000).toFixed(2)} लाख <small>/वर्ष</small></div>
                 <div className="payback-sub">⏳ {lang === "mr" ? `भांडवल परतफेड कालावधी: ${prof.payback_period_years} वर्षे` : `Payback period: ${prof.payback_period_years} years`}</div>
               </div>
 
-              <div className="machinery-section">
-                <div className="mach-head">⚙️ {lang === "mr" ? "समाविष्ट प्रमुख यंत्रसामग्री" : "Key Equipment"}:</div>
-                <ul className="mach-list">
-                  {prof.key_machinery_list.map((m, idx) => (
+              <div className="machinery-section" style={{ margin: "14px 0" }}>
+                <div className="mach-head" style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)" }}>⚙️ {lang === "mr" ? "समाविष्ट प्रमुख यंत्रसामग्री" : "Key Equipment"}:</div>
+                <ul className="mach-list" style={{ paddingLeft: 18, fontSize: 12, marginTop: 4, color: "var(--text-primary)" }}>
+                  {(lang === "mr" ? prof.key_machinery_required_mr : prof.key_machinery_required).map((m, idx) => (
                     <li key={idx}>{m}</li>
                   ))}
                 </ul>
               </div>
 
               <div className="pmfme-action">
-                <a href={prof.official_portal} target="_blank" rel="noreferrer" className="btn-pmfme-apply">
+                <a href="https://pmfme.mofpi.gov.in" target="_blank" rel="noreferrer" className="btn-pmfme-apply">
                   🌐 {lang === "mr" ? "PMFME अधिकृत पोर्टलवर अर्ज करा" : "Apply on PMFME Portal"}
                 </a>
               </div>

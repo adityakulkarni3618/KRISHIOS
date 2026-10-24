@@ -2,58 +2,80 @@
 
 import React, { useState, useEffect } from "react";
 
-interface FeederSchedule {
+interface FeederScheduleItem {
   district: string;
-  substation: string;
+  substation_name: string;
   feeder_name: string;
-  current_shift: string;
-  active_hours_today: string;
-  next_shift_start: string;
-  is_power_available_now: boolean;
-  voltage_health_volts: number;
-  low_voltage_warning: boolean;
-  pump_recommendation_mr: string;
-  pump_recommendation_en: string;
-  emergency_helpline: string;
+  current_status: string;
+  active_shift: string;
+  shift_hours: string;
+  shift_hours_mr: string;
+  next_shift_rotation_date: string;
+  current_voltage: number;
+  voltage_health: string;
+  irrigation_advisory: string;
+  irrigation_advisory_mr: string;
+  helpline_number: string;
   provenance: string;
-}
-
-interface HospitalASV {
-  id: string;
-  name: string;
-  name_mr: string;
-  district: string;
-  taluka: string;
-  asv_vials_available: number;
-  anti_rabies_available: boolean;
-  has_ventilator_icu: boolean;
-  emergency_phone: string;
-  distance_km: number;
-  twenty_four_seven_emergency: boolean;
-  provenance: string;
-}
-
-interface FirstAidGuide {
-  emergency_contacts: Record<string, string>;
-  snakebite_golden_rules: Array<{ do: string; do_mr: string; dont: string; dont_mr: string }>;
-  pesticide_poisoning_steps: Array<{ step: number; action_en: string; action_mr: string }>;
   source_citation: string;
 }
 
-interface BioRecipe {
+interface EmergencyHospital {
+  name: string;
+  name_mr: string;
+  facility_type: string;
+  taluka: string;
+  district: string;
+  asv_stock_status: string;
+  available_asv_vials: number;
+  emergency_phone: string;
+  distance_km: number;
+  ambulance_available: boolean;
+}
+
+interface FirstAidProtocol {
+  hazard_title: string;
+  hazard_title_mr: string;
+  critical_time_window: string;
+  critical_time_window_mr: string;
+  immediate_dos: string[];
+  immediate_dos_mr: string[];
+  strict_donts: string[];
+  strict_donts_mr: string[];
+  medical_antidote_info: string;
+  medical_antidote_info_mr: string;
+}
+
+interface EmergencySOSResult {
+  district: string;
+  emergency_toll_free: string;
+  snakebite_protocol: FirstAidProtocol;
+  pesticide_poisoning_protocol: FirstAidProtocol;
+  nearby_asv_hospitals: EmergencyHospital[];
+  provenance: string;
+  source_citation: string;
+}
+
+interface BioInputRecipe {
   id: string;
   name: string;
   name_mr: string;
-  target_benefit: string;
-  target_benefit_mr: string;
-  cost_estimate_per_100l_inr: number;
-  market_chemical_cost_equiv_inr: number;
+  category: string;
+  target_problems: string[];
+  target_problems_mr: string[];
+  preparation_time_days: number;
   shelf_life_days: number;
-  preparation_days: number;
-  ingredients: Array<{ item: string; item_mr: string; quantity: string }>;
-  preparation_steps: string[];
-  preparation_steps_mr: string[];
+  cost_per_acre_inr: number;
+  ingredients: string[];
+  ingredients_mr: string[];
+  step_by_step_instructions: string[];
+  step_by_step_instructions_mr: string[];
+  dosage_and_application: string;
+  dosage_and_application_mr: string;
+  key_benefit: string;
+  key_benefit_mr: string;
   provenance: string;
+  source_citation: string;
 }
 
 interface RuralOpsModuleProps {
@@ -64,29 +86,26 @@ interface RuralOpsModuleProps {
 
 export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModuleProps) {
   const [subTab, setSubTab] = useState<"electricity" | "sos" | "bioinputs">("electricity");
-  const [feeder, setFeeder] = useState<FeederSchedule | null>(null);
-  const [hospitals, setHospitals] = useState<HospitalASV[]>([]);
-  const [firstAid, setFirstAid] = useState<FirstAidGuide | null>(null);
-  const [recipes, setRecipes] = useState<BioRecipe[]>([]);
+  const [feeder, setFeeder] = useState<FeederScheduleItem | null>(null);
+  const [sosData, setSosData] = useState<EmergencySOSResult | null>(null);
+  const [recipes, setRecipes] = useState<BioInputRecipe[]>([]);
+  const [selectedRecipe, setSelectedRecipe] = useState<BioInputRecipe | null>(null);
   const [loading, setLoading] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState<BioRecipe | null>(null);
 
   useEffect(() => {
     const fetchRuralOpsData = async () => {
       setLoading(true);
       try {
-        const [feedRes, hospRes, aidRes, bioRes] = await Promise.all([
-          fetch(`${apiUrl}/rural-ops/feeder-schedule?district=${encodeURIComponent(district)}`),
-          fetch(`${apiUrl}/rural-ops/emergency-sos/hospitals?district=${encodeURIComponent(district)}`),
-          fetch(`${apiUrl}/rural-ops/emergency-sos/first-aid`),
-          fetch(`${apiUrl}/rural-ops/bio-inputs/recipes`),
+        const [feedRes, sosRes, bioRes] = await Promise.all([
+          fetch(`${apiUrl}/rural-ops/electricity?district=${encodeURIComponent(district)}`),
+          fetch(`${apiUrl}/rural-ops/emergency-sos?district=${encodeURIComponent(district)}`),
+          fetch(`${apiUrl}/rural-ops/bio-recipes`),
         ]);
 
         if (feedRes.ok) setFeeder(await feedRes.json());
-        if (hospRes.ok) setHospitals(await hospRes.json());
-        if (aidRes.ok) setFirstAid(await aidRes.json());
+        if (sosRes.ok) setSosData(await sosRes.json());
         if (bioRes.ok) {
-          const recList = await bioRes.json();
+          const recList: BioInputRecipe[] = await bioRes.json();
           setRecipes(recList);
           if (recList.length > 0) setSelectedRecipe(recList[0]);
         }
@@ -99,6 +118,8 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
 
     fetchRuralOpsData();
   }, [apiUrl, district]);
+
+  const isPowerOn = feeder?.current_status === "POWER_ACTIVE";
 
   return (
     <div className="rural-ops-container">
@@ -119,14 +140,14 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
           <div className="metric-pill">
             <span className="metric-icon">🔌</span>
             <div>
-              <div className="metric-val">{feeder?.is_power_available_now ? "ON" : "OFF"}</div>
+              <div className="metric-val">{isPowerOn ? (lang === "mr" ? "सुरू (ON)" : "POWER ON") : (lang === "mr" ? "बंद (OFF)" : "POWER OFF")}</div>
               <div className="metric-lbl">{lang === "mr" ? "३-फेज वीज स्थिती" : "3-Phase Power"}</div>
             </div>
           </div>
           <div className="metric-pill emergency-pill">
             <span className="metric-icon">🚨</span>
             <div>
-              <div className="metric-val">108 / 112</div>
+              <div className="metric-val">108 / 104</div>
               <div className="metric-lbl">{lang === "mr" ? "आणीबाणी रुग्णवाहिका" : "Ambulance SOS"}</div>
             </div>
           </div>
@@ -162,60 +183,62 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
         <div className="feeder-section-grid">
           <div className="glass-card feeder-status-card">
             <div className="card-top-header">
-              <span className="source-chip">⚡ {feeder.provenance}</span>
-              <span className={`status-badge ${feeder.is_power_available_now ? "badge-success" : "badge-danger"}`}>
-                {feeder.is_power_available_now
+              <span className="source-chip">⚡ {feeder.provenance} • {feeder.source_citation}</span>
+              <span className={`status-badge ${isPowerOn ? "badge-success" : "badge-danger"}`}>
+                {isPowerOn
                   ? (lang === "mr" ? "🟢 वीज सुरू आहे (POWER ON)" : "🟢 POWER ACTIVE")
                   : (lang === "mr" ? "🔴 वीज बंद आहे (OFF SHIFT)" : "🔴 POWER OFF")}
               </span>
             </div>
 
             <h3 className="feeder-name">{feeder.feeder_name}</h3>
-            <p className="feeder-substation">📍 {feeder.substation}, {feeder.district}</p>
+            <p className="feeder-substation">📍 {feeder.substation_name}, {feeder.district}</p>
 
             <div className="feeder-time-box">
               <div className="time-col">
-                <span className="time-lbl">{lang === "mr" ? "आजची वीज पाळी (Shift)" : "Today's Shift"}</span>
-                <span className="time-val highlight">{feeder.current_shift}</span>
+                <span className="time-lbl">{lang === "mr" ? "सध्याची पाळी" : "Current Shift"}</span>
+                <span className="time-val highlight">
+                  {feeder.active_shift === "day_shift" ? (lang === "mr" ? "दिवस पाळी (Day)" : "Day Shift") : (lang === "mr" ? "रात्र पाळी (Night)" : "Night Shift")}
+                </span>
               </div>
               <div className="time-col">
-                <span className="time-lbl">{lang === "mr" ? "सक्रिय तास" : "Active Hours"}</span>
-                <span className="time-val">{feeder.active_hours_today}</span>
+                <span className="time-lbl">{lang === "mr" ? "८ तास वीज वेळ" : "Active Hours"}</span>
+                <span className="time-val">{lang === "mr" ? feeder.shift_hours_mr : feeder.shift_hours}</span>
               </div>
               <div className="time-col">
-                <span className="time-lbl">{lang === "mr" ? "पुढील पाळी सुरू" : "Next Shift Starts"}</span>
-                <span className="time-val">{feeder.next_shift_start}</span>
+                <span className="time-lbl">{lang === "mr" ? "पुढील पाळी बदल" : "Rotation Date"}</span>
+                <span className="time-val">{feeder.next_shift_rotation_date}</span>
               </div>
             </div>
 
             <div className="voltage-monitor-box">
               <div className="voltage-meta">
-                <span>{lang === "mr" ? "व्होल्टेज गुणवत्ता" : "Voltage Health"}: <strong>{feeder.voltage_health_volts} V</strong></span>
-                {feeder.low_voltage_warning ? (
-                  <span className="warning-pill">⚠️ {lang === "mr" ? "कमी व्होल्टेज - स्टार्टर ट्रिप होऊ शकतो" : "Low Voltage Alert"}</span>
+                <span>{lang === "mr" ? "व्होल्टेज गुणवत्ता" : "Voltage Health"}: <strong>{feeder.current_voltage} V</strong></span>
+                {feeder.voltage_health === "OPTIMAL_NORMAL" ? (
+                  <span className="safe-pill">✅ {lang === "mr" ? "३-फेज स्थिर व्होल्टेज" : "Stable 3-Phase"}</span>
                 ) : (
-                  <span className="safe-pill">✅ {lang === "mr" ? "३-फेज स्थिर व्होल्टेज" : "Stable 3-Phase Voltage"}</span>
+                  <span className="warning-pill">⚠️ {lang === "mr" ? "कमी व्होल्टेज इशारा" : "Low Voltage Alert"}</span>
                 )}
               </div>
               <div className="voltage-bar">
                 <div
                   className="voltage-fill"
                   style={{
-                    width: `${Math.min(100, (feeder.voltage_health_volts / 440) * 100)}%`,
-                    background: feeder.low_voltage_warning ? "#ef4444" : "#22c55e",
+                    width: `${Math.min(100, (feeder.current_voltage / 440) * 100)}%`,
+                    background: feeder.voltage_health === "OPTIMAL_NORMAL" ? "#22c55e" : "#ef4444",
                   }}
                 />
               </div>
             </div>
 
             <div className="recommendation-box">
-              <div className="rec-title">💡 {lang === "mr" ? "पंप चालवण्याचा सल्ला" : "Motor Operation Advisory"}</div>
-              <p className="rec-text">{lang === "mr" ? feeder.pump_recommendation_mr : feeder.pump_recommendation_en}</p>
+              <div className="rec-title">💡 {lang === "mr" ? "पंप व ओलीत सल्ला" : "Irrigation Advisory"}</div>
+              <p className="rec-text">{lang === "mr" ? feeder.irrigation_advisory_mr : feeder.irrigation_advisory}</p>
             </div>
 
             <div className="feeder-actions">
-              <a href={`tel:${feeder.emergency_helpline}`} className="action-btn-call">
-                📞 {lang === "mr" ? `महावितरण तक्रार निवारण (${feeder.emergency_helpline})` : `MSEDCL Helpline (${feeder.emergency_helpline})`}
+              <a href={`tel:${feeder.helpline_number}`} className="action-btn-call">
+                📞 {lang === "mr" ? `महावितरण हेल्पलाइन (${feeder.helpline_number})` : `MSEDCL Helpline (${feeder.helpline_number})`}
               </a>
             </div>
           </div>
@@ -225,7 +248,7 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
             <ul className="safety-list">
               <li>
                 <strong>{lang === "mr" ? "सिंगल फेजिंग प्रतिबंधक (Single Phase Preventer):" : "Single Phase Preventer:"}</strong>{" "}
-                {lang === "mr" ? "दोन फेजवर मोटर चालू झाल्यास कॉईल जळते; ऑटोमॅटिक कट-ऑफ बसवा." : "Ensures motor trips immediately if any one phase drops."}
+                {lang === "mr" ? "दोन फेजवर मोटर चालू झाल्यास कॉईल जळते; ऑटोमॅटिक कट-ऑफ स्टार्टर बसवा." : "Ensures motor trips immediately if any one phase drops."}
               </li>
               <li>
                 <strong>{lang === "mr" ? "कॅपॅसिटर बँक जोडणी:" : "Shunt Capacitor Attachment:"}</strong>{" "}
@@ -233,7 +256,7 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
               </li>
               <li>
                 <strong>{lang === "mr" ? "रात्रपाळी ठिबक ऑटोमेशन:" : "Night Shift Drip Automation:"}</strong>{" "}
-                {lang === "mr" ? "रात्री ११ ते सकाळी ७ दरम्यान वीज असल्यास ऑटोमॅटिक व्हॉल्व्ह वापरून ओलीत करावे." : "Utilize off-peak tariff and lower evaporation during night cycles."}
+                {lang === "mr" ? "रात्री वीज असताना शेतात न जाता ऑटोमॅटिक व्हॉल्व्ह वापरून ओलीत करावे, जेणेकरून सर्पदंशाचा धोका टळेल." : "Utilize off-peak tariff and lower evaporation safely during night cycles."}
               </li>
             </ul>
           </div>
@@ -241,21 +264,21 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
       )}
 
       {/* SUBTAB 2: SNAKEBITE & POISON SOS */}
-      {!loading && subTab === "sos" && (
+      {!loading && subTab === "sos" && sosData && (
         <div className="sos-section-wrapper">
           {/* Emergency Alert Banner */}
           <div className="sos-emergency-banner">
             <div className="sos-icon">🚨</div>
             <div className="sos-banner-content">
-              <h3>{lang === "mr" ? "आणीबाणी: त्वरित 108 किंवा नजीकच्या ASV केंद्रात जा" : "EMERGENCY: Call 108 or Reach ASV Hospital Immediately"}</h3>
+              <h3>{lang === "mr" ? "आणीबाणी: त्वरित १०८ किंवा नजीकच्या ASV केंद्रात जा" : "EMERGENCY: Call 108 or Reach ASV Hospital Immediately"}</h3>
               <p>
                 {lang === "mr"
-                  ? "सर्पदंश किंवा कीटकनाशक पोटात गेल्यास पहिली ६० मिनिटे (Golden Hour) अत्यंत मोलाची आहेत. झाडफूक किंवा बांधणी करू नका."
+                  ? "सर्पदंश किंवा कीटकनाशक विषबाधा झाल्यास पहिली ६० मिनिटे (Golden Hour) अत्यंत मोलाची आहेत. झाडफूक, कापणे किंवा जखम चोखणे टाळा."
                   : "First 60 minutes (Golden Hour) determine survival. Administer Anti-Snake Venom at certified government centers immediately."}
               </p>
             </div>
             <div className="sos-call-buttons">
-              <a href="tel:108" className="btn-call-emergency">
+              <a href={`tel:${sosData.emergency_toll_free}`} className="btn-call-emergency">
                 📞 {lang === "mr" ? "१०८ रुग्णवाहिका" : "CALL 108"}
               </a>
               <a href="tel:104" className="btn-call-helpline">
@@ -269,18 +292,18 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
             <div className="glass-card asv-hospitals-box">
               <h4>🏥 {lang === "mr" ? `जिल्हा रुग्णालये व सर्पदंश लस (ASV) साठा - ${district}` : `ASV Stocked Centers in ${district}`}</h4>
               <div className="hospital-list">
-                {hospitals.map((hosp) => (
-                  <div key={hosp.id} className="hospital-item-card">
+                {sosData.nearby_asv_hospitals.map((hosp, idx) => (
+                  <div key={idx} className="hospital-item-card">
                     <div className="hospital-item-top">
                       <span className="hosp-name">{lang === "mr" ? hosp.name_mr : hosp.name}</span>
                       <span className="hosp-asv-badge">
-                        💉 {hosp.asv_vials_available} {lang === "mr" ? "डोस उपलब्ध" : "ASV Vials"}
+                        💉 {hosp.available_asv_vials} {lang === "mr" ? "डोस उपलब्ध" : "ASV Vials"}
                       </span>
                     </div>
                     <div className="hosp-details">
                       <span>📍 {hosp.taluka} ({hosp.distance_km} km)</span>
-                      <span>{hosp.has_ventilator_icu ? "✅ व्हेंटिलेटर/ICU उपलब्ध" : "ℹ️ प्राथमिक उपचार केंद्र"}</span>
-                      <span>🕒 {hosp.twenty_four_seven_emergency ? "२४x७ आपत्कालीन" : "Day Care"}</span>
+                      <span>🏥 {hosp.facility_type}</span>
+                      <span>🚑 {hosp.ambulance_available ? (lang === "mr" ? "रुग्णवाहिका सज्ज" : "Ambulance Ready") : "On Request"}</span>
                     </div>
                     <div className="hosp-action">
                       <a href={`tel:${hosp.emergency_phone}`} className="hosp-call-btn">
@@ -294,28 +317,35 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
 
             {/* First Aid DOs & DONTs */}
             <div className="glass-card first-aid-box">
-              <h4>⚕️ {lang === "mr" ? "सर्पदंश प्रथमोपचार: काय करावे आणि काय टाळावे" : "Snakebite First-Aid Protocol"}</h4>
-              {firstAid?.snakebite_golden_rules && (
-                <div className="rules-table">
-                  <div className="rules-header">
-                    <span className="rule-col-title do-title">✅ {lang === "mr" ? "काय करावे (DOs)" : "DO"}</span>
-                    <span className="rule-col-title dont-title">❌ {lang === "mr" ? "काय करू नये (DON'Ts)" : "DON'T"}</span>
-                  </div>
-                  {firstAid.snakebite_golden_rules.map((rule, idx) => (
-                    <div key={idx} className="rule-row">
-                      <div className="rule-do">{lang === "mr" ? rule.do_mr : rule.do}</div>
-                      <div className="rule-dont">{lang === "mr" ? rule.dont_mr : rule.dont}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <h4>⚕️ {lang === "mr" ? sosData.snakebite_protocol.hazard_title_mr : sosData.snakebite_protocol.hazard_title}</h4>
+              <p className="timeline-badge">⏱️ {lang === "mr" ? sosData.snakebite_protocol.critical_time_window_mr : sosData.snakebite_protocol.critical_time_window}</p>
 
-              <h4 style={{ marginTop: "1.5rem" }}>☣️ {lang === "mr" ? "कीटकनाशक विषबाधा झाल्यास" : "Pesticide Poisoning Actions"}</h4>
+              <div className="rules-table">
+                <div className="rules-header">
+                  <span className="rule-col-title do-title">✅ {lang === "mr" ? "काय करावे (DOs)" : "DO"}</span>
+                  <span className="rule-col-title dont-title">❌ {lang === "mr" ? "काय करू नये (DON'Ts)" : "DON'T"}</span>
+                </div>
+                {sosData.snakebite_protocol.immediate_dos.map((doItem, idx) => (
+                  <div key={idx} className="rule-row">
+                    <div className="rule-do">{lang === "mr" ? sosData.snakebite_protocol.immediate_dos_mr[idx] || doItem : doItem}</div>
+                    <div className="rule-dont">
+                      {lang === "mr" ? sosData.snakebite_protocol.strict_donts_mr[idx] || sosData.snakebite_protocol.strict_donts[idx] : sosData.snakebite_protocol.strict_donts[idx]}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="antidote-box" style={{ marginTop: 14 }}>
+                <strong>💉 {lang === "mr" ? "वैद्यकीय उपाय" : "Medical Protocol"}:</strong>
+                <p>{lang === "mr" ? sosData.snakebite_protocol.medical_antidote_info_mr : sosData.snakebite_protocol.medical_antidote_info}</p>
+              </div>
+
+              <h4 style={{ marginTop: "1.5rem" }}>☣️ {lang === "mr" ? sosData.pesticide_poisoning_protocol.hazard_title_mr : sosData.pesticide_poisoning_protocol.hazard_title}</h4>
               <div className="pesticide-steps">
-                {firstAid?.pesticide_poisoning_steps.map((st) => (
-                  <div key={st.step} className="pesticide-step-item">
-                    <span className="step-circle">{st.step}</span>
-                    <span className="step-desc">{lang === "mr" ? st.action_mr : st.action_en}</span>
+                {(lang === "mr" ? sosData.pesticide_poisoning_protocol.immediate_dos_mr : sosData.pesticide_poisoning_protocol.immediate_dos).map((step, idx) => (
+                  <div key={idx} className="pesticide-step-item">
+                    <span className="step-circle">{idx + 1}</span>
+                    <span className="step-desc">{step}</span>
                   </div>
                 ))}
               </div>
@@ -343,42 +373,48 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
             <div className="glass-card bio-recipe-card">
               <div className="recipe-hero">
                 <div>
-                  <span className="source-chip">🏛️ {selectedRecipe.provenance}</span>
+                  <span className="source-chip">🏛️ {selectedRecipe.provenance} • {selectedRecipe.source_citation}</span>
                   <h3 className="recipe-title">{lang === "mr" ? selectedRecipe.name_mr : selectedRecipe.name}</h3>
-                  <p className="recipe-target">🎯 {lang === "mr" ? selectedRecipe.target_benefit_mr : selectedRecipe.target_benefit}</p>
+                  <p className="recipe-target">🎯 {lang === "mr" ? selectedRecipe.key_benefit_mr : selectedRecipe.key_benefit}</p>
                 </div>
                 <div className="cost-saving-badge">
-                  <div className="saving-value">₹{selectedRecipe.cost_estimate_per_100l_inr} <span className="sub-val">/ 100L</span></div>
+                  <div className="saving-value">₹{selectedRecipe.cost_per_acre_inr} <span className="sub-val">/ {lang === "mr" ? "एकर" : "acre"}</span></div>
                   <div className="saving-sub">
                     {lang === "mr"
-                      ? `बाजारातील रासायनिक खर्च ₹${selectedRecipe.market_chemical_cost_equiv_inr} - बचत ९०%+`
-                      : `Saves vs ₹${selectedRecipe.market_chemical_cost_equiv_inr} chemicals`}
+                      ? "बाजारातील रासायनिक टॉनिक खर्च ₹२,५०० पेक्षा ९०%+ बचत"
+                      : "Saves 90%+ vs ₹2,500 synthetic chemicals"}
                   </div>
                 </div>
               </div>
 
               <div className="recipe-meta-strip">
-                <div>⏱️ {lang === "mr" ? "तयार होण्यास वेळ" : "Fermentation Time"}: <strong>{selectedRecipe.preparation_days} {lang === "mr" ? "दिवस" : "days"}</strong></div>
+                <div>⏱️ {lang === "mr" ? "तयार होण्यास वेळ" : "Fermentation Time"}: <strong>{selectedRecipe.preparation_time_days} {lang === "mr" ? "दिवस" : "days"}</strong></div>
                 <div>📦 {lang === "mr" ? "वापरण्याची मुदत" : "Shelf Life"}: <strong>{selectedRecipe.shelf_life_days} {lang === "mr" ? "दिवस" : "days"}</strong></div>
+                <div>🌱 {lang === "mr" ? "प्रकार" : "Category"}: <strong>{selectedRecipe.category}</strong></div>
               </div>
 
               <div className="recipe-body-grid">
                 <div className="ingredients-box">
                   <h4>🥣 {lang === "mr" ? "आवश्यक देशी साहित्य (Ingredients)" : "Required Ingredients"}</h4>
                   <ul className="ingredient-list">
-                    {selectedRecipe.ingredients.map((ing, idx) => (
+                    {(lang === "mr" ? selectedRecipe.ingredients_mr : selectedRecipe.ingredients).map((ing, idx) => (
                       <li key={idx}>
-                        <span className="ing-name">{lang === "mr" ? ing.item_mr : ing.item}</span>
-                        <span className="ing-qty">{ing.quantity}</span>
+                        <span className="ing-name">{ing}</span>
                       </li>
                     ))}
                   </ul>
+                  <div style={{ marginTop: 14 }}>
+                    <strong>🌾 {lang === "mr" ? "वापरण्याचे प्रमाण (Dosage)" : "Dosage & Application"}:</strong>
+                    <p style={{ fontSize: 13, marginTop: 4 }}>
+                      {lang === "mr" ? selectedRecipe.dosage_and_application_mr : selectedRecipe.dosage_and_application}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="preparation-box">
                   <h4>🧑‍🌾 {lang === "mr" ? "तयार करण्याची सोपी पद्धत (Steps)" : "Preparation Steps"}</h4>
                   <ol className="prep-steps-list">
-                    {(lang === "mr" ? selectedRecipe.preparation_steps_mr : selectedRecipe.preparation_steps).map((step, idx) => (
+                    {(lang === "mr" ? selectedRecipe.step_by_step_instructions_mr : selectedRecipe.step_by_step_instructions).map((step, idx) => (
                       <li key={idx}>{step}</li>
                     ))}
                   </ol>
