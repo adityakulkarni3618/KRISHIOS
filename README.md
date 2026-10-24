@@ -3,7 +3,7 @@
 > Tailored for Maharashtra farmers, Farmer Producer Organizations (FPOs), and agricultural researchers.  
 > Native Multilingual Support: **Marathi (मराठी)**, **Hindi (हिन्दी)**, and **English (EN)**.
 
-[![Tests](https://img.shields.io/badge/pytest-55%2F55%20passing-brightgreen)](file:///backend/tests)
+[![Tests](https://img.shields.io/badge/pytest-66%2F66%20passing-brightgreen)](file:///backend/tests)
 [![Frontend](https://img.shields.io/badge/Next.js-14.2.15-black)](file:///frontend)
 [![Backend](https://img.shields.io/badge/FastAPI-0.115.6-009688)](file:///backend)
 [![Provenance](https://img.shields.io/badge/Data%20Provenance-Enforced-blue)](#data-provenance-framework)
@@ -112,6 +112,25 @@ KRISHIOS features a seamless **Dual-Theme System** and **Rural-First Accessibili
 ### 16. 📄 Mahabhulekh Digital 7/12 & Farm Health Card Exporter
 - **Land Registry Sync:** Standardized 7/12 Gat number and E-Pik Pahani digital record keeper.
 - **Official Print Export:** One-click printable Farm Health Card for bank loan submissions and dealer fertilizer subsidies.
+
+### 17. ⚡ Rural Lifeline: 3-Phase Electricity Feeder Roster & Emergency Snakebite SOS (`rural_ops`)
+- **MSEDCL 3-Phase Roster:** Live 8-hour feeder shift timings (Day 06:00-14:00 vs. Night 22:00-06:00), voltage health monitor, and pump protection guidelines.
+- **Snakebite & Poison SOS:** Direct 1-tap call to 108 Ambulance, government hospital Anti-Snake Venom (ASV) vial locator, and CIBRC organophosphate poisoning first-aid protocol.
+- **Ghar-cha-Doctor Bio-Inputs Lab:** ₹0-cost university recipes for *Jeevamrut*, *Dashparni Ark*, and *Sour Buttermilk* saving ₹2,500/acre over synthetic chemicals.
+
+### 18. 👥 Farm Operations, Labor Wage Hub & Seed Authenticity (`operations`)
+- **Krishi Majur Wage Benchmarks:** Prevailing district-wise wage rates for farm operations (plowing, transplanting, weeding, harvesting) with contactable crew directory.
+- **Seed Authenticity QR/Lot Checker:** Verification against certified Mahabeej/CIBRC registries to prevent counterfeit seed purchases and spurious pesticide fraud.
+- **Groundwater & Aquifer Recharge Advisory:** Static water level monitoring (bgl), GSDA casing recommendations, and borewell recharge pit design diagrams.
+
+### 19. 🤝 Direct Kisan Bazaar & PMFME 35% Food Processing (`market_linkage`)
+- **Farm-to-Buyer Direct Listings:** Enables farmers to publish produce lots directly with contact phone and one-tap WhatsApp chat, bypassing APMC middlemen commissions.
+- **PMFME Food Processing Profiles:** Comprehensive project profiles for *Mini Dal Mills*, *Wood-pressed Lakadi Ghani*, and *Onion Solar Dehydration* with 35% capital subsidy calculations.
+
+### 20. 💳 KCC 4% Subsidized Loan Dossier & Kisan Nyay Legal Aid (`institutional`)
+- **RBI/NABARD KCC Loan Dossier:** Generates crop-wise Scale of Finance bank dossiers calculating 4% net interest rate after Prompt Repayment Incentive (PRI).
+- **Kisan Nyay Legal Remedies:** Step-by-step statutory remedies for *Mamlatdar's Courts Act Sec 143 (Farm Road right-of-way disputes)* and Consumer Protection Act seed claims.
+- **Omnichannel Access Gateway:** Interactive simulation of missed-call automated voice advisory (IVR) and zero-data WhatsApp Krishi Bot.
 
 ---
 
