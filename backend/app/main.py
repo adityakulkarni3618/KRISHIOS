@@ -2,7 +2,25 @@ from fastapi import FastAPI
 
 from app.core.config import settings
 from app.db import Base, engine
-from app.routers import auth, calculator, disease, farms, mapping, market, schemes, soil, weather
+from app.routers import (
+    assistant,
+    auth,
+    calculator,
+    crops,
+    disease,
+    equipment,
+    farms,
+    fertilizer,
+    insurance,
+    livestock,
+    mapping,
+    market,
+    postharvest,
+    remote_sensing,
+    schemes,
+    soil,
+    weather,
+)
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -26,6 +44,14 @@ app.include_router(calculator.router)
 app.include_router(soil.router)
 app.include_router(schemes.router)
 app.include_router(disease.router)
+app.include_router(crops.router)
+app.include_router(fertilizer.router)
+app.include_router(insurance.router)
+app.include_router(equipment.router)
+app.include_router(livestock.router)
+app.include_router(remote_sensing.router)
+app.include_router(postharvest.router)
+app.include_router(assistant.router)
 
 
 @app.get("/health", tags=["system"])
