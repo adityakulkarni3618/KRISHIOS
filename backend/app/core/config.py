@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     jwt_secret: str = "agrinexus-dev-secret-key-do-not-use-in-production"
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 1440
+    demo_mode: bool = True
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 

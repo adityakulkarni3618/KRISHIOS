@@ -987,8 +987,8 @@ export default function Home() {
                       style={{ fontSize: 13, padding: "8px 16px" }}
                       onClick={() => speakText(
                         lang === "mr" 
-                          ? `आज फवारणी करण्यास हवामान अनुकूल आहे. वाऱ्याचा वेग ${weather?.wind_speed || 9.4} किमी प्रतितास असून पाऊस पडण्याची शक्यता ५ टक्के आहे. कापूस पिकावर बोंडअळीच्या नियंत्रणासाठी कोराजेन ६ मिली प्रति १५ लिटर पंपात वापरावे. सोयाबीनला चांगला उठाव असून काही दिवस साठवून ठेवणे फायदेशीर ठरेल.`
-                          : `Today weather is optimal for spray. Wind speed is ${weather?.wind_speed || 9.4} km per hour with negligible rain. Crop doctor advises 6ml Coragen per 15L pump for bollworm. Soybean price is bullish; hold advice recommended.`
+                          ? `आज फवारणी करण्यास हवामान अनुकूल आहे. वाऱ्याचा वेग ${weather?.wind_speed || 9.4} किमी प्रतितास असून पाऊस पडण्याची शक्यता ५ टक्के आहे. कापूस पिकावरील कीड नियंत्रणासाठी योग्य सल्ला घ्या. बाजार समितीतील आजचे दर तपासा.`
+                          : `Today weather is optimal for spray. Wind speed is ${weather?.wind_speed || 9.4} km per hour with negligible rain. Check APMC mandi rates for prevailing commodity prices.`
                       )}
                     >
                       {speakingText ? "🔊 वाचन सुरू आहे..." : "🔊 आजचा सल्ला ऐका"}
@@ -997,7 +997,7 @@ export default function Home() {
                       className="whatsapp-share-btn"
                       style={{ fontSize: 13, padding: "8px 16px" }}
                       onClick={() => shareToWhatsApp(
-                        `🌾 *कृषी ओएस - आजचा शेती सल्ला*\n📍 जिल्हा: ${selectedDistrict}\n⛅ हवामान: ${weather?.temperature || 31.8}°C | वाऱ्याचा वेग: ${weather?.wind_speed || 9.4} km/h\n✅ फवारणी: सकाळच्या वेळेत फवारणीस अनुकूल\n🔬 पीक डॉक्टर: कापूस बोंडअळीसाठी कोराजेन ६ मिली / १५L पंप\n💰 सोयाबीन दर: ₹४,६८० (साठवून ठेवा - HOLD)\n📞 २४x७ किसान मदत: 1800-180-1551`
+                        `🌾 *कृषी ओएस - आजचा शेती सल्ला*\n📍 जिल्हा: ${selectedDistrict}\n⛅ हवामान: ${weather?.temperature || 31.8}°C | वाऱ्याचा वेग: ${weather?.wind_speed || 9.4} km/h\n✅ फवारणी: सकाळच्या वेळेत फवारणीस अनुकूल\n💰 कृषी उत्पन्न बाजार समिती दर तपासा\n📞 २४x७ किसान मदत: 1800-180-1551`
                       )}
                     >
                       📲 व्हॉट्सॲपवर पाठवा
@@ -1030,15 +1030,15 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Card 3: Mandi Price & Hold/Sell */}
-                  <div className="kisan-card" onClick={() => { setActiveTab("market"); setMandiSubTab("forecast"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
+                  {/* Card 3: Mandi Rates Board (No simulated forecast/advice) */}
+                  <div className="kisan-card" onClick={() => { setActiveTab("market"); setMandiSubTab("rates"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
                     <div className="kisan-card-icon">💰</div>
                     <div className="kisan-card-title">{t("kisan_mandi_q")}</div>
                     <div className="kisan-card-desc">
-                      {lang === "mr" ? "सोयाबीन सरासरी ₹४,६८०/क्विंटल. पुढील १५ दिवसांत +₹३८० दरवाढीची शक्यता. साठवून ठेवणे फायदेशीर!" : "Soybean ₹4,680. Hold recommendation active for +₹380 gain."}
+                      {lang === "mr" ? "बाजार समितीतील आजचे थेट भाव (किमान, सरासरी व कमाल दर ₹/क्विंटल)." : "APMC Mandi rates (Min, Modal, Max ₹/quintal)."}
                     </div>
                     <div className="kisan-status-badge safe">
-                      📈 {lang === "mr" ? "साठवून ठेवा (HOLD ADVICE)" : "HOLD ADVICE"}
+                      📊 {lang === "mr" ? "बाजारभाव पहा" : "VIEW MANDI RATES"}
                     </div>
                   </div>
 
@@ -2150,10 +2150,10 @@ export default function Home() {
                         cursor: "pointer"
                       }}
                     >
-                      🔮 30-Day Price Forecaster & Hold/Sell Engine
+                      🔮 {lang === "mr" ? "काल्पनिक किंमत परिस्थिती (सिम्युलेटेड)" : "Illustrative Price Scenario (Simulated Demo)"}
                     </button>
                   </div>
-                  <span className="prov-badge live">MSAMB / AGMARKNET LIVE & TIME-SERIES</span>
+                  <span className="prov-badge simulated" style={{ background: "#f59e0b", color: "#000", fontWeight: 800 }}>SIMULATED DEMO</span>
                 </div>
 
                 {mandiSubTab === "rates" ? (
@@ -2199,11 +2199,16 @@ export default function Home() {
                     </div>
                   </div>
                 ) : (
-                  /* 30-Day Mandi Price Forecaster & Hold/Sell Engine */
+                  /* Illustrative Price Scenario (Simulated Demo Only) */
                   <div>
+                    {/* Prominent Simulated Warning */}
+                    <div style={{ marginBottom: 16, padding: "12px 16px", background: "rgba(245, 158, 11, 0.15)", border: "1.5px solid #f59e0b", borderRadius: 10, color: "#fcd34d", fontSize: 13, lineHeight: 1.5 }}>
+                      ⚠️ <strong>{lang === "mr" ? "काल्पनिक आकडेवारी (SIMULATED):" : "SIMULATED WARNING:"}</strong> {forecastData?.warning || "This is an illustrative price scenario for UI demonstration only. It is NOT real market intelligence or financial/selling advice."}
+                    </div>
+
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, marginBottom: 20, background: "var(--bg-card-subtle)", padding: 20, borderRadius: "var(--radius-md)", border: "1px solid var(--border-card)" }}>
                       <div>
-                        <label className="input-label">Select Commodity for Forecasting</label>
+                        <label className="input-label">Select Commodity for Scenario Demo</label>
                         <select
                           className="modern-select"
                           value={forecastCommodity}
@@ -2219,7 +2224,7 @@ export default function Home() {
                       </div>
 
                       <div>
-                        <label className="input-label">Harvest Produce Quantity (Quintals)</label>
+                        <label className="input-label">Produce Volume (Quintals)</label>
                         <input
                           type="number"
                           className="modern-input"
@@ -2233,9 +2238,9 @@ export default function Home() {
                       </div>
 
                       <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
-                        <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 4 }}>Live Recommendation:</div>
-                        <div className={`advice-badge-big ${forecastData?.recommendation === "HOLD" ? "hold" : "sell"}`}>
-                          {forecastData?.recommendation === "HOLD" ? "🟢 साठवून ठेवा (HOLD)" : "🔴 त्वरित विका (SELL NOW)"}
+                        <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 4 }}>Scenario Type:</div>
+                        <div className="advice-badge-big" style={{ background: "rgba(245, 158, 11, 0.2)", border: "1px solid #f59e0b", color: "#fbbf24" }}>
+                          ⚠️ SIMULATED SCENARIO
                         </div>
                       </div>
                     </div>

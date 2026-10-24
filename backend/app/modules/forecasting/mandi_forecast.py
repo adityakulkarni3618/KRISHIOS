@@ -1,11 +1,13 @@
-"""AI Mandi Price Forecaster & Post-Harvest Storage Decision Engine.
+"""Illustrative Price Scenario Module (SIMULATED).
 
-Projects 7, 15, and 30-day commodity price trends using seasonal cycles,
-APMC arrivals, and export policies to advise farmers on "Hold vs. Sell".
+Demonstrates illustrative multi-week price scenarios for UI modeling.
+SIMULATED ONLY: NOT real market forecasting, econometric modeling, or trading advice.
 """
 
 from typing import List, Dict
 from pydantic import BaseModel, Field
+
+from app.core.provenance import Provenance
 
 
 class ForecastPoint(BaseModel):
@@ -35,21 +37,30 @@ class StorageEconomics(BaseModel):
 
 
 class HoldSellAdvice(BaseModel):
+    scenario_title: str = "Illustrative price scenario"
+    scenario_title_mr: str = "काल्पनिक किंमत परिस्थिती (प्रात्यक्षिक)"
+    warning: str = "SIMULATED: This is an illustrative price scenario for UI demonstration only. It is NOT real market intelligence or financial/selling advice."
+    warning_mr: str = "काल्पनिक / सिम्युलेटेड: ही केवळ प्रात्यक्षिकासाठी काल्पनिक आकडेवारी आहे. हा प्रत्यक्ष बाजाराचा अंदाज किंवा सल्ला नाही."
     commodity: str
     district: str
     market: str
     current_modal_price: int
     quantity_quintals: int
-    recommendation: str  # "HOLD", "SELL_NOW", "STAGGER"
-    recommendation_mr: str
-    confidence_pct: int
+    recommendation: str = "ILLUSTRATIVE_SCENARIO"
+    recommendation_mr: str = "प्रात्यक्षिक किंमत परिस्थिती (सिम्युलेटेड)"
+    confidence_pct: int = 0
     executive_summary: str
     executive_summary_mr: str
     forecast_curve: List[ForecastPoint]
     storage_economics: StorageEconomics
     market_drivers: List[MarketDriver]
     nearby_warehouses: List[Dict[str, str]]
-    provenance: str = "Agmarknet APMC Historical Time-Series & MSAMB Seasonal Indices"
+    provenance: Provenance = Provenance.SIMULATED
+    source_citation: str = "Demonstration formula for UI modeling (SIMULATED - not an econometric prediction)"
+
+
+# Type alias for clarity
+IllustrativePriceScenario = HoldSellAdvice
 
 
 COMMODITY_FORECAST_CONFIG = {
@@ -57,7 +68,7 @@ COMMODITY_FORECAST_CONFIG = {
         "current": 4650,
         "delta_15": 380,
         "trend": "UPWARD",
-        "rec": "HOLD",
+        "rec": "ILLUSTRATIVE_SCENARIO",
         "rec_mr": "काही दिवस साठवून ठेवा (HOLD)",
         "summary": "Soymeal export demand is accelerating and arrivals in Madhya Pradesh/Maharashtra are slowing down. Price expected to rally towards ₹5,030.",
         "summary_mr": "सोयापेंड निर्यातीची मागणी वाढली असून बाजारातील आवक मंदावली आहे. पुढील १५ दिवसांत भाव ₹५,०३० पर्यंत जाण्याची शक्यता आहे.",
@@ -195,18 +206,24 @@ def compute_mandi_forecast(
     ]
 
     return HoldSellAdvice(
+        scenario_title="Illustrative price scenario",
+        scenario_title_mr="काल्पनिक किंमत परिस्थिती (प्रात्यक्षिक)",
+        warning="SIMULATED: This is an illustrative price scenario for UI demonstration only. It is NOT real market intelligence or financial/selling advice.",
+        warning_mr="काल्पनिक / सिम्युलेटेड: ही केवळ प्रात्यक्षिकासाठी काल्पनिक आकडेवारी आहे. हा प्रत्यक्ष बाजाराचा अंदाज किंवा सल्ला नाही.",
         commodity=commodity,
         district=district,
         market=market,
         current_modal_price=modal,
         quantity_quintals=quantity_quintals,
-        recommendation=cfg["rec"],
-        recommendation_mr=cfg["rec_mr"],
-        confidence_pct=92,
+        recommendation=cfg.get("rec", "ILLUSTRATIVE_SCENARIO"),
+        recommendation_mr=cfg.get("rec_mr", "प्रात्यक्षिक किंमत परिस्थिती (सिम्युलेटेड)"),
+        confidence_pct=0,
         executive_summary=cfg["summary"],
         executive_summary_mr=cfg["summary_mr"],
         forecast_curve=curve,
         storage_economics=storage,
         market_drivers=drivers,
-        nearby_warehouses=warehouses
+        nearby_warehouses=warehouses,
+        provenance=Provenance.SIMULATED,
+        source_citation="Demonstration formula for UI modeling (SIMULATED - not an econometric prediction)"
     )

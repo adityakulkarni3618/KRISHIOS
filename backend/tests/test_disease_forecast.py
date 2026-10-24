@@ -37,10 +37,26 @@ def test_disease_diagnose():
 
 
 def test_mandi_forecast():
+    from app.core.config import settings
+
+    # In DEMO_MODE=True (default), returns SIMULATED scenario with visible warning
     res = client.get("/market/forecast?commodity=Soybean&district=Latur&market=Latur%20APMC&quantity_quintals=60")
     assert res.status_code == 200
     data = res.json()
     assert data["commodity"] == "Soybean"
-    assert "recommendation" in data
+    assert data["provenance"] == "SIMULATED"
+    assert "SIMULATED" in data["warning"]
+    assert "Agmarknet" not in data["source_citation"]
+    assert data["scenario_title"] == "Illustrative price scenario"
     assert len(data["forecast_curve"]) >= 3
     assert data["storage_economics"]["net_profit_per_quintal"] is not None
+
+    # When DEMO_MODE=False, simulated endpoint returns 404
+    original_demo_mode = settings.demo_mode
+    try:
+        settings.demo_mode = False
+        res_disabled = client.get("/market/forecast?commodity=Soybean&district=Latur&market=Latur%20APMC&quantity_quintals=60")
+        assert res_disabled.status_code == 404
+        assert "disabled" in res_disabled.json()["detail"].lower()
+    finally:
+        settings.demo_mode = original_demo_mode
