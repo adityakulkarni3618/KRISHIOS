@@ -813,9 +813,12 @@ export default function Home() {
               </button>
               <button
                 className={`dribbble-nav-link ${activeTab === "market" ? "active" : ""}`}
-                onClick={() => setActiveTab("market")}
+                onClick={() => {
+                  setActiveTab("market");
+                  document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" });
+                }}
               >
-                📊 Mandi Rates & Forecast
+                📊 Mandi & Price
               </button>
               <button
                 className={`dribbble-nav-link ${activeTab === "irrigation" ? "active" : ""}`}
@@ -827,24 +830,6 @@ export default function Home() {
                 💧 {t("nav_irrigation")}
               </button>
               <button
-                className={`dribbble-nav-link ${activeTab === "weather" ? "active" : ""}`}
-                onClick={() => setActiveTab("weather")}
-              >
-                Weather
-              </button>
-              <button
-                className={`dribbble-nav-link ${activeTab === "calculator" ? "active" : ""}`}
-                onClick={() => setActiveTab("calculator")}
-              >
-                Calculator
-              </button>
-              <button
-                className={`dribbble-nav-link ${activeTab === "farms" ? "active" : ""}`}
-                onClick={() => setActiveTab("farms")}
-              >
-                Our Farms
-              </button>
-              <button
                 className={`dribbble-nav-link ${activeTab === "schemes" ? "active" : ""}`}
                 onClick={() => {
                   setActiveTab("schemes");
@@ -852,25 +837,15 @@ export default function Home() {
                   el?.scrollIntoView({ behavior: "smooth" });
                 }}
               >
-                Schemes 3D
+                📜 Schemes 3D
               </button>
               <button
-                className={`dribbble-nav-link ${activeTab === "rural_ops" ? "active" : ""}`}
+                className={`dribbble-nav-link ${activeTab === "rural_ops" || activeTab === "operations_hub" || activeTab === "kisan_bazaar" || activeTab === "kcc_legal" ? "active" : ""}`}
                 onClick={() => {
-                  setActiveTab("rural_ops");
                   document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" });
                 }}
               >
-                ⚡ {t("nav_rural_ops")}
-              </button>
-              <button
-                className={`dribbble-nav-link ${activeTab === "kisan_bazaar" ? "active" : ""}`}
-                onClick={() => {
-                  setActiveTab("kisan_bazaar");
-                  document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" });
-                }}
-              >
-                🤝 {t("nav_kisan_bazaar")}
+                ⚡ Agritech Tools
               </button>
             </div>
 

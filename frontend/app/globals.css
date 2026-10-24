@@ -174,12 +174,14 @@ body.theme-govt-active .theme-pill-btn.active {
   backdrop-filter: blur(20px);
   border: 1px solid var(--border-card);
   border-radius: 60px;
-  padding: 10px 24px;
+  padding: 8px 20px;
   margin-bottom: 24px;
   position: sticky;
   top: 16px;
   z-index: 100;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
+  gap: 12px;
+  max-width: 100%;
 }
 
 .dribbble-brand {
@@ -191,6 +193,7 @@ body.theme-govt-active .theme-pill-btn.active {
   font-weight: 800;
   font-size: 20px;
   letter-spacing: -0.5px;
+  flex-shrink: 0;
 }
 
 .dribbble-brand span.brand-dot {
@@ -209,6 +212,14 @@ body.theme-govt-active .theme-pill-btn.active {
   border-radius: 40px;
   padding: 4px 6px;
   gap: 4px;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.dribbble-nav-center::-webkit-scrollbar {
+  display: none;
 }
 
 .dribbble-nav-link {
@@ -239,7 +250,8 @@ body.theme-govt-active .theme-pill-btn.active {
 .dribbble-nav-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .btn-lime-pill {
@@ -3367,6 +3379,212 @@ body.theme-govt-active .forecast-card-item {
   font-family: inherit;
   margin-top: 6px;
 }
+
+/* ========================================================
+   LIGHT THEME OVERRIDES FOR UNIVERSAL AGRARIAN SUITE
+   ======================================================== */
+body.theme-light .glass-card,
+body.theme-govt-active .glass-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+}
+
+body.theme-light .module-banner-header,
+body.theme-govt-active .module-banner-header {
+  background: linear-gradient(135deg, #166534, #14532d);
+  border-color: #15803d;
+  box-shadow: 0 8px 24px rgba(22, 101, 52, 0.2);
+}
+
+body.theme-light .module-banner-header .banner-title,
+body.theme-govt-active .module-banner-header .banner-title {
+  color: #ffffff;
+}
+
+body.theme-light .module-banner-header .banner-subtitle,
+body.theme-govt-active .module-banner-header .banner-subtitle {
+  color: #dcfce7;
+}
+
+body.theme-light .subtab-pill,
+body.theme-govt-active .subtab-pill {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #475569;
+}
+
+body.theme-light .subtab-pill:hover,
+body.theme-govt-active .subtab-pill:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+body.theme-light .subtab-pill.active,
+body.theme-govt-active .subtab-pill.active {
+  background: #166534;
+  color: #ffffff;
+  border-color: #166534;
+  box-shadow: 0 4px 14px rgba(22, 101, 52, 0.3);
+}
+
+body.theme-light .feeder-time-box,
+body.theme-govt-active .feeder-time-box,
+body.theme-light .voltage-monitor-box,
+body.theme-govt-active .voltage-monitor-box,
+body.theme-light .hospital-item-card,
+body.theme-govt-active .hospital-item-card,
+body.theme-light .pesticide-step-item,
+body.theme-govt-active .pesticide-step-item,
+body.theme-light .recipe-meta-strip,
+body.theme-govt-active .recipe-meta-strip,
+body.theme-light .ingredient-list li,
+body.theme-govt-active .ingredient-list li,
+body.theme-light .crew-card,
+body.theme-govt-active .crew-card,
+body.theme-light .result-metrics,
+body.theme-govt-active .result-metrics,
+body.theme-light .indicator-pill,
+body.theme-govt-active .indicator-pill,
+body.theme-light .lot-pricing-strip,
+body.theme-govt-active .lot-pricing-strip,
+body.theme-light .financial-breakdown-box,
+body.theme-govt-active .financial-breakdown-box,
+body.theme-light .ivr-result-card,
+body.theme-govt-active .ivr-result-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+body.theme-light .rules-header,
+body.theme-govt-active .rules-header {
+  background: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+body.theme-light .rule-row,
+body.theme-govt-active .rule-row {
+  border-top-color: #e2e8f0;
+}
+
+body.theme-light .rule-do,
+body.theme-govt-active .rule-do {
+  color: #15803d;
+}
+
+body.theme-light .rule-dont,
+body.theme-govt-active .rule-dont {
+  color: #b91c1c;
+  border-left-color: #e2e8f0;
+}
+
+body.theme-light .source-chip,
+body.theme-govt-active .source-chip {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+body.theme-light .custom-data-table th,
+body.theme-govt-active .custom-data-table th {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+body.theme-light .custom-data-table td,
+body.theme-govt-active .custom-data-table td {
+  border-bottom-color: #e2e8f0;
+}
+
+body.theme-light .custom-data-table td strong,
+body.theme-govt-active .custom-data-table td strong {
+  color: #0f172a;
+}
+
+body.theme-light .wage-highlight,
+body.theme-govt-active .wage-highlight {
+  color: #166534;
+}
+
+body.theme-light .lot-input,
+body.theme-govt-active .lot-input,
+body.theme-light .produce-form-grid input,
+body.theme-govt-active .produce-form-grid input,
+body.theme-light .produce-form-grid select,
+body.theme-govt-active .produce-form-grid select,
+body.theme-light .kcc-form input,
+body.theme-govt-active .kcc-form input,
+body.theme-light .kcc-form select,
+body.theme-govt-active .kcc-form select,
+body.theme-light .sim-form input,
+body.theme-govt-active .sim-form input,
+body.theme-light .lot-form-grid input,
+body.theme-govt-active .lot-form-grid input {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+body.theme-light .profit-metric-box,
+body.theme-govt-active .profit-metric-box {
+  background: #ecfdf5;
+  border-color: #86efac;
+}
+
+body.theme-light .profit-val,
+body.theme-govt-active .profit-val {
+  color: #166534;
+}
+
+body.theme-light .limit-hero-box,
+body.theme-govt-active .limit-hero-box {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+body.theme-light .limit-amt,
+body.theme-govt-active .limit-amt {
+  color: #166534;
+}
+
+body.theme-light .sample-lot-chips button,
+body.theme-govt-active .sample-lot-chips button {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+body.theme-light .sample-lot-chips button:hover,
+body.theme-govt-active .sample-lot-chips button:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+body.theme-light .bio-tab-chip,
+body.theme-govt-active .bio-tab-chip {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #475569;
+}
+
+body.theme-light .bio-tab-chip.active,
+body.theme-govt-active .bio-tab-chip.active {
+  background: #166534;
+  color: #ffffff;
+  border-color: #166534;
+}
+
+body.theme-light .btn-call-farmer,
+body.theme-govt-active .btn-call-farmer {
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+}
+
+body.theme-light .btn-call-farmer:hover,
+body.theme-govt-active .btn-call-farmer:hover {
+  background: #e2e8f0;
+}
+
 
 
 
