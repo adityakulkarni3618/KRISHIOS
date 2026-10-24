@@ -2,58 +2,79 @@
 
 import React, { useState, useEffect } from "react";
 
-interface LaborWageRate {
-  district: string;
-  operation_name: string;
-  operation_name_mr: string;
-  daily_wage_inr_male: number;
-  daily_wage_inr_female: number;
-  standard_working_hours: number;
-  is_peak_season_active: boolean;
-  notes_mr: string;
-  notes_en: string;
+interface LaborWageBenchmark {
+  operation_type: string;
+  operation_type_mr: string;
+  daily_wage_standard_inr: number;
+  piece_rate_rate: string;
+  piece_rate_rate_mr: string;
+  season: string;
+  hours_per_day: number;
 }
 
 interface LaborGroup {
   id: string;
-  toli_leader_name: string;
-  contact_phone: string;
-  district: string;
+  leader_name: string;
+  group_size: number;
   taluka: string;
-  crew_size: number;
+  district: string;
+  contact_phone: string;
   specialization: string;
   specialization_mr: string;
-  availability_status: string;
+  available_now: boolean;
+  verified_identity: boolean;
 }
 
-interface InputVerificationResult {
-  lot_number: string;
-  company_name: string;
-  product_name: string;
-  crop_variety: string;
-  manufacturing_date: string;
-  expiry_date: string;
-  germination_pct_guaranteed: number;
-  physical_purity_pct: number;
-  authenticity_status: string;
-  authenticity_message_mr: string;
-  authenticity_message_en: string;
-  verification_source: string;
-}
-
-interface GroundwaterAdvisory {
+interface LaborHubResult {
   district: string;
-  village: string;
-  average_depth_to_water_ft_bgl: number;
-  water_table_trend: string;
-  water_table_trend_mr: string;
-  borewell_yield_potential_gph: number;
-  critical_recharge_months: string;
-  recommended_casing_depth_ft: number;
-  recharge_structure_recommendation_mr: string;
-  recharge_structure_recommendation_en: string;
-  govt_subsidy_scheme: string;
+  prevailing_wages: LaborWageBenchmark[];
+  available_labor_groups: LaborGroup[];
+  guidelines_for_employers: string[];
+  guidelines_for_employers_mr: string[];
   provenance: string;
+  source_citation: string;
+}
+
+interface SeedVerificationResult {
+  is_genuine_format: boolean;
+  status: string;
+  status_mr: string;
+  variety_registered: boolean;
+  recommended_germination_pct: number;
+  maximum_retail_price_notified: number;
+  authenticity_checklist: string[];
+  authenticity_checklist_mr: string[];
+  complaint_helpline: string;
+  provenance: string;
+  source_citation: string;
+}
+
+interface AuthorizedDealer {
+  shop_name: string;
+  proprietor: string;
+  license_number: string;
+  district: string;
+  taluka: string;
+  contact_phone: string;
+  is_active_license: boolean;
+}
+
+interface GroundWaterStatus {
+  district: string;
+  taluka: string;
+  watershed_code: string;
+  aquifer_classification: string;
+  aquifer_classification_mr: string;
+  pre_monsoon_water_level_m: number;
+  post_monsoon_water_level_m: number;
+  recommended_borewell_depth_ft: string;
+  recommended_borewell_depth_ft_mr: string;
+  deep_drilling_risk: string;
+  deep_drilling_risk_mr: string;
+  borewell_recharge_design: string[];
+  borewell_recharge_design_mr: string[];
+  provenance: string;
+  source_citation: string;
 }
 
 interface OperationsHubProps {
@@ -64,26 +85,32 @@ interface OperationsHubProps {
 
 export default function OperationsHubModule({ district, lang, apiUrl }: OperationsHubProps) {
   const [subTab, setSubTab] = useState<"labor" | "seed" | "groundwater">("labor");
-  const [wageRates, setWageRates] = useState<LaborWageRate[]>([]);
-  const [laborGroups, setLaborGroups] = useState<LaborGroup[]>([]);
-  const [groundwater, setGroundwater] = useState<GroundwaterAdvisory | null>(null);
-  const [lotInput, setLotInput] = useState("MAHY-COT-2026-9921");
-  const [verificationResult, setVerificationResult] = useState<InputVerificationResult | null>(null);
+  const [laborData, setLaborData] = useState<LaborHubResult | null>(null);
+  const [dealers, setDealers] = useState<AuthorizedDealer[]>([]);
+  const [groundwater, setGroundwater] = useState<GroundWaterStatus | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Seed Verification form state
+  const [lotInput, setLotInput] = useState("MH-COT-2026-9921");
+  const [cropInput, setCropInput] = useState("Cotton");
+  const [companyInput, setCompanyInput] = useState("Mahabeej Seeds Corp");
+  const [varietyInput, setVarietyInput] = useState("Ajeet 155 BG-II");
+  const [mrpInput, setMrpInput] = useState(864);
+  const [verificationResult, setVerificationResult] = useState<SeedVerificationResult | null>(null);
   const [verifying, setVerifying] = useState(false);
 
   useEffect(() => {
     const fetchOperationsData = async () => {
       setLoading(true);
       try {
-        const [wagesRes, groupsRes, gwRes] = await Promise.all([
-          fetch(`${apiUrl}/operations/labor-hub/rates?district=${encodeURIComponent(district)}`),
-          fetch(`${apiUrl}/operations/labor-hub/groups?district=${encodeURIComponent(district)}`),
-          fetch(`${apiUrl}/operations/groundwater/advisory?district=${encodeURIComponent(district)}`),
+        const [laborRes, dealerRes, gwRes] = await Promise.all([
+          fetch(`${apiUrl}/operations/labor-hub?district=${encodeURIComponent(district)}`),
+          fetch(`${apiUrl}/operations/authorized-dealers?district=${encodeURIComponent(district)}`),
+          fetch(`${apiUrl}/operations/groundwater?district=${encodeURIComponent(district)}`),
         ]);
 
-        if (wagesRes.ok) setWageRates(await wagesRes.json());
-        if (groupsRes.ok) setLaborGroups(await groupsRes.json());
+        if (laborRes.ok) setLaborData(await laborRes.json());
+        if (dealerRes.ok) setDealers(await dealerRes.json());
         if (gwRes.ok) setGroundwater(await gwRes.json());
       } catch (e) {
         console.error("Operations fetch error:", e);
@@ -97,14 +124,20 @@ export default function OperationsHubModule({ district, lang, apiUrl }: Operatio
 
   const handleVerifyInput = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!lotInput) return;
     setVerifying(true);
     try {
-      const res = await fetch(`${apiUrl}/operations/input-verification/verify`, {
+      const res = await fetch(`${apiUrl}/operations/verify-seed`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lot_number: lotInput, dealer_license: "MH-NSK-RET-2025-412" }),
+        body: JSON.stringify({
+          crop: cropInput,
+          company_name: companyInput,
+          variety_name: varietyInput,
+          lot_number: lotInput,
+          mrp_inr: Number(mrpInput),
+        }),
       });
+
       if (res.ok) {
         setVerificationResult(await res.json());
       }
@@ -157,13 +190,13 @@ export default function OperationsHubModule({ district, lang, apiUrl }: Operatio
       {loading && <div className="loading-spinner">⌛ {lang === "mr" ? "माहिती लोड होत आहे..." : "Loading records..."}</div>}
 
       {/* SUBTAB 1: LABOR HUB */}
-      {!loading && subTab === "labor" && (
+      {!loading && subTab === "labor" && laborData && (
         <div className="labor-hub-grid">
           {/* Wage Rates Table */}
           <div className="glass-card wages-table-box">
             <div className="card-top-header">
-              <span className="source-chip">🏛️ Maharashtra Agri Labor Board</span>
-              <span className="info-chip">📍 {district}</span>
+              <span className="source-chip">🏛️ {laborData.provenance} • {laborData.source_citation}</span>
+              <span className="info-chip">📍 {laborData.district}</span>
             </div>
             <h4>📋 {lang === "mr" ? "प्रचलित मजुरी दर (प्रति दिवस)" : "Prevailing Daily Wage Benchmarks"}</h4>
             <div className="table-responsive">
@@ -171,30 +204,31 @@ export default function OperationsHubModule({ district, lang, apiUrl }: Operatio
                 <thead>
                   <tr>
                     <th>{lang === "mr" ? "कामाचा प्रकार" : "Operation"}</th>
-                    <th>{lang === "mr" ? "महिला मजूर" : "Female (₹)"}</th>
-                    <th>{lang === "mr" ? "पुरुष मजूर" : "Male (₹)"}</th>
-                    <th>{lang === "mr" ? "तास" : "Hours"}</th>
-                    <th>{lang === "mr" ? "हंगाम स्थिती" : "Season"}</th>
+                    <th>{lang === "mr" ? "दैनिक दर (८ तास)" : "Daily Wage"}</th>
+                    <th>{lang === "mr" ? "उखळ/नग दर (Piece Rate)" : "Piece Rate"}</th>
+                    <th>{lang === "mr" ? "हंगाम" : "Season"}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {wageRates.map((rate, idx) => (
+                  {laborData.prevailing_wages.map((rate, idx) => (
                     <tr key={idx}>
-                      <td><strong>{lang === "mr" ? rate.operation_name_mr : rate.operation_name}</strong></td>
-                      <td className="wage-highlight">₹{rate.daily_wage_inr_female}</td>
-                      <td className="wage-highlight">₹{rate.daily_wage_inr_male}</td>
-                      <td>{rate.standard_working_hours} hrs</td>
-                      <td>
-                        {rate.is_peak_season_active ? (
-                          <span className="tag-peak">🔥 {lang === "mr" ? "गतीचा काळ (Peak)" : "Peak Surge"}</span>
-                        ) : (
-                          <span className="tag-normal">🟢 {lang === "mr" ? "सामान्य" : "Normal"}</span>
-                        )}
-                      </td>
+                      <td><strong>{lang === "mr" ? rate.operation_type_mr : rate.operation_type}</strong></td>
+                      <td className="wage-highlight">₹{rate.daily_wage_standard_inr}</td>
+                      <td>{lang === "mr" ? rate.piece_rate_rate_mr : rate.piece_rate_rate}</td>
+                      <td><span className="tag-peak">{rate.season}</span></td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            <div style={{ marginTop: 18 }}>
+              <h5>💡 {lang === "mr" ? "शेतकऱ्यांसाठी मजुरी मार्गदर्शक तत्त्वे" : "Guidelines for Employers"}:</h5>
+              <ul style={{ paddingLeft: 18, marginTop: 6, fontSize: 13, lineHeight: 1.6, color: "var(--text-secondary)" }}>
+                {(lang === "mr" ? laborData.guidelines_for_employers_mr : laborData.guidelines_for_employers).map((g, idx) => (
+                  <li key={idx}>{g}</li>
+                ))}
+              </ul>
             </div>
           </div>
 
@@ -202,19 +236,19 @@ export default function OperationsHubModule({ district, lang, apiUrl }: Operatio
           <div className="glass-card labor-groups-box">
             <h4>🤝 {lang === "mr" ? "उपलब्ध शेतमजूर टोळ्या (Contactable Crews)" : "Available Labor Crews"}</h4>
             <div className="groups-list">
-              {laborGroups.map((grp) => (
+              {laborData.available_labor_groups.map((grp) => (
                 <div key={grp.id} className="crew-card">
                   <div className="crew-header">
-                    <span className="crew-leader">👤 {grp.toli_leader_name}</span>
-                    <span className={`crew-badge ${grp.availability_status === "AVAILABLE_NOW" ? "badge-success" : "badge-booked"}`}>
-                      {grp.availability_status === "AVAILABLE_NOW"
+                    <span className="crew-leader">👤 {grp.leader_name}</span>
+                    <span className={`crew-badge ${grp.available_now ? "badge-success" : "badge-booked"}`}>
+                      {grp.available_now
                         ? (lang === "mr" ? "🟢 त्वरित उपलब्ध" : "AVAILABLE")
                         : (lang === "mr" ? "🔴 कामावर व्यस्त" : "BOOKED")}
                     </span>
                   </div>
                   <div className="crew-details">
                     <span>📍 {grp.taluka}, {grp.district}</span>
-                    <span>👥 {grp.crew_size} {lang === "mr" ? "मजूर" : "members"}</span>
+                    <span>👥 {grp.group_size} {lang === "mr" ? "मजूर" : "members"}</span>
                     <span>🌾 {lang === "mr" ? grp.specialization_mr : grp.specialization}</span>
                   </div>
                   <div className="crew-action">
@@ -239,75 +273,111 @@ export default function OperationsHubModule({ district, lang, apiUrl }: Operatio
                 ? "पोत्यावरील बारकोड / क्यूआर कोड किंवा लॉट क्रमांक टाकून शासनमान्य अस्सलता व उगवण क्षमता तपासा."
                 : "Enter the Lot Number printed on the seed bag to verify Mahabeej / Seed Act certified purity."}
             </p>
-            <form onSubmit={handleVerifyInput} className="lot-form">
-              <input
-                type="text"
-                value={lotInput}
-                onChange={(e) => setLotInput(e.target.value)}
-                placeholder="उदा. MAHY-COT-2026-9921 किंवा BAY-NAT-2026-118"
-                className="lot-input"
-              />
-              <button type="submit" className="verify-btn" disabled={verifying}>
-                {verifying ? "तपासत आहे..." : (lang === "mr" ? "अस्सलता पडताळा" : "Verify Authenticity")}
-              </button>
+            <form onSubmit={handleVerifyInput} className="lot-form-grid">
+              <div className="form-group">
+                <label>{lang === "mr" ? "लॉट क्रमांक (Lot Number)" : "Lot Number"}</label>
+                <input
+                  type="text"
+                  value={lotInput}
+                  onChange={(e) => setLotInput(e.target.value)}
+                  placeholder="उदा. MH-COT-2026-9921"
+                  className="lot-input"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>{lang === "mr" ? "कंपनीचे नाव" : "Company"}</label>
+                <input type="text" value={companyInput} onChange={(e) => setCompanyInput(e.target.value)} required />
+              </div>
+              <div className="form-group">
+                <label>{lang === "mr" ? "वाण / जात" : "Variety"}</label>
+                <input type="text" value={varietyInput} onChange={(e) => setVarietyInput(e.target.value)} required />
+              </div>
+              <div className="form-group">
+                <label>{lang === "mr" ? "एमआरपी किंमत (₹)" : "MRP Price (₹)"}</label>
+                <input type="number" value={mrpInput} onChange={(e) => setMrpInput(Number(e.target.value))} required />
+              </div>
+              <div className="form-actions" style={{ gridColumn: "1 / -1" }}>
+                <button type="submit" className="verify-btn" disabled={verifying}>
+                  {verifying ? "तपासत आहे..." : (lang === "mr" ? "अस्सलता पडताळा" : "Verify Authenticity")}
+                </button>
+              </div>
             </form>
 
             <div className="sample-lot-chips">
               <span className="sample-lbl">{lang === "mr" ? "चाचणीसाठी लॉट:" : "Sample Lots:"}</span>
-              <button type="button" onClick={() => setLotInput("MAHY-COT-2026-9921")}>MAHY-COT (Genuine)</button>
-              <button type="button" onClick={() => setLotInput("BAY-NAT-2026-118")}>BAY-NAT (Fungicide)</button>
-              <button type="button" onClick={() => setLotInput("FAKE-LOT-000")}>FAKE-LOT (Spurious)</button>
+              <button type="button" onClick={() => setLotInput("MH-COT-2026-9921")}>MH-COT-2026-9921 (Certified Genuine)</button>
+              <button type="button" onClick={() => setLotInput("MAHY-SOY-2026-4412")}>MAHY-SOY-2026-4412 (Soybean)</button>
+              <button type="button" onClick={() => setLotInput("FAKE-LOT-0000-XYZ")}>FAKE-LOT (Spurious Alert)</button>
             </div>
           </div>
 
           {verificationResult && (
-            <div className={`glass-card result-card ${verificationResult.authenticity_status === "GENUINE_CERTIFIED" ? "card-verified" : "card-danger"}`}>
+            <div className={`glass-card result-card ${verificationResult.is_genuine_format ? "card-verified" : "card-danger"}`}>
               <div className="result-header">
                 <div>
-                  <span className="source-chip">🏛️ {verificationResult.verification_source}</span>
-                  <h3 className="product-title">{verificationResult.company_name} - {verificationResult.product_name}</h3>
-                  <div className="product-variety">🌾 {verificationResult.crop_variety}</div>
+                  <span className="source-chip">🏛️ {verificationResult.provenance} • {verificationResult.source_citation}</span>
+                  <h3 className="product-title">{companyInput} - {varietyInput}</h3>
+                  <div className="product-variety">🌾 Lot: <strong>{lotInput}</strong></div>
                 </div>
                 <div className="auth-stamp">
-                  {verificationResult.authenticity_status === "GENUINE_CERTIFIED" ? (
-                    <span className="stamp-valid">✅ {lang === "mr" ? "१००% अस्सल बियाणे" : "GENUINE & CERTIFIED"}</span>
+                  {verificationResult.is_genuine_format ? (
+                    <span className="stamp-valid">✅ {lang === "mr" ? verificationResult.status_mr : verificationResult.status}</span>
                   ) : (
-                    <span className="stamp-invalid">⚠️ {lang === "mr" ? "संशयास्पद / बोगस इशारा" : "SPURIOUS / UNVERIFIED"}</span>
+                    <span className="stamp-invalid">⚠️ {lang === "mr" ? verificationResult.status_mr : verificationResult.status}</span>
                   )}
                 </div>
               </div>
 
               <div className="result-metrics">
                 <div className="metric-box">
-                  <span className="m-label">{lang === "mr" ? "उगवण क्षमता (Germination)" : "Germination Rate"}</span>
-                  <span className="m-val">{verificationResult.germination_pct_guaranteed}%</span>
+                  <span className="m-label">{lang === "mr" ? "किमान उगवण क्षमता" : "Germination Rate"}</span>
+                  <span className="m-val">{verificationResult.recommended_germination_pct}%</span>
                 </div>
                 <div className="metric-box">
-                  <span className="m-label">{lang === "mr" ? "भौतिक शुद्धता (Purity)" : "Physical Purity"}</span>
-                  <span className="m-val">{verificationResult.physical_purity_pct}%</span>
+                  <span className="m-label">{lang === "mr" ? "शासन अधिसूचित कमाल भाव" : "Notified Max MRP"}</span>
+                  <span className="m-val">₹{verificationResult.maximum_retail_price_notified}</span>
                 </div>
                 <div className="metric-box">
-                  <span className="m-label">{lang === "mr" ? "उत्पादन तारीख" : "Mfg Date"}</span>
-                  <span className="m-val">{verificationResult.manufacturing_date}</span>
-                </div>
-                <div className="metric-box">
-                  <span className="m-label">{lang === "mr" ? "समाप्ती तारीख" : "Expiry Date"}</span>
-                  <span className="m-val">{verificationResult.expiry_date}</span>
+                  <span className="m-label">{lang === "mr" ? "बियाणे कायदा नोंदणी" : "Seed Act Status"}</span>
+                  <span className="m-val">{verificationResult.variety_registered ? "नोंदणीकृत (Registered)" : "अनोंदणीकृत"}</span>
                 </div>
               </div>
 
-              <div className="auth-message-box">
-                <p>{lang === "mr" ? verificationResult.authenticity_message_mr : verificationResult.authenticity_message_en}</p>
+              <div style={{ marginTop: 14 }}>
+                <h5>📋 {lang === "mr" ? "खरेदी करताना तपासायच्या बाबी" : "Authenticity Checklist"}:</h5>
+                <ul style={{ paddingLeft: 18, marginTop: 6, fontSize: 13, color: "var(--text-secondary)" }}>
+                  {(lang === "mr" ? verificationResult.authenticity_checklist_mr : verificationResult.authenticity_checklist).map((chk, idx) => (
+                    <li key={idx}>{chk}</li>
+                  ))}
+                </ul>
               </div>
 
-              {verificationResult.authenticity_status !== "GENUINE_CERTIFIED" && (
-                <div className="complaint-action-strip">
-                  <span>🚨 {lang === "mr" ? "बोगस बियाणे विकणाऱ्याविरुद्ध तक्रार करा:" : "Report Spurious Input Dealer:"}</span>
-                  <a href="tel:02025537553" className="report-btn">
-                    📞 {lang === "mr" ? "गुण नियंत्रण कक्ष (020-25537553)" : "Quality Control Inspector"}
-                  </a>
-                </div>
-              )}
+              <div className="complaint-action-strip">
+                <span>🚨 {lang === "mr" ? "बोगस बियाणे विकणाऱ्याविरुद्ध तक्रार करा:" : "Report Spurious Input Dealer:"}</span>
+                <a href={`tel:${verificationResult.complaint_helpline}`} className="report-btn">
+                  📞 {lang === "mr" ? `कृषी विभाग तक्रार कक्ष (${verificationResult.complaint_helpline})` : `Agri Dept Helpline (${verificationResult.complaint_helpline})`}
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Authorized Dealers in District */}
+          {dealers.length > 0 && (
+            <div className="glass-card dealers-box" style={{ marginTop: 20 }}>
+              <h4>🏛️ {lang === "mr" ? `जिल्ह्यातील परवानाधारक कृषी सेवा केंद्रे (${district})` : `Authorized Dealers in ${district}`}</h4>
+              <div className="dealers-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 14, marginTop: 12 }}>
+                {dealers.map((dlr, idx) => (
+                  <div key={idx} style={{ background: "var(--bg-card-subtle)", padding: 12, borderRadius: 8, border: "1px solid var(--border-card)" }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: "var(--text-primary)" }}>{dlr.shop_name}</div>
+                    <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>👤 {dlr.proprietor} • 📍 {dlr.taluka}</div>
+                    <div style={{ fontSize: 11, color: "var(--accent-lime)", marginTop: 4 }}>📜 परवाना: {dlr.license_number}</div>
+                    <a href={`tel:${dlr.contact_phone}`} style={{ display: "inline-block", marginTop: 8, fontSize: 12, color: "#38bdf8", textDecoration: "none" }}>
+                      📞 {dlr.contact_phone}
+                    </a>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -318,60 +388,48 @@ export default function OperationsHubModule({ district, lang, apiUrl }: Operatio
         <div className="groundwater-grid">
           <div className="glass-card gw-stats-card">
             <div className="card-top-header">
-              <span className="source-chip">🏛️ {groundwater.provenance}</span>
-              <span className="info-chip">📍 {groundwater.village}, {groundwater.district}</span>
+              <span className="source-chip">🏛️ {groundwater.provenance} • {groundwater.source_citation}</span>
+              <span className="info-chip">📍 {groundwater.taluka}, {groundwater.district}</span>
             </div>
 
             <h3 className="gw-depth-val">
-              {groundwater.average_depth_to_water_ft_bgl} <span className="sub-unit">ft bgl</span>
+              {groundwater.pre_monsoon_water_level_m} <span className="sub-unit">मीटर भूजल खोली</span>
             </h3>
-            <p className="gw-depth-lbl">{lang === "mr" ? "भूजलाची सरासरी खोली (पाण्याचा थर)" : "Average Static Water Table Depth"}</p>
+            <p className="gw-depth-lbl">{lang === "mr" ? "पावसाळ्यापूर्वीची सरासरी भूजल पातळी (भूगर्भात)" : "Pre-Monsoon Static Water Table"}</p>
 
             <div className="gw-indicators">
               <div className="indicator-pill">
-                <span>{lang === "mr" ? "पाणी पातळी कल" : "Water Trend"}:</span>
-                <strong>{lang === "mr" ? groundwater.water_table_trend_mr : groundwater.water_table_trend}</strong>
+                <span>{lang === "mr" ? "पाणलोट क्षेत्र कोड" : "Watershed Code"}:</span>
+                <strong>{groundwater.watershed_code}</strong>
               </div>
               <div className="indicator-pill">
-                <span>{lang === "mr" ? "बोअरवेल अंदाज पाणी" : "Expected Yield"}:</span>
-                <strong>{groundwater.borewell_yield_potential_gph} GPH (गॅलन/तास)</strong>
+                <span>{lang === "mr" ? "भूजल शोषण स्थिती" : "Aquifer Classification"}:</span>
+                <strong>{lang === "mr" ? groundwater.aquifer_classification_mr : groundwater.aquifer_classification}</strong>
               </div>
               <div className="indicator-pill">
-                <span>{lang === "mr" ? "केसिंग पाईप शिफारस" : "Recommended Casing"}:</span>
-                <strong>{groundwater.recommended_casing_depth_ft} ft</strong>
+                <span>{lang === "mr" ? "पावसाळ्यानंतरची पातळी" : "Post-Monsoon Depth"}:</span>
+                <strong>{groundwater.post_monsoon_water_level_m} मीटर</strong>
+              </div>
+              <div className="indicator-pill">
+                <span>{lang === "mr" ? "शिफारस केलेली बोअरवेल खोली" : "Recommended Depth"}:</span>
+                <strong>{lang === "mr" ? groundwater.recommended_borewell_depth_ft_mr : groundwater.recommended_borewell_depth_ft}</strong>
               </div>
             </div>
 
-            <div className="recharge-tip-box">
-              <div className="tip-head">💧 {lang === "mr" ? "बोअरवेल पुनर्भरण (Recharge) उपाय" : "Artificial Recharge Protocol"}</div>
-              <p className="tip-body">{lang === "mr" ? groundwater.recharge_structure_recommendation_mr : groundwater.recharge_structure_recommendation_en}</p>
-            </div>
-
-            <div className="subsidy-badge-strip">
-              <span>🏛️ {lang === "mr" ? "१००% शासकीय अनुदान योजना:" : "Govt Subsidy Linkage:"}</span>
-              <strong>{groundwater.govt_subsidy_scheme}</strong>
+            <div className="recharge-tip-box" style={{ background: "rgba(239, 68, 68, 0.1)", borderLeft: "3px solid #ef4444", padding: 12, borderRadius: 6, margin: "14px 0" }}>
+              <div className="tip-head" style={{ fontWeight: 800, color: "#f87171", fontSize: 13 }}>⚠️ {lang === "mr" ? "अतिखोल बोअरवेल धोका इशारा" : "Deep Drilling Hazard"}:</div>
+              <p className="tip-body" style={{ fontSize: 13, marginTop: 4, color: "var(--text-primary)" }}>{lang === "mr" ? groundwater.deep_drilling_risk_mr : groundwater.deep_drilling_risk}</p>
             </div>
           </div>
 
           <div className="glass-card recharge-diagram-card">
             <h4>📐 {lang === "mr" ? "बोअरवेल छताचे पाणी पुनर्भरण खड्डा (Recharge Pit)" : "Standard Aquifer Recharge Pit Design"}</h4>
             <div className="recharge-layers">
-              <div className="layer-item filter-sand">
-                <span className="l-name">1️⃣ {lang === "mr" ? "बारीक वाळूचा थर (६ इंच)" : "Fine River Sand Layer (6 in)"}</span>
-                <span className="l-purpose">{lang === "mr" ? "गाळ व कचरा गाळणे" : "Filters silt"}</span>
-              </div>
-              <div className="layer-item filter-gravel">
-                <span className="l-name">2️⃣ {lang === "mr" ? "बारीक खडी/बजरी (१२ इंच)" : "Gravel & Pebbles (12 in)"}</span>
-                <span className="l-purpose">{lang === "mr" ? "मध्यम कण रोखणे" : "Filters medium particulates"}</span>
-              </div>
-              <div className="layer-item filter-boulder">
-                <span className="l-name">3️⃣ {lang === "mr" ? "मोठे दगड/दगडी गोटे (१८ इंच)" : "Boulders & Charcoal (18 in)"}</span>
-                <span className="l-purpose">{lang === "mr" ? "पाण्याचा वेग नियंत्रित करणे" : "Flow dispersion"}</span>
-              </div>
-              <div className="layer-item casing-mesh">
-                <span className="l-name">4️⃣ {lang === "mr" ? "नायलॉन जाळी वेढलेला छिद्राचा पाईप" : "Slotted Casing with SS Mesh"}</span>
-                <span className="l-purpose">{lang === "mr" ? "स्वच्छ पाणी भूगर्भात सोडणे" : "Direct deep injection"}</span>
-              </div>
+              {groundwater.borewell_recharge_design.map((step, idx) => (
+                <div key={idx} className={`layer-item ${idx === 0 ? "filter-sand" : idx === 1 ? "filter-gravel" : idx === 2 ? "filter-boulder" : "casing-mesh"}`}>
+                  <span className="l-name">{lang === "mr" ? groundwater.borewell_recharge_design_mr[idx] || step : step}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
