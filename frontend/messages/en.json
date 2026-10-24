@@ -94,5 +94,9 @@
   "nav_remote_sensing": "🛰️ Satellite NDVI Health",
   "nav_postharvest": "📦 Warehouses & e-NWR",
   "nav_assistant": "🎙️ AI Krishi Mitra Voice",
-  "nav_satbara": "📄 7/12 Land Record"
+  "nav_satbara": "📄 7/12 Land Record",
+  "nav_rural_ops": "⚡ Electricity & SOS",
+  "nav_operations_hub": "👥 Labor & Water",
+  "nav_kisan_bazaar": "🤝 Direct Bazaar & PMFME",
+  "nav_kcc_legal": "💳 KCC & Kisan Nyay"
 }

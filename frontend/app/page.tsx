@@ -12,6 +12,10 @@ import RemoteSensingModule from "./components/RemoteSensingModule";
 import PostharvestModule from "./components/PostharvestModule";
 import AssistantVoiceModule from "./components/AssistantVoiceModule";
 import SatbaraModule from "./components/SatbaraModule";
+import RuralOpsModule from "./components/RuralOpsModule";
+import OperationsHubModule from "./components/OperationsHubModule";
+import KisanBazaarModule from "./components/KisanBazaarModule";
+import KCCAndLegalModule from "./components/KCCAndLegalModule";
 import enMessages from "../messages/en.json";
 import mrMessages from "../messages/mr.json";
 import hiMessages from "../messages/hi.json";
@@ -850,6 +854,24 @@ export default function Home() {
               >
                 Schemes 3D
               </button>
+              <button
+                className={`dribbble-nav-link ${activeTab === "rural_ops" ? "active" : ""}`}
+                onClick={() => {
+                  setActiveTab("rural_ops");
+                  document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                ⚡ {t("nav_rural_ops")}
+              </button>
+              <button
+                className={`dribbble-nav-link ${activeTab === "kisan_bazaar" ? "active" : ""}`}
+                onClick={() => {
+                  setActiveTab("kisan_bazaar");
+                  document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                🤝 {t("nav_kisan_bazaar")}
+              </button>
             </div>
 
             <div className="dribbble-nav-right">
@@ -1102,6 +1124,54 @@ export default function Home() {
                     </div>
                     <div className="kisan-status-badge safe">
                       🖨️ {lang === "mr" ? "कार्ड डाऊनलोड करा" : "PRINT HEALTH CARD"}
+                    </div>
+                  </div>
+
+                  {/* Card 9: 3-Phase Electricity Schedule */}
+                  <div className="kisan-card" onClick={() => { setActiveTab("rural_ops"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
+                    <div className="kisan-card-icon" style={{ background: "rgba(234, 179, 8, 0.2)" }}>⚡</div>
+                    <div className="kisan-card-title">{lang === "mr" ? "३-फेज वीज वेळापत्रक" : "3-Phase Power Roster"}</div>
+                    <div className="kisan-card-desc">
+                      {lang === "mr" ? "महावितरण फिडरनुसार दिवसा/रात्रीचे ८ तास वीज वेळापत्रक व व्होल्टेज आरोग्य तपासा." : "MSEDCL 3-phase rural feeder active hours, voltage quality, and motor protection tips."}
+                    </div>
+                    <div className="kisan-status-badge safe">
+                      🔌 {lang === "mr" ? "वीज वेळ तपासा" : "CHECK FEEDER SHIFT"}
+                    </div>
+                  </div>
+
+                  {/* Card 10: Snakebite & Poison SOS */}
+                  <div className="kisan-card" onClick={() => { setActiveTab("rural_ops"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
+                    <div className="kisan-card-icon" style={{ background: "rgba(239, 68, 68, 0.2)" }}>🚨</div>
+                    <div className="kisan-card-title">{lang === "mr" ? "सर्पदंश व विषबाधा SOS" : "Snakebite & Poison SOS"}</div>
+                    <div className="kisan-card-desc">
+                      {lang === "mr" ? "१०८ रुग्णवाहिका थेट संपर्क, तालुक्यातील ASV सर्पदंश लस साठा व प्रथमोपचार मार्गदर्शन." : "108 ambulance one-tap call, certified Anti-Snake Venom (ASV) hospital locator."}
+                    </div>
+                    <div className="kisan-status-badge danger">
+                      🏥 {lang === "mr" ? "तातडीचे उपचार केंद्र" : "EMERGENCY ASV"}
+                    </div>
+                  </div>
+
+                  {/* Card 11: Direct Farm Bazaar */}
+                  <div className="kisan-card" onClick={() => { setActiveTab("kisan_bazaar"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
+                    <div className="kisan-card-icon" style={{ background: "rgba(34, 197, 94, 0.2)" }}>🤝</div>
+                    <div className="kisan-card-title">{lang === "mr" ? "थेट शेतकरी बाजार (०% आडत)" : "Direct Kisan Bazaar"}</div>
+                    <div className="kisan-card-desc">
+                      {lang === "mr" ? "दलाल आणि अडत्यांशिवाय थेट व्यापारी व ग्राहकांना शेतीमाल विका किंवा डाळ मिल योजना पहा." : "Trade produce directly at 0% commission or explore PMFME 35% processing subsidy."}
+                    </div>
+                    <div className="kisan-status-badge safe">
+                      🌾 {lang === "mr" ? "थेट माल विका" : "DIRECT TRADE"}
+                    </div>
+                  </div>
+
+                  {/* Card 12: KCC Loan & Farm Rights */}
+                  <div className="kisan-card" onClick={() => { setActiveTab("kcc_legal"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
+                    <div className="kisan-card-icon" style={{ background: "rgba(56, 189, 248, 0.2)" }}>💳</div>
+                    <div className="kisan-card-title">{lang === "mr" ? "४% केसीसी कर्ज व शेतरस्ता हक्क" : "4% KCC & Farm Rights"}</div>
+                    <div className="kisan-card-desc">
+                      {lang === "mr" ? "४% सवलतीचे पीक कर्ज डॉसियर तयार करा किंवा शेतरस्ता अडवल्यास मामलतदार कोर्ट अर्ज करा." : "RBI 4% subsidized crop loan dossier & Mamlatdar Courts Act Sec 143 road dispute remedies."}
+                    </div>
+                    <div className="kisan-status-badge safe">
+                      ⚖️ {lang === "mr" ? "हक्क व अर्ज मिळवा" : "KCC & LEGAL AID"}
                     </div>
                   </div>
                 </div>
@@ -1727,6 +1797,30 @@ export default function Home() {
                 onClick={() => setActiveTab("satbara")}
               >
                 📄 {t("nav_satbara")}
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "rural_ops" ? "active" : ""}`}
+                onClick={() => setActiveTab("rural_ops")}
+              >
+                ⚡ {t("nav_rural_ops")}
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "operations_hub" ? "active" : ""}`}
+                onClick={() => setActiveTab("operations_hub")}
+              >
+                👥 {t("nav_operations_hub")}
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "kisan_bazaar" ? "active" : ""}`}
+                onClick={() => setActiveTab("kisan_bazaar")}
+              >
+                🤝 {t("nav_kisan_bazaar")}
+              </button>
+              <button
+                className={`console-tab-btn ${activeTab === "kcc_legal" ? "active" : ""}`}
+                onClick={() => setActiveTab("kcc_legal")}
+              >
+                💳 {t("nav_kcc_legal")}
               </button>
               <button
                 className={`console-tab-btn ${activeTab === "overview" || activeTab === "weather" ? "active" : ""}`}
@@ -2625,6 +2719,42 @@ export default function Home() {
               <SatbaraModule
                 district={selectedDistrict}
                 lang={lang}
+              />
+            )}
+
+            {/* TAB: Rural Ops, Feeder Electricity & Snakebite SOS */}
+            {activeTab === "rural_ops" && (
+              <RuralOpsModule
+                district={selectedDistrict}
+                lang={lang}
+                apiUrl={API_URL}
+              />
+            )}
+
+            {/* TAB: Operations, Labor Wages & Groundwater */}
+            {activeTab === "operations_hub" && (
+              <OperationsHubModule
+                district={selectedDistrict}
+                lang={lang}
+                apiUrl={API_URL}
+              />
+            )}
+
+            {/* TAB: Direct Kisan Bazaar & PMFME Food Processing */}
+            {activeTab === "kisan_bazaar" && (
+              <KisanBazaarModule
+                district={selectedDistrict}
+                lang={lang}
+                apiUrl={API_URL}
+              />
+            )}
+
+            {/* TAB: KCC Crop Loan & Kisan Nyay Legal */}
+            {activeTab === "kcc_legal" && (
+              <KCCAndLegalModule
+                district={selectedDistrict}
+                lang={lang}
+                apiUrl={API_URL}
               />
             )}
           </section>
