@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from pydantic_settings import BaseSettings
 
 
@@ -14,3 +15,11 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+def require_demo_mode():
+    if not settings.demo_mode:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This simulated module is disabled when DEMO_MODE is false.",
+        )
