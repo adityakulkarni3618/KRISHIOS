@@ -39,6 +39,8 @@ interface SeedVerificationResult {
   is_genuine_format: boolean;
   status: string;
   status_mr: string;
+  message?: string;
+  message_mr?: string;
   variety_registered: boolean;
   recommended_germination_pct: number;
   maximum_retail_price_notified: number;
@@ -299,16 +301,16 @@ export default function OperationsHubModule({ district, lang, apiUrl }: Operatio
               </div>
               <div className="form-actions" style={{ gridColumn: "1 / -1" }}>
                 <button type="submit" className="verify-btn" disabled={verifying}>
-                  {verifying ? "तपासत आहे..." : (lang === "mr" ? "अस्सलता पडताळा" : "Verify Authenticity")}
+                  {verifying ? (lang === "mr" ? "तपासत आहे..." : "Checking...") : (lang === "mr" ? "लॉट फॉरमॅट तपासा" : "Check Lot Format")}
                 </button>
               </div>
             </form>
 
             <div className="sample-lot-chips">
               <span className="sample-lbl">{lang === "mr" ? "चाचणीसाठी लॉट:" : "Sample Lots:"}</span>
-              <button type="button" onClick={() => setLotInput("MH-COT-2026-9921")}>MH-COT-2026-9921 (Certified Genuine)</button>
+              <button type="button" onClick={() => setLotInput("MH-COT-2026-9921")}>MH-COT-2026-9921 (Plausible Format)</button>
               <button type="button" onClick={() => setLotInput("MAHY-SOY-2026-4412")}>MAHY-SOY-2026-4412 (Soybean)</button>
-              <button type="button" onClick={() => setLotInput("FAKE-LOT-0000-XYZ")}>FAKE-LOT (Spurious Alert)</button>
+              <button type="button" onClick={() => setLotInput("12")}>12 (Invalid Short Format)</button>
             </div>
           </div>
 
@@ -322,11 +324,16 @@ export default function OperationsHubModule({ district, lang, apiUrl }: Operatio
                 </div>
                 <div className="auth-stamp">
                   {verificationResult.is_genuine_format ? (
-                    <span className="stamp-valid">✅ {lang === "mr" ? verificationResult.status_mr : verificationResult.status}</span>
+                    <span className="stamp-valid">📋 {lang === "mr" ? verificationResult.status_mr : verificationResult.status}</span>
                   ) : (
                     <span className="stamp-invalid">⚠️ {lang === "mr" ? verificationResult.status_mr : verificationResult.status}</span>
                   )}
                 </div>
+              </div>
+
+              {/* Mandatory Format Check Disclaimer Notice */}
+              <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(234, 179, 8, 0.12)", border: "1px solid rgba(234, 179, 8, 0.4)", borderRadius: 8, fontSize: 13, color: "#fbbf24", lineHeight: 1.4 }}>
+                ⚠️ <strong>{lang === "mr" ? "महत्त्वाची सूचना:" : "Notice:"}</strong> {lang === "mr" ? (verificationResult.message_mr || verificationResult.message) : verificationResult.message}
               </div>
 
               <div className="result-metrics">

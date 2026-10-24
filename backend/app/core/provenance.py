@@ -5,6 +5,7 @@ from enum import Enum
 class Provenance(str, Enum):
     LIVE = "LIVE"
     HISTORICAL = "HISTORICAL"
+    CURATED_REFERENCE = "CURATED_REFERENCE"
     ESTIMATED = "ESTIMATED"
     SIMULATED = "SIMULATED"
     USER_PROVIDED = "USER_PROVIDED"
