@@ -2178,11 +2178,36 @@ export default function Home() {
                       🔮 {lang === "mr" ? "काल्पनिक किंमत परिस्थिती (सिम्युलेटेड)" : "Illustrative Price Scenario (Simulated Demo)"}
                     </button>
                   </div>
-                  <span className="prov-badge simulated" style={{ background: "#f59e0b", color: "#000", fontWeight: 800 }}>SIMULATED DEMO</span>
+                  {mandiSubTab === "rates" ? (
+                    <span className="prov-badge curated" style={{ background: "#22c55e", color: "#000", fontWeight: 800 }}>CURATED REFERENCE (19-Oct-2026)</span>
+                  ) : (
+                    <span className="prov-badge simulated" style={{ background: "#f59e0b", color: "#000", fontWeight: 800 }}>SIMULATED DEMO</span>
+                  )}
                 </div>
 
                 {mandiSubTab === "rates" ? (
                   <div>
+                    {/* Sample reference disclaimer note */}
+                    <div style={{
+                      background: "rgba(34, 197, 94, 0.08)",
+                      border: "1px solid rgba(34, 197, 94, 0.3)",
+                      borderRadius: 8,
+                      padding: "8px 14px",
+                      marginBottom: 16,
+                      fontSize: 12,
+                      color: "#86efac",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8
+                    }}>
+                      <span>ℹ️</span>
+                      <span>
+                        {lang === "mr"
+                          ? "नमुना संदर्भ भाव (दिनांक: १९ ऑक्टोबर २०२६) - हे थेट चालू दर नाहीत. अधिकृत MSAMB बुलेटिनवर आधारित."
+                          : "Sample reference prices as of 19-Oct-2026 from MSAMB daily bulletins. Not live streaming rates."}
+                      </span>
+                    </div>
+
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                       <input
                         type="text"

@@ -18,6 +18,8 @@ interface FarmProduceListing {
   contact_phone: string;
   whatsapp_enabled: boolean;
   fpo_verified: boolean;
+  provenance?: string;
+  warning?: string;
 }
 
 interface ProcessingUnitProfile {
@@ -201,10 +203,37 @@ export default function KisanBazaarModule({ district, lang, apiUrl }: KisanBazaa
       {/* SUBTAB 1: PRODUCE LISTINGS */}
       {!loading && subTab === "bazaar" && (
         <div className="bazaar-listings-grid">
+          {/* Simulated Disclaimer Banner */}
+          <div style={{
+            gridColumn: "1 / -1",
+            background: "rgba(234, 179, 8, 0.12)",
+            border: "1.5px solid #eab308",
+            borderRadius: "var(--radius-md, 12px)",
+            padding: "10px 14px",
+            marginBottom: 10,
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            width: "100%"
+          }}>
+            <span style={{ fontSize: 20 }}>⚠️</span>
+            <div style={{ fontSize: 12, color: "#facc15", fontWeight: 600 }}>
+              {lang === "mr"
+                ? "सिम्युलेटेड शेतकरी बाजार (SIMULATED): ही प्रात्यक्षिक सूची आहे. थेट शेतकरी-खरेदीदार प्रणाली तपासण्यासाठी."
+                : "SIMULATED MARKETPLACE: Demonstration listings for platform testing only. Direct farmer contacts shown are mock samples."}
+            </div>
+            <span style={{ marginLeft: "auto", background: "#eab308", color: "#000", fontSize: 10, fontWeight: 900, padding: "2px 8px", borderRadius: 4 }}>
+              SIMULATED
+            </span>
+          </div>
+
           {listings.map((item) => (
             <div key={item.id} className="glass-card produce-lot-card">
               <div className="lot-card-top">
                 <span className="source-chip">📍 {item.village}, {item.taluka}, {item.district}</span>
+                <span className="source-chip" style={{ background: "rgba(234, 179, 8, 0.2)", color: "#facc15", fontWeight: 700 }}>
+                  🟡 SIMULATED
+                </span>
                 {item.fpo_verified && <span className="organic-chip" style={{ background: "rgba(34, 197, 94, 0.15)", color: "#4ade80", padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 700 }}>✓ FPO Verified</span>}
               </div>
 
