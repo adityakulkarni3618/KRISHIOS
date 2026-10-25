@@ -13,8 +13,25 @@ from app.core.provenance import Provenance
 
 
 class PowerShift(str, Enum):
-    DAY_SHIFT = "day_shift"        # 8:00 AM to 4:00 PM (8 Hours)
-    NIGHT_SHIFT = "night_shift"    # 11:00 PM to 7:00 AM (8 Hours)
+    DAY_SHIFT = "day_shift"        # 08:00 AM to 04:00 PM (8 Hours)
+    NIGHT_SHIFT = "night_shift"    # 11:00 PM to 07:00 AM (8 Hours)
+
+
+# Single canonical source of truth for MSEDCL 8-hour agricultural rotational shifts
+STANDARD_SHIFT_SCHEDULE: Dict[PowerShift, Dict[str, str]] = {
+    PowerShift.DAY_SHIFT: {
+        "shift_hours": "08:00 AM to 04:00 PM (Active)",
+        "shift_hours_mr": "सकाळी ०८:०० ते दुपारी ०४:०० (सुरू आहे)",
+        "rotation": "Next Monday (Rotating to Night Shift: 11:00 PM to 07:00 AM)",
+        "rotation_mr": "पुढील सोमवार (रात्रपाळी: रात्री ११:०० ते सकाळी ०७:००)",
+    },
+    PowerShift.NIGHT_SHIFT: {
+        "shift_hours": "11:00 PM to 07:00 AM (Upcoming Night)",
+        "shift_hours_mr": "रात्री ११:०० ते सकाळी ०७:०० (रात्रपाळी)",
+        "rotation": "Next Monday (Rotating to Day Shift: 08:00 AM to 04:00 PM)",
+        "rotation_mr": "पुढील सोमवार (दिवसपाळी: सकाळी ०८:०० ते दुपारी ०४:००)",
+    },
+}
 
 
 class FeederScheduleItem(BaseModel):
@@ -31,19 +48,18 @@ class FeederScheduleItem(BaseModel):
     irrigation_advisory: str
     irrigation_advisory_mr: str
     helpline_number: str
-    provenance: Provenance = Provenance.HISTORICAL
-    source_citation: str
+    schedule_note: str = "Sample data - Schedules vary by feeder. Confirm with your local MSEDCL office."
+    schedule_note_mr: str = "नमुना माहिती - वेळापत्रक प्रत्येक फिडरनुसार बदलते. कृपया आपल्या स्थानिक महावितरण (MSEDCL) कार्यालयातून खात्री करा."
+    provenance: Provenance = Provenance.CURATED_REFERENCE
+    source_citation: str = "MahaVitaran (MSEDCL) Agri Feeder Roster Guidelines (Sample Reference)"
 
 
-# Baseline feeder schedules for Maharashtra agricultural clusters
+# Baseline sample feeder schedules for Maharashtra agricultural clusters
 DISTRICT_FEEDER_SCHEDULES: Dict[str, Dict] = {
     "nashik": {
         "substation": "Dindori 33/11 kV Substation",
         "feeder": "Agritech Dindori Rural-04 Feeder",
         "shift": PowerShift.DAY_SHIFT,
-        "shift_hours": "08:00 AM to 04:00 PM (Active)",
-        "shift_hours_mr": "सकाळी ०८:०० ते दुपारी ०४:०० (सुरू आहे)",
-        "rotation": "Next Monday (Rotating to Night Shift: 11 PM to 7 AM)",
         "voltage": 412,
         "health": "Optimal Normal (सुरक्षित व्होल्टेज)",
         "advisory_en": "3-Phase power is currently ACTIVE. Run drip irrigation and recharge farm ponds now during daylight hours.",
@@ -53,9 +69,6 @@ DISTRICT_FEEDER_SCHEDULES: Dict[str, Dict] = {
         "substation": "Baramati Rural 33/11 kV Substation",
         "feeder": "Malegaon Khurd Agri Feeder",
         "shift": PowerShift.NIGHT_SHIFT,
-        "shift_hours": "11:00 PM to 07:00 AM (Upcoming Night)",
-        "shift_hours_mr": "रात्री ११:०० ते सकाळी ०७:०० (रात्रपाळी)",
-        "rotation": "Next Monday (Rotating to Day Shift: 8 AM to 4 PM)",
         "voltage": 408,
         "health": "Optimal Normal (सुरक्षित व्होल्टेज)",
         "advisory_en": "Night shift active. Keep torch and gumboots ready; set automated motor timers to avoid manual field visits at 2 AM.",
@@ -65,9 +78,6 @@ DISTRICT_FEEDER_SCHEDULES: Dict[str, Dict] = {
         "substation": "Ausa Road 33/11 kV Substation",
         "feeder": "Kisan Urja Feeder Latur-02",
         "shift": PowerShift.DAY_SHIFT,
-        "shift_hours": "07:30 AM to 03:30 PM (Active)",
-        "shift_hours_mr": "सकाळी ०७:३० ते दुपारी ०३:३० (सुरू आहे)",
-        "rotation": "Next Tuesday (Rotating to Night Shift)",
         "voltage": 392,
         "health": "Low Voltage Warning (३९२ V - स्टार्टर ट्रिप होण्याची शक्यता)",
         "advisory_en": "Voltage fluctuating below 400V. Do not run heavy submersible pumps without dry-run protector to prevent motor coil burnout.",
@@ -77,9 +87,6 @@ DISTRICT_FEEDER_SCHEDULES: Dict[str, Dict] = {
         "substation": "Pandharpur 33/11 kV Substation",
         "feeder": "Bheema River Lift Irrigation Feeder",
         "shift": PowerShift.NIGHT_SHIFT,
-        "shift_hours": "11:00 PM to 07:00 AM (Upcoming Night)",
-        "shift_hours_mr": "रात्री ११:०० ते सकाळी ०७:०० (रात्रपाळी)",
-        "rotation": "Next Monday (Rotating to Day Shift)",
         "voltage": 415,
         "health": "Optimal Normal (सुरक्षित व्होल्टेज)",
         "advisory_en": "Night shift operational. Ensure main gate valve is open before motor start to avoid pipeline burst.",
@@ -91,6 +98,7 @@ DISTRICT_FEEDER_SCHEDULES: Dict[str, Dict] = {
 def get_feeder_schedule(district: str) -> FeederScheduleItem:
     dist_key = district.lower().strip()
     data = DISTRICT_FEEDER_SCHEDULES.get(dist_key, DISTRICT_FEEDER_SCHEDULES["nashik"])
+    shift_meta = STANDARD_SHIFT_SCHEDULE[data["shift"]]
 
     return FeederScheduleItem(
         district=district,
@@ -98,14 +106,16 @@ def get_feeder_schedule(district: str) -> FeederScheduleItem:
         feeder_name=data["feeder"],
         current_status="POWER_ACTIVE" if data["shift"] == PowerShift.DAY_SHIFT else "SCHEDULED_OFF",
         active_shift=data["shift"],
-        shift_hours=data["shift_hours"],
-        shift_hours_mr=data["shift_hours_mr"],
-        next_shift_rotation_date=data["rotation"],
+        shift_hours=shift_meta["shift_hours"],
+        shift_hours_mr=shift_meta["shift_hours_mr"],
+        next_shift_rotation_date=shift_meta["rotation"],
         current_voltage=data["voltage"],
         voltage_health=data["health"],
         irrigation_advisory=data["advisory_en"],
         irrigation_advisory_mr=data["advisory_mr"],
         helpline_number="1912 / 1800-212-3435 (MahaVitaran 24x7)",
-        provenance=Provenance.HISTORICAL,
-        source_citation="MahaVitaran (MSEDCL) Agri Feeder Roster Guidelines & Central Electricity Authority"
+        schedule_note="Sample data - Schedules vary by feeder. Confirm with your local MSEDCL office.",
+        schedule_note_mr="नमुना माहिती - वेळापत्रक प्रत्येक फिडरनुसार बदलते. कृपया आपल्या स्थानिक महावितरण (MSEDCL) कार्यालयातून खात्री करा.",
+        provenance=Provenance.CURATED_REFERENCE,
+        source_citation="MahaVitaran (MSEDCL) Agri Feeder Roster Guidelines (Sample Reference)"
     )

@@ -8,11 +8,15 @@ from app.modules.rural_ops.emergency_sos import get_emergency_sos_data
 
 
 def test_rural_electricity_schedule():
+    from app.core.provenance import Provenance
     item = get_feeder_schedule("Nashik")
     assert item.district == "Nashik"
     assert "Feeder" in item.feeder_name
     assert item.current_voltage > 350
     assert "MahaVitaran" in item.source_citation
+    assert item.provenance == Provenance.CURATED_REFERENCE
+    assert "Schedules vary by feeder. Confirm with your local MSEDCL office." in item.schedule_note
+    assert item.shift_hours == "08:00 AM to 04:00 PM (Active)"
 
 
 def test_emergency_snakebite_and_asv_hospitals():

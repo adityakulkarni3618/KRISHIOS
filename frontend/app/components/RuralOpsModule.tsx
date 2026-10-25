@@ -16,6 +16,8 @@ interface FeederScheduleItem {
   irrigation_advisory: string;
   irrigation_advisory_mr: string;
   helpline_number: string;
+  schedule_note?: string;
+  schedule_note_mr?: string;
   provenance: string;
   source_citation: string;
 }
@@ -195,6 +197,28 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
 
             <h3 className="feeder-name">{feeder.feeder_name}</h3>
             <p className="feeder-substation">📍 {feeder.substation_name}, {feeder.district}</p>
+
+            {/* Feeder schedule sample notice */}
+            <div style={{
+              background: "rgba(245, 158, 11, 0.1)",
+              border: "1px solid #f59e0b",
+              borderRadius: "8px",
+              padding: "8px 12px",
+              margin: "10px 0 14px 0",
+              fontSize: 12,
+              color: "#fbbf24",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              lineHeight: 1.4
+            }}>
+              <span>ℹ️</span>
+              <span>
+                {lang === "mr"
+                  ? (feeder.schedule_note_mr || "नमुना माहिती - वेळापत्रक प्रत्येक फिडरनुसार बदलते. कृपया आपल्या स्थानिक महावितरण (MSEDCL) कार्यालयातून खात्री करा.")
+                  : (feeder.schedule_note || "Sample data - schedules vary by feeder. Confirm with your local MSEDCL office.")}
+              </span>
+            </div>
 
             <div className="feeder-time-box">
               <div className="time-col">
