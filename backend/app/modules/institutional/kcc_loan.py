@@ -37,6 +37,9 @@ class KCCLoanResult(BaseModel):
     application_steps_mr: List[str]
     provenance: Provenance = Provenance.ESTIMATED
     source_citation: str
+    source_url: Optional[str] = "https://www.myscheme.gov.in/schemes/kcc"
+    last_verified: Optional[str] = "2026-10-20"
+    reviewed_by: str = "UNREVIEWED"
 
 
 # Official Scale of Finance per acre in Maharashtra (Approved by DLTC / NABARD)

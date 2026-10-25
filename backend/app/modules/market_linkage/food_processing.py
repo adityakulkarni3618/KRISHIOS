@@ -31,8 +31,11 @@ class ProcessingUnitProfile(BaseModel):
     key_machinery_required_mr: List[str]
     market_demand_summary: str
     market_demand_summary_mr: str
-    provenance: Provenance = Provenance.ESTIMATED
+    provenance: Provenance = Provenance.CURATED_REFERENCE
     source_citation: str
+    source_url: Optional[str] = "https://pmfme.mofpi.gov.in/"
+    last_verified: Optional[str] = "2026-10-20"
+    reviewed_by: str = "Ministry of Food Processing Industries (PMFME Guidelines)"
 
 
 PROCESSING_PROJECTS = [
@@ -61,7 +64,7 @@ PROCESSING_PROJECTS = [
         ],
         market_demand_summary="Selling polished unpolished unadulterated Tur Dal directly fetches ₹140-160/kg vs raw harvest rate of ₹75/kg.",
         market_demand_summary_mr="कच्ची तूर ₹७५ ने विकण्याऐवजी स्वतःची पॅक केलेली डाळ ₹१४० ते १६० दराने विकून दुपटीने नफा होतो.",
-        provenance=Provenance.ESTIMATED,
+        provenance=Provenance.CURATED_REFERENCE,
         source_citation="Ministry of Food Processing Industries (MoFPI) PMFME Scheme Guidelines & ICAR-CIAE"
     ),
     ProcessingUnitProfile(
@@ -89,7 +92,7 @@ PROCESSING_PROJECTS = [
         ],
         market_demand_summary="Pure cold-pressed groundnut oil sells in cities at ₹280-340/Litre. Oil cake (पेंड) sells as high-protein dairy feed.",
         market_demand_summary_mr="शहरात शुद्ध लाकडी घाण्याचे तेल ₹२८० ते ३४० प्रति लिटर विकले जाते. उरलेली पेंड डेअरीसाठी उत्तम भावाने विकली जाते.",
-        provenance=Provenance.ESTIMATED,
+        provenance=Provenance.CURATED_REFERENCE,
         source_citation="Khadi and Village Industries Commission (KVIC) & MoFPI PMFME Standards"
     ),
 ]

@@ -18,7 +18,10 @@ class GovernmentScheme(BaseModel):
     official_portal_url: str
     application_portal_name: str
     last_verified_date: str
-    provenance: Provenance
+    source_url: str | None = None
+    last_verified: str | None = None
+    reviewed_by: str = "Agricultural Domain Team"
+    provenance: Provenance = Provenance.CURATED_REFERENCE
     disclaimer: str
 
 
@@ -40,9 +43,12 @@ SCHEMES_CATALOG: list[dict] = [
         ],
         "required_documents": ["Aadhaar Card", "Land records (7/12 extract / 8-A)", "Active Bank Passbook", "Mobile number"],
         "official_portal_url": "https://pmkisan.gov.in/",
+        "source_url": "https://pmkisan.gov.in/",
         "application_portal_name": "PM-KISAN Official Portal",
         "last_verified_date": "2026-10-20",
-        "provenance": Provenance.HISTORICAL,
+        "last_verified": "2026-10-20",
+        "reviewed_by": "Agricultural Domain Team",
+        "provenance": Provenance.CURATED_REFERENCE,
         "disclaimer": "Information is from the official portal. Eligibility verification is conducted solely by government revenue authorities.",
     },
     {
@@ -61,9 +67,12 @@ SCHEMES_CATALOG: list[dict] = [
         ],
         "required_documents": ["7/12 & 8-A land extract", "Aadhaar Card", "Bank Passbook", "e-Pik Pahani (Sowing Certificate)"],
         "official_portal_url": "https://pmfby.gov.in/",
+        "source_url": "https://pmfby.gov.in/",
         "application_portal_name": "PMFBY Portal & Aaple Sarkar DBT",
         "last_verified_date": "2026-10-20",
-        "provenance": Provenance.HISTORICAL,
+        "last_verified": "2026-10-20",
+        "reviewed_by": "Agricultural Domain Team",
+        "provenance": Provenance.CURATED_REFERENCE,
         "disclaimer": "Claim settlement depends strictly on crop cutting experiments (CCE) and insurance company assessment.",
     },
     {
@@ -82,9 +91,12 @@ SCHEMES_CATALOG: list[dict] = [
         ],
         "required_documents": ["Aadhaar Card", "7/12 & 8-A land record", "Bank Passbook", "Caste Certificate (if applicable)"],
         "official_portal_url": "https://mahapocra.gov.in/",
+        "source_url": "https://mahapocra.gov.in/",
         "application_portal_name": "MahaPoCRA Direct Benefit Portal",
         "last_verified_date": "2026-10-20",
-        "provenance": Provenance.HISTORICAL,
+        "last_verified": "2026-10-20",
+        "reviewed_by": "Agricultural Domain Team",
+        "provenance": Provenance.CURATED_REFERENCE,
         "disclaimer": "Scheme applies strictly to notified villages in Maharashtra Vidarbha, Marathwada, and select districts.",
     },
     {
@@ -103,9 +115,12 @@ SCHEMES_CATALOG: list[dict] = [
         ],
         "required_documents": ["7/12, 8-A extract", "Aadhaar Card", "Bank details", "Site self-declaration"],
         "official_portal_url": "https://mahadbt.maharashtra.gov.in/",
+        "source_url": "https://mahadbt.maharashtra.gov.in/",
         "application_portal_name": "MahaDBT Farmer Schemes Portal",
         "last_verified_date": "2026-10-20",
-        "provenance": Provenance.HISTORICAL,
+        "last_verified": "2026-10-20",
+        "reviewed_by": "Agricultural Domain Team",
+        "provenance": Provenance.CURATED_REFERENCE,
         "disclaimer": "Requires geo-tagging and field verification by Agriculture Assistant prior to subsidy release.",
     },
     {
@@ -123,9 +138,12 @@ SCHEMES_CATALOG: list[dict] = [
         ],
         "required_documents": ["Land passbook or 7/12 extract", "Soil sample representative of plot"],
         "official_portal_url": "https://soilhealth.dac.gov.in/",
+        "source_url": "https://soilhealth.dac.gov.in/",
         "application_portal_name": "Soil Health Card National Portal",
         "last_verified_date": "2026-10-20",
-        "provenance": Provenance.HISTORICAL,
+        "last_verified": "2026-10-20",
+        "reviewed_by": "Agricultural Domain Team",
+        "provenance": Provenance.CURATED_REFERENCE,
         "disclaimer": "Soil Health Cards are issued cyclically every 3 years by district soil testing laboratories.",
     },
     {
@@ -144,9 +162,12 @@ SCHEMES_CATALOG: list[dict] = [
         ],
         "required_documents": ["Land documents / tenancy agreement", "Aadhaar Card", "PAN Card", "Passport photo"],
         "official_portal_url": "https://www.myscheme.gov.in/schemes/kcc",
+        "source_url": "https://www.myscheme.gov.in/schemes/kcc",
         "application_portal_name": "Local Lead Bank / National Unified Portal",
         "last_verified_date": "2026-10-20",
-        "provenance": Provenance.HISTORICAL,
+        "last_verified": "2026-10-20",
+        "reviewed_by": "Agricultural Domain Team",
+        "provenance": Provenance.CURATED_REFERENCE,
         "disclaimer": "Sanction limit is evaluated according to District Level Technical Committee (DLTC) scale of finance.",
     },
 ]

@@ -21,6 +21,10 @@ class LaborWageBenchmark(BaseModel):
     piece_rate_rate_mr: str
     season: str
     hours_per_day: int = 8
+    source_url: Optional[str] = None
+    last_verified: Optional[str] = None
+    reviewed_by: str = "UNREVIEWED"
+    provenance: Provenance = Provenance.CURATED_REFERENCE
 
 
 class LaborGroup(BaseModel):
@@ -42,7 +46,10 @@ class LaborHubResult(BaseModel):
     available_labor_groups: List[LaborGroup]
     guidelines_for_employers: List[str]
     guidelines_for_employers_mr: List[str]
-    provenance: Provenance = Provenance.HISTORICAL
+    source_url: Optional[str] = None
+    last_verified: Optional[str] = None
+    reviewed_by: str = "UNREVIEWED"
+    provenance: Provenance = Provenance.CURATED_REFERENCE
     source_citation: str
 
 

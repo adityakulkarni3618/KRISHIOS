@@ -25,6 +25,10 @@ class WarehouseFacility(BaseModel):
     manager_name: str
     contact_phone: str
     distance_km: float
+    source_url: Optional[str] = "https://www.mswarehousing.com/"
+    last_verified: Optional[str] = "2026-10-18"
+    reviewed_by: str = "Agricultural Domain Team"
+    provenance: Provenance = Provenance.CURATED_REFERENCE
 
 
 class PledgeLoanEstimateRequest(BaseModel):
@@ -49,6 +53,9 @@ class PledgeLoanEstimateResult(BaseModel):
     advice_summary_mr: str
     provenance: Provenance = Provenance.ESTIMATED
     source_citation: str
+    source_url: Optional[str] = "https://wdra.gov.in/"
+    last_verified: Optional[str] = "2026-10-18"
+    reviewed_by: str = "Agricultural Domain Team"
 
 
 MAHARASHTRA_WAREHOUSE_DIRECTORY = [

@@ -52,6 +52,9 @@ class FeederScheduleItem(BaseModel):
     schedule_note_mr: str = "नमुना माहिती - वेळापत्रक प्रत्येक फिडरनुसार बदलते. कृपया आपल्या स्थानिक महावितरण (MSEDCL) कार्यालयातून खात्री करा."
     provenance: Provenance = Provenance.CURATED_REFERENCE
     source_citation: str = "MahaVitaran (MSEDCL) Agri Feeder Roster Guidelines (Sample Reference)"
+    source_url: Optional[str] = "https://www.mahadiscom.in/"
+    last_verified: Optional[str] = "2026-10-15"
+    reviewed_by: str = "UNREVIEWED"
 
 
 # Baseline sample feeder schedules for Maharashtra agricultural clusters
