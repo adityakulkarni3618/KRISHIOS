@@ -101,15 +101,17 @@ export default function AssistantVoiceModule({
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
         <div>
           <h4 style={{ fontSize: 18, fontWeight: 800, color: "var(--accent-lime)", margin: 0 }}>
-            🎙️ {lang === "mr" ? "एआय कृषी मित्र - व्हॉइस व चॅट शेती सल्लागार" : "AI Krishi Mitra - Voice & Multilingual Agronomic Advisor"}
+            🎙️ {lang === "mr" ? "कृषी प्रश्नोत्तरे (FAQ) - विद्यापीठ कृषी सल्ला मार्गदर्शक" : "Krishi FAQ - University Agronomic Knowledge Guide"}
           </h4>
           <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "4px 0 0 0" }}>
             {lang === "mr"
-              ? "राहुरी, अकोला व परभणी कृषी विद्यापीठांच्या अधिकृत पॅकेज ऑफ प्रॅक्टिसेसवर आधारित थेट संवाद."
-              : "Voice-driven dialogue grounded in verified MPKV, PDKV, and VNMKV agricultural university guidelines."}
+              ? "राहुरी, अकोला व परभणी कृषी विद्यापीठांच्या अधिकृत पॅकेज ऑफ प्रॅक्टिसेसवर आधारित प्रश्नोत्तरे."
+              : "Curated questions and answers based on verified MPKV, PDKV, and VNMKV agricultural university guidelines."}
           </p>
         </div>
-        <span className="prov-badge live" style={{ background: "#d4f936", color: "#08160c" }}>VOICE-FIRST AI</span>
+        <span className="prov-badge curated" style={{ background: "#22c55e", color: "#000", fontWeight: 800, padding: "4px 10px", borderRadius: 8 }}>
+          CURATED REFERENCE
+        </span>
       </div>
 
       {/* Mic Input Container */}

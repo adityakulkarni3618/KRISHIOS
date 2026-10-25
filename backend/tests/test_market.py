@@ -6,9 +6,13 @@ def test_market_query_by_commodity():
     svc = MarketService()
     res = svc.query_prices(commodity="Onion")
     assert res.total_records > 0
-    assert res.provenance == Provenance.HISTORICAL
+    assert res.provenance == Provenance.CURATED_REFERENCE
+    assert res.as_of == "2026-10-19"
+    assert any("sample, not live" in n.lower() for n in res.notes)
     for rec in res.records:
         assert "Onion" in rec.commodity
+        assert rec.provenance == Provenance.CURATED_REFERENCE
+        assert rec.as_of == "2026-10-19"
         assert rec.min_price > 0
         assert rec.modal_price >= rec.min_price
         assert rec.max_price >= rec.modal_price
@@ -45,7 +49,7 @@ def test_market_deduplication():
             "modal_price": 1500.0,
             "max_price": 2000.0,
             "price_date": "2026-10-19",
-            "provenance": Provenance.HISTORICAL,
+            "provenance": Provenance.CURATED_REFERENCE,
             "source": "MSAMB",
             "attribution": "MSAMB",
         },
@@ -59,7 +63,7 @@ def test_market_deduplication():
             "modal_price": 1500.0,
             "max_price": 2000.0,
             "price_date": "2026-10-19",
-            "provenance": Provenance.HISTORICAL,
+            "provenance": Provenance.CURATED_REFERENCE,
             "source": "MSAMB",
             "attribution": "MSAMB",
         },
@@ -75,7 +79,8 @@ def test_market_endpoints(client):
     assert r_prices.status_code == 200
     data = r_prices.json()
     assert data["total_records"] >= 1
-    assert data["provenance"] == "HISTORICAL"
+    assert data["provenance"] == "CURATED_REFERENCE"
+    assert data["as_of"] == "2026-10-19"
 
     r_comm = client.get("/market/commodities")
     assert r_comm.status_code == 200

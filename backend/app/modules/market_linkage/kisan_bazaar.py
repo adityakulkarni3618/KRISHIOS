@@ -26,6 +26,9 @@ class FarmProduceListing(BaseModel):
     contact_phone: str
     whatsapp_enabled: bool = True
     fpo_verified: bool = True
+    provenance: Provenance = Provenance.SIMULATED
+    source_citation: str = "Simulated direct farmer marketplace listings for platform demonstration"
+    warning: str = "SIMULATED DATA: Sample listing for platform demonstration only."
 
 
 BAZAAR_LISTINGS: List[FarmProduceListing] = [

@@ -31,11 +31,11 @@ CAPABILITIES: dict[str, Coverage] = {
     "J_finance": Coverage.TESTED,                         # Farm economics calculator, break-even price/yield & sensitivity matrix
     "K_schemes": Coverage.TESTED,                         # Verified central & state schemes catalog with official portals
     "L_insurance": Coverage.TESTED,                       # PMFBY ₹1 insurance claim & 72-hour disaster intimation
-    "M_remote_sensing": Coverage.TESTED,                  # Sentinel-2 multispectral NDVI & canopy vigor engine
+    "M_remote_sensing": Coverage.TESTED,                  # Canopy NDVI simulation & vegetation vigor engine
     "N_postharvest": Coverage.TESTED,                     # MSWC/CWC warehouse directory & e-NWR pledge loan calculator
     "O_equipment": Coverage.TESTED,                       # CHC farm machinery catalog & rental cost estimator
     "P_livestock": Coverage.TESTED,                       # Pashu-Mitra vaccination schedule & TMR feed ration
-    "Q_assistant": Coverage.TESTED,                       # Multilingual voice AI Krishi Mitra with university citations
+    "Q_assistant": Coverage.TESTED,                       # Multilingual voice Krishi Mitra with university citations
     "R_community": Coverage.NOT_IMPLEMENTED,
     "S_offline": Coverage.TESTED,                         # Multilingual UI (mr/hi/en) with offline local cache & sync
     "T_analytics": Coverage.NOT_IMPLEMENTED,

@@ -3,7 +3,7 @@
 > Tailored for Maharashtra farmers, Farmer Producer Organizations (FPOs), and agricultural researchers.  
 > Native Multilingual Support: **Marathi (मराठी)**, **Hindi (हिन्दी)**, and **English (EN)**.
 
-[![Tests](https://img.shields.io/badge/pytest-66%2F66%20passing-brightgreen)](file:///backend/tests)
+[![Tests](https://img.shields.io/badge/pytest-73%2F73%20passing-brightgreen)](file:///backend/tests)
 [![Frontend](https://img.shields.io/badge/Next.js-14.2.15-black)](file:///frontend)
 [![Backend](https://img.shields.io/badge/FastAPI-0.115.6-009688)](file:///backend)
 [![Provenance](https://img.shields.io/badge/Data%20Provenance-Enforced-blue)](#data-provenance-framework)
@@ -13,9 +13,9 @@
 
 ## 🌟 Overview
 
-**KRISHIOS** is a full-stack, production-ready agricultural intelligence ecosystem designed to bridge the gap between complex agronomic telemetry and on-the-ground farming decisions. 
+**KRISHIOS** is a full-stack agricultural decision ecosystem designed to bridge the gap between complex agronomic telemetry and on-the-ground farming decisions. 
 
-Built with strict adherence to data integrity, KRISHIOS guarantees that **no metrics or recommendations are ever hallucinated or fabricated**. Every data point displayed carries a transparent provenance badge (`LIVE`, `HISTORICAL`, `ESTIMATED`, `UNAVAILABLE`, or `USER_PROVIDED`).
+Built with strict adherence to data integrity, KRISHIOS guarantees that **every data point carries an honest, transparent provenance badge** (`LIVE`, `HISTORICAL`, `CURATED_REFERENCE`, `ESTIMATED`, `SIMULATED`, `USER_PROVIDED`, or `UNAVAILABLE`). Heuristic models and simulated scenarios are explicitly marked and gated behind `DEMO_MODE`.
 
 ---
 
@@ -33,12 +33,12 @@ KRISHIOS features a seamless **Dual-Theme System** and **Rural-First Accessibili
    - Tri-color saffron/white/green accent stripe, official Department of Agriculture seal, and Kisan Call Centre 24x7 toll-free helpline (`1800-180-1551`).
 
 3. **🌾 Easy Kisan Mode (सुलभ शेतकरी मोड):**
-   - Single-tap toggle for farmers with lower digital literacy: presents 8 high-contrast, card-based questions:
-     - 🌦️ *आज फवारणी करू का? (Can I Spray Today?)* — Traffic-light Safe/Warning/Hazard status.
-     - 🔬 *पिकाला काय रोग झाला? (Crop Doctor Diagnostic)* — Instant camera photo check.
-     - 💰 *आजचा बाजारभाव काय? (Today's Mandi Rate & Hold/Sell Advice)*.
-     - 📞 *२४x७ किसान हेल्पलाइन (Toll-free 1800-180-1551)* — Direct one-tap phone call.
-     - 🎙️ *कृषी मित्राशी बोला (AI Krishi Mitra)* — Voice-first query in Marathi, Hindi, or English.
+   - Single-tap toggle for farmers with lower digital literacy: presents exactly 8 high-contrast, card-based questions:
+     - 🌦️ *आज फवारणी करू का? (Can I Spray Today?)* — Traffic-light Safe/Warning/Hazard status based on live weather.
+     - 🔬 *पिकाला काय लक्षणे आहेत? (Crop Symptom Guide)* — Keyword search with ICAR/KVK reference guide and expert referral disclaimer.
+     - 💰 *आजचा बाजारभाव काय? (Today's Mandi Rate & Hold/Sell Advice)* — Sample APMC reference prices with holding cost calculator.
+     - 📞 *२४x७ किसान हेल्पलाइन (Toll-free 1800-180-1551)* — Direct one-tap phone call to official extension services.
+     - 🎙️ *कृषी विचारणा (Krishi FAQ)* — Multilingual question-answer lookup with official KVK helpline fallback.
      - 🛡️ *₹१ पीक विमा क्लेम (PMFBY Claim Assistance)* — 72-hour disaster intimation guide.
      - 🧪 *खताची मात्रा व वेळापत्रक (Fertilizer Bags)* — NPK split dosing schedule.
      - 📄 *७/१२ उतारा व हेल्थ कार्ड (7/12 Digital Card)* — Printable official Farm Health Card.
@@ -50,85 +50,85 @@ KRISHIOS features a seamless **Dual-Theme System** and **Rural-First Accessibili
 ## 🚀 Core Functional Modules
 
 ### 1. ⛅ Agro-Meteorology & Spray Advisory Module
-- **Live Upstream:** Integrated with Open-Meteo & IMD agro-meteorological feeds across all 36 Maharashtra districts.
+- **Live Upstream:** Integrated with Open-Meteo weather API across all 36 Maharashtra districts.
 - **Decision Engine:** Evaluates wind speed, relative humidity, and precipitation probability to issue specific spray windows with audio readout and WhatsApp sharing.
+- **Provenance:** `LIVE` with in-memory TTL caching and graceful `UNAVAILABLE` fallback.
 
-### 2. 📊 APMC Mandi Rate Board & 🔮 30-Day Price Forecaster
-- **Market Schema:** Compatible with Agmarknet and Maharashtra State Agricultural Marketing Board (MSAMB).
-- **Price Forecasting:** 7, 15, and 30-day projected commodity curves based on arrivals and export tariffs.
+### 2. 📊 APMC Mandi Rate Board & Price Forecaster Scenario
+- **Market Schema:** Curated reference daily modal prices compatible with Agmarknet and Maharashtra State Agricultural Marketing Board (MSAMB).
+- **Price Forecasting Scenario:** Illustrative heuristic price scenario model gated behind `DEMO_MODE` and labeled `SIMULATED`.
 - **Hold vs. Sell Engine:** Computes warehouse storage carrying costs, shrinkage loss %, and net gain to protect farmers from distress selling.
 
-### 3. 🔬 AI Crop Doctor & Multimodal Leaf Pathology Lab
-- **ICAR Benchmarking:** Visual and symptom-based diagnosis for Maharashtra crops (Cotton, Soybean, Tomato, Sugarcane, Onion).
-- **Dual Remedy:** Side-by-side Organic/Bio-control (Neem, Jeevamrut, Dashparni) vs. Targeted Chemical control.
-- **Pump Dosage Calculator:** Formulated strictly **per 15-litre knapsack pump** with CIBRC Pre-Harvest Interval (PHI) waiting periods.
+### 3. 🔬 Crop Symptom Guide
+- **Curated ICAR/KVK Benchmarks:** Keyword-driven symptom identification guide for Maharashtra crops (Cotton, Soybean, Tomato, Sugarcane, Onion).
+- **Non-Diagnostic Disclaimer:** Prominently warns that symptom matching is not a clinical laboratory diagnosis and advises showing affected leaves to a local KVK or crop expert.
+- **Dual Remedy:** Side-by-side Organic/Bio-control (Neem, Jeevamrut, Dashparni) vs. Targeted Chemical control with pump dosages per 15-litre knapsack pump.
 
 ### 4. 💧 Smart Jal-Mitra: Precision Drip Irrigation & Water Budgeting
 - **Evapotranspiration ($ET_c$):** Integrates temperature, humidity, crop coefficient ($K_c$), and soil water-holding capacity.
-- **Execution Guidance:** Outputs exact daily drip runtime in minutes (e.g. 54 mins at 5:00 PM) and farm pond reserve countdown days.
+- **Execution Guidance:** Outputs estimated daily drip runtime in minutes and farm pond reserve countdown days.
 
 ### 5. 🧮 Farm Economics & Sensitivity Calculator
-- **Mathematical Integrity:** Hand-calculated arithmetic formulas for total cost, gross revenue, net profit, ROI %, and break-even price/yield.
+- **Mathematical Integrity:** Deterministic arithmetic formulas for total cost, gross revenue, net profit, ROI %, and break-even price/yield.
 - **5×5 Sensitivity Matrix:** Computes outcome variability across price and yield fluctuations (-20% to +20%).
 
 ### 6. 🔬 ICAR Soil Health Interpretation Engine
 - **Agronomic Standards:** Interprets soil pH and organic carbon percentage, providing verified corrective amendments (agricultural lime, gypsum, compost).
 
-### 7. 📜 Government Schemes & DBT Directory (3D Corridor)
-- **Verified Catalog:** Central & Maharashtra state initiatives (PM-KISAN, PMFBY ₹1 Crop Insurance, PoCRA, Magel Tyala Shet Tale).
+### 7. 📜 Government Schemes & DBT Directory
+- **Curated Catalog:** Central & Maharashtra state initiatives (PM-KISAN, PMFBY ₹1 Crop Insurance, PoCRA, Magel Tyala Shet Tale) with verified official portal links and last verified dates.
 
-### 8. 🌱 Scientific Crop Recommendation & Intercropping Planner (`B_crop_recommendation`)
-- **Agro-Climatic Benchmarking:** Evaluates Maharashtra's 9 agro-climatic zones, soil texture, pH, and rainfall/irrigation conditions.
-- **Intercrop Multiplier:** Recommends scientifically validated row ratios (e.g. *Soybean + Pigeonpea 4:2*, *Cotton + Mung 1:2*) to maximize land equivalent ratio (LER) and build soil nitrogen.
+### 8. 🌱 Scientific Crop Recommendation & Intercropping Planner
+- **Agro-Climatic Benchmarking:** Evaluates Maharashtra's agro-climatic zones, soil texture, pH, and rainfall/irrigation conditions.
+- **Intercrop Multiplier:** Recommends scientifically validated row ratios (e.g. *Soybean + Pigeonpea 4:2*, *Cotton + Mung 1:2*).
 
-### 9. 🧪 Fertilizer & N-P-K Split Dosage Engine (`G_fertilizer`)
-- **Soil Health Card Adjusted:** Calculates exact bags of DAP, Urea, MOP, and SSP tailored to specific acreages.
-- **3-Stage Split Schedule:** Prepares Basal, 30 DAS Vegetative, and 60 DAS Flowering top-dressing schedules with micronutrient advisories.
+### 9. 🧪 Fertilizer & N-P-K Split Dosage Engine
+- **Soil Health Card Adjusted:** Calculates bags of DAP, Urea, MOP, and SSP tailored to specific acreages.
+- **3-Stage Split Schedule:** Prepares Basal, 30 DAS Vegetative, and 60 DAS Flowering top-dressing schedules.
 
-### 10. 🛡️ PMFBY ₹1 Crop Insurance & Emergency Claim Desk (`L_insurance`)
-- **Maharashtra ₹1 Policy Guarantee:** Calculates farmer token premium (₹1) vs. state actuarial subsidy.
+### 10. 🛡️ PMFBY ₹1 Crop Insurance & Emergency Claim Desk
+- **Maharashtra ₹1 Policy Calculation:** Calculates farmer token premium (₹1) vs. state actuarial subsidy.
 - **72-Hour Disaster Intimation:** Emergency countdown, localized damage assessment, panchnama checklist, and toll-free helpline (14447).
 
-### 11. 🚜 Custom Hiring Center (CHC) Farm Machinery Rental (`O_equipment`)
-- **Mechanization Suite:** Standardized rental tariffs for RTK spray drones (16L), 45HP 4WD tractors, rotavators, and combine harvesters.
-- **Cost & Fuel Estimator:** Detailed breakdown of rental, diesel consumption, and certified operator costs with local FPO hub contacts.
+### 11. 🚜 Custom Hiring Center (CHC) Farm Machinery Rental
+- **Mechanization Suite:** Benchmark rental tariffs for spray drones, 45HP 4WD tractors, rotavators, and combine harvesters.
+- **Cost & Fuel Estimator:** Detailed breakdown of rental, diesel consumption, and certified operator costs.
 
-### 12. 🐄 Pashu-Mitra Dairy & Vaccination Companion (`P_livestock`)
+### 12. 🐄 Pashu-Mitra Dairy & Vaccination Companion
 - **Total Mixed Ration (TMR):** Calculates dry matter, green fodder, dry straw, and cattle feed concentrate requirements based on body weight and milk yield.
-- **Vaccination Tracker:** Bi-annual Foot and Mouth Disease (FMD), Lumpy Skin Disease (LSD), and Haemorrhagic Septicaemia (HS) calendars.
+- **Vaccination Tracker:** NDDB vaccination schedule for FMD, HS, and BQ.
 
-### 13. 🛰️ Sentinel-2 Satellite NDVI Canopy Explorer (`M_remote_sensing`)
-- **10m Multispectral Imagery:** Computes NDVI, NDRE, and NDWI indices to identify spatial crop vigor and moisture stress zones.
-- **Actionable Agronomy:** Generates targeted field interventions to equalize yield across all farm quadrants.
+### 13. 🛰️ Canopy NDVI Vegetation Simulation
+- **Synthetic Vegetation Model:** Illustrative canopy vigor simulation gated behind `DEMO_MODE` with `SIMULATED` provenance badge.
 
-### 14. 📦 MSWC Warehouses & e-NWR Pledge Financing (`N_postharvest`)
+### 14. 📦 MSWC Warehouses & e-NWR Pledge Financing
 - **State Warehouse Directory:** Direct contacts and capacity details for Maharashtra State Warehousing Corporation (MSWC) and CWC godowns.
-- **Pledge Loan Calculator:** Enables farmers to unlock up to 75% advance liquidity at 7% subvented interest instead of distress selling.
+- **Pledge Loan Calculator:** Enables farmers to estimate up to 75% advance liquidity at 7% subvented interest instead of distress selling.
 
-### 15. 🎙️ Voice-First Multilingual AI Krishi Mitra Advisor (`Q_assistant`)
-- **Native Speech & Dialogue:** Speaks and listens in Marathi, Hindi, and English.
-- **Zero-Hallucination Grounding:** Cites specific packages of practices from MPKV Rahuri, PDKV Akola, and VNMKV Parbhani.
+### 15. 🎙️ Multilingual Krishi FAQ & KVK Directory
+- **Curated Knowledge Base:** Answers common agronomic questions in Marathi, Hindi, and English.
+- **Human Fallback:** Directly routes unanswered questions to the nearest Krishi Vigyan Kendra (KVK) and Kisan Call Centre (`1800-180-1551`).
 
 ### 16. 📄 Mahabhulekh Digital 7/12 & Farm Health Card Exporter
 - **Land Registry Sync:** Standardized 7/12 Gat number and E-Pik Pahani digital record keeper.
-- **Official Print Export:** One-click printable Farm Health Card for bank loan submissions and dealer fertilizer subsidies.
+- **Official Print Export:** Printable Farm Health Card for bank loan submissions and dealer fertilizer subsidies.
 
-### 17. ⚡ Rural Lifeline: 3-Phase Electricity Feeder Roster & Emergency Snakebite SOS (`rural_ops`)
-- **MSEDCL 3-Phase Roster:** Live 8-hour feeder shift timings (Day 06:00-14:00 vs. Night 22:00-06:00), voltage health monitor, and pump protection guidelines.
-- **Snakebite & Poison SOS:** Direct 1-tap call to 108 Ambulance, government hospital Anti-Snake Venom (ASV) vial locator, and CIBRC organophosphate poisoning first-aid protocol.
-- **Ghar-cha-Doctor Bio-Inputs Lab:** ₹0-cost university recipes for *Jeevamrut*, *Dashparni Ark*, and *Sour Buttermilk* saving ₹2,500/acre over synthetic chemicals.
+### 17. ⚡ Rural Lifeline: 3-Phase Electricity Feeder Roster & Emergency First Aid
+- **MSEDCL 3-Phase Roster:** Standard 8-hour feeder shift timings (Day Shift: 08:00 AM to 04:00 PM vs. Night Shift: 11:00 PM to 07:00 AM), voltage health monitor, and pump protection guidelines. Note: Schedules vary by feeder; confirm with local MSEDCL office.
+- **Snakebite & Poison SOS:** Direct 1-tap call to 108 Ambulance, sample hospital directory (confirm stock prior to transit), and non-invasive first-aid protocols (no tourniquets, no cutting/sucking).
+- **Desi Bio-Inputs Lab:** University formulations for *Jeevamrut*, *Dashparni Ark*, and *Sour Buttermilk*.
 
-### 18. 👥 Farm Operations, Labor Wage Hub & Seed Authenticity (`operations`)
-- **Krishi Majur Wage Benchmarks:** Prevailing district-wise wage rates for farm operations (plowing, transplanting, weeding, harvesting) with contactable crew directory.
-- **Seed Authenticity QR/Lot Checker:** Verification against certified Mahabeej/CIBRC registries to prevent counterfeit seed purchases and spurious pesticide fraud.
-- **Groundwater & Aquifer Recharge Advisory:** Static water level monitoring (bgl), GSDA casing recommendations, and borewell recharge pit design diagrams.
+### 18. 👥 Farm Operations, Labor Wage Hub & Seed Format Checker
+- **Krishi Majur Wage Benchmarks:** Sample district-wise daily wage rates for farm operations with contactable crew directory.
+- **Seed Lot Format Checker:** Syntax format validation against Indian seed lot standards. (Format check only; does not confirm physical seed purity or authenticity).
+- **Groundwater Advisory:** Static water level monitoring (bgl), GSDA casing recommendations, and borewell recharge pit design diagrams.
 
-### 19. 🤝 Direct Kisan Bazaar & PMFME 35% Food Processing (`market_linkage`)
-- **Farm-to-Buyer Direct Listings:** Enables farmers to publish produce lots directly with contact phone and one-tap WhatsApp chat, bypassing APMC middlemen commissions.
-- **PMFME Food Processing Profiles:** Comprehensive project profiles for *Mini Dal Mills*, *Wood-pressed Lakadi Ghani*, and *Onion Solar Dehydration* with 35% capital subsidy calculations.
+### 19. 🤝 Direct Kisan Bazaar & PMFME 35% Food Processing
+- **Farm-to-Buyer Listings:** Simulated community marketplace for direct farm-to-buyer produce lots.
+- **PMFME Food Processing Profiles:** Curated feasibility profiles for *Mini Dal Mills*, *Wood-pressed Lakadi Ghani*, and *Onion Solar Dehydration* with 35% capital subsidy calculations.
 
-### 20. 💳 KCC 4% Subsidized Loan Dossier & Kisan Nyay Legal Aid (`institutional`)
-- **RBI/NABARD KCC Loan Dossier:** Generates crop-wise Scale of Finance bank dossiers calculating 4% net interest rate after Prompt Repayment Incentive (PRI).
+### 20. 💳 KCC Subsidized Loan Dossier & Kisan Nyay Legal Aid
+- **KCC Loan Dossier:** Generates crop-wise DLTC Scale of Finance bank dossiers calculating 0% net interest rate under Maharashtra's Dr. Punjabrao Deshmukh scheme for prompt repayment up to ₹3 Lakhs.
 - **Kisan Nyay Legal Remedies:** Step-by-step statutory remedies for *Mamlatdar's Courts Act Sec 143 (Farm Road right-of-way disputes)* and Consumer Protection Act seed claims.
 - **Omnichannel Access Gateway:** Interactive simulation of missed-call automated voice advisory (IVR) and zero-data WhatsApp Krishi Bot.
 
@@ -140,11 +140,15 @@ To prevent misinformation, every API response and frontend widget explicitly dec
 
 | Provenance Label | Meaning & Usage |
 |---|---|
-| `LIVE` | Fetched directly from verified upstream endpoints (Open-Meteo, MSAMB) within valid TTL. |
-| `HISTORICAL` | Official published records (e.g. government scheme eligibility, baseline MSP). |
-| `ESTIMATED` | Deterministically computed by mathematical algorithms (e.g. economics calculator). |
-| `USER_PROVIDED` | Input directly by the cultivator (e.g. soil test report values, farm area). |
+| `LIVE` | Fetched directly from verified upstream endpoints (Open-Meteo) within valid TTL. Includes `source` and `fetched_at`. |
+| `HISTORICAL` | Archived official published records. |
+| `CURATED_REFERENCE` | Hand-verified static catalogs (schemes, CHC rates, KVK contacts, hospital directory) with `source_url`, `last_verified`, and reviewer metadata. |
+| `ESTIMATED` | Deterministically computed by mathematical agronomic algorithms (economics calculator, fertilizer RDF). |
+| `SIMULATED` | Illustrative synthetic models gated behind `DEMO_MODE` (mandi forecast, NDVI canopy model, kisan bazaar, omnichannel). |
+| `USER_PROVIDED` | Input directly by the cultivator (soil test report values, farm area, Gat number). |
 | `UNAVAILABLE` | Explicitly declared when upstream sources are unreachable or records are absent (no fake fallbacks). |
+
+Audit all modules and datasets anytime via the `/data-registry` API endpoint.
 
 ---
 
@@ -159,26 +163,37 @@ agrinexus/
 │   │   ├── modules/        # Domain business logic & adapters:
 │   │   │   ├── weather/    # Open-Meteo adapter, TTL cache, spray advisory rules
 │   │   │   ├── market/     # APMC mandi rates adapter & Agmarknet schema
+│   │   │   ├── forecasting/# Mandi price forecasting scenario (DEMO_MODE)
 │   │   │   ├── calculator/ # Pure economics engine & sensitivity matrix
 │   │   │   ├── soil/       # ICAR soil test interpretation engine
 │   │   │   ├── schemes/    # Central & State schemes catalog
+│   │   │   ├── disease/    # ICAR/KVK symptom guide
+│   │   │   ├── crops/      # Agro-climatic crop suitability recommender
+│   │   │   ├── fertilizer/ # ICAR RDF NPK calculator
+│   │   │   ├── insurance/  # PMFBY insurance calculator
+│   │   │   ├── equipment/  # CHC custom hiring rate cards
+│   │   │   ├── livestock/  # Dairy ration & NDDB vaccination
+│   │   │   ├── remote_sensing/# NDVI canopy simulation (DEMO_MODE)
+│   │   │   ├── postharvest/# MSWC warehouses & e-NWR pledge loans
+│   │   │   ├── assistant/  # Krishi FAQ & KVK directory
+│   │   │   ├── rural_ops/  # Feeder electricity, emergency first aid, bio-recipes
+│   │   │   ├── operations/ # Labor wage hub, seed format checker, groundwater
+│   │   │   ├── market_linkage/# Kisan bazaar (simulated) & PMFME food processing
+│   │   │   ├── institutional/# KCC loan dossier, Kisan Nyay, omnichannel simulation
 │   │   │   └── mapping/    # Agricultural problem classification engine
 │   │   ├── routers/        # FastAPI REST endpoints
 │   │   └── main.py         # App factory, CORS, exception handlers
-│   ├── tests/              # 37 automated pytest unit and integration suites
+│   ├── tests/              # 17 automated pytest test suites (73 tests)
 │   ├── requirements.txt    # Python dependencies
 │   └── pytest.ini          # Pytest configuration
 ├── frontend/
 │   ├── app/
 │   │   ├── globals.css     # Complete styling system for Dribbble & Govt themes
 │   │   ├── layout.tsx      # Root Next.js layout & metadata
-│   │   └── page.tsx        # Interactive UI with dual-theme architecture
+│   │   └── page.tsx        # Interactive UI with dual-theme architecture & Easy Kisan Mode
 │   ├── messages/           # Localization dictionaries (mr.json, hi.json, en.json)
-│   ├── public/             # High-res photography & extracted Dribbble assets
 │   ├── package.json        # Dependencies (Next.js 14, React, TypeScript)
-│   └── .env.local          # Environment configuration (NEXT_PUBLIC_API_URL)
-├── scripts/
-│   └── seed_synthetic.py  # Realistic demo database seeder
+│   └── .env.local          # Environment configuration
 ├── docs/                   # Architecture notes, traceability matrix, AGENTS.md
 └── README.md               # Main project documentation
 ```
@@ -205,16 +220,14 @@ source ../.venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the test suite (37 tests)
+# Run the test suite (73 tests)
 pytest -v
-
-# Seed synthetic demo data
-python ../scripts/seed_synthetic.py
 
 # Launch development server
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
-API Documentation (Interactive Swagger): **`http://localhost:8000/docs`**
+API Documentation (Interactive Swagger): **`http://localhost:8000/docs`**  
+Data Source Registry: **`http://localhost:8000/data-registry`**
 
 ### 2. Frontend Setup
 ```bash
@@ -238,47 +251,30 @@ Web Application: **`http://localhost:3000`**
 
 ## 🧪 Verification & Automated Testing
 
-All 37 backend tests pass with 100% success rate:
+All 73 backend tests across 17 suites pass with a 100% success rate:
 
 ```text
-======================== 37 passed, 1 warning in 1.92s ========================
-tests/test_api.py::test_health PASSED
-tests/test_api.py::test_create_farm PASSED
-tests/test_api.py::test_farm_for_missing_farmer_404 PASSED
-tests/test_api.py::test_invalid_coordinates_rejected PASSED
-tests/test_api.py::test_negative_area_rejected PASSED
-tests/test_api.py::test_invalid_language_rejected PASSED
-tests/test_api.py::test_soil_test_is_labelled_user_provided PASSED
-tests/test_api.py::test_soil_ph_out_of_range_rejected PASSED
-tests/test_auth.py::test_register_success PASSED
-tests/test_auth.py::test_duplicate_registration_rejected PASSED
-tests/test_auth.py::test_login_success_and_failure PASSED
-tests/test_auth.py::test_unauthenticated_requests_return_401 PASSED
-tests/test_auth.py::test_me_endpoint_returns_user_info PASSED
-tests/test_auth.py::test_cross_user_access_returns_403 PASSED
-tests/test_calculator.py::test_hand_calculated_soybean_economics PASSED
-tests/test_calculator.py::test_calculator_api_endpoint PASSED
-tests/test_mapping.py::test_classification_is_flagged_for_review PASSED
-tests/test_mapping.py::test_unimplemented_modules_reported_as_missing PASSED
-tests/test_mapping.py::test_source_url_marks_verified PASSED
-tests/test_mapping.py::test_unknown_text_has_no_domain PASSED
-tests/test_market.py::test_market_query_by_commodity PASSED
-tests/test_market.py::test_market_query_by_district PASSED
-tests/test_market.py::test_market_empty_query_returns_unavailable PASSED
-tests/test_market.py::test_market_deduplication PASSED
-tests/test_market.py::test_market_endpoints PASSED
-tests/test_soil_schemes.py::test_soil_acidic_interpretation PASSED
-tests/test_soil_schemes.py::test_soil_optimal_and_alkaline PASSED
-tests/test_soil_schemes.py::test_farm_soil_interpretation_endpoint PASSED
-tests/test_soil_schemes.py::test_schemes_listing_and_filtering PASSED
-tests/test_soil_schemes.py::test_schemes_api_endpoints PASSED
-tests/test_weather.py::test_weather_success_response PASSED
-tests/test_weather.py::test_weather_cache_hit PASSED
-tests/test_weather.py::test_weather_timeout_fallback_to_unavailable PASSED
-tests/test_weather.py::test_weather_upstream_error_fallback PASSED
-tests/test_weather.py::test_district_name_resolution PASSED
-tests/test_weather.py::test_missing_coordinates_and_district_handled PASSED
-tests/test_weather.py::test_weather_api_endpoint PASSED
+======================== 73 passed, 1 warning in 2.25s ========================
+tests/test_api.py (8 tests)
+tests/test_assistant.py (4 tests)
+tests/test_auth.py (6 tests)
+tests/test_calculator.py (2 tests)
+tests/test_crops.py (3 tests)
+tests/test_data_registry.py (1 test)
+tests/test_disease_forecast.py (4 tests)
+tests/test_equipment_livestock.py (3 tests)
+tests/test_fertilizer.py (2 tests)
+tests/test_institutional.py (3 tests)
+tests/test_insurance.py (1 test)
+tests/test_mapping.py (4 tests)
+tests/test_market.py (5 tests)
+tests/test_market_linkage.py (2 tests)
+tests/test_operations.py (3 tests)
+tests/test_provenance_integrity.py (4 tests)
+tests/test_remote_sensing_postharvest.py (2 tests)
+tests/test_rural_ops.py (4 tests)
+tests/test_soil_schemes.py (5 tests)
+tests/test_weather.py (7 tests)
 ```
 
 Frontend production build (`npm run build`) compiles with zero errors and static pre-rendering optimization.

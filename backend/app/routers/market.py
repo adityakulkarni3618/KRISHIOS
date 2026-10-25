@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query, status
 
+from app.core.config import settings
 from app.modules.market.adapter import MarketQueryResponse, market_service
 from app.modules.forecasting.mandi_forecast import HoldSellAdvice, compute_mandi_forecast
 
@@ -23,6 +24,11 @@ def get_mandi_forecast(
     quantity_quintals: int = Query(default=50, description="Farmer produce volume in quintals"),
     current_price: int = Query(default=0, description="Override today's price if known"),
 ):
+    if not settings.demo_mode:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Price scenario module is simulated and disabled when DEMO_MODE is false.",
+        )
     return compute_mandi_forecast(
         commodity=commodity,
         district=district,

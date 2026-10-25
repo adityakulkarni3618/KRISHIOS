@@ -1115,16 +1115,43 @@ body.theme-govt-active .theme-pill-btn.active {
   border: 1px solid rgba(74, 222, 128, 0.4);
 }
 
+.prov-badge.curated {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.4);
+}
+
 .prov-badge.historical {
   background: rgba(56, 189, 248, 0.2);
   color: #38bdf8;
   border: 1px solid rgba(56, 189, 248, 0.4);
 }
 
+.prov-badge.estimated {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+  border: 1px solid rgba(192, 132, 252, 0.4);
+}
+
+.prov-badge.simulated {
+  background: #facc15 !important;
+  color: #000000 !important;
+  border: 1px solid #ca8a04 !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.6px;
+  box-shadow: 0 0 8px rgba(250, 204, 21, 0.5);
+}
+
 .prov-badge.user-prov {
   background: rgba(251, 191, 36, 0.2);
   color: #fbbf24;
   border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.prov-badge.unavailable {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.4);
 }
 
 .modal-dim {

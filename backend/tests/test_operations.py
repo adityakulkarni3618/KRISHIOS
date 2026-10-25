@@ -19,6 +19,7 @@ def test_labor_hub_wages_and_gangs():
 
 
 def test_seed_authenticity_verification():
+    from app.core.provenance import Provenance
     req = SeedVerificationRequest(
         crop="Soybean",
         company_name="Mahabeej",
@@ -28,8 +29,22 @@ def test_seed_authenticity_verification():
     )
     res = verify_seed_lot(req)
     assert res.is_genuine_format is True
-    assert "VERIFIED" in res.status
+    assert res.status == "FORMAT_PLAUSIBLE"
+    assert res.provenance == Provenance.CURATED_REFERENCE
+    assert "format check only" in res.message.lower()
     assert res.recommended_germination_pct >= 70
+
+    # Test invalid format
+    invalid_req = SeedVerificationRequest(
+        crop="Soybean",
+        company_name="Unknown",
+        variety_name="Test",
+        lot_number="12",
+        mrp_inr=100.0,
+    )
+    invalid_res = verify_seed_lot(invalid_req)
+    assert invalid_res.is_genuine_format is False
+    assert invalid_res.status == "FORMAT_INVALID"
 
     dealers = list_authorized_dealers("Nashik")
     assert len(dealers) >= 1

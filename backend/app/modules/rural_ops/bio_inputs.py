@@ -158,7 +158,7 @@ RECIPES: List[BioInputRecipe] = [
         key_benefit="Naturally generates organic copper lactate which penetrates fungal cell walls better than chemical Copper Oxychloride.",
         key_benefit_mr="नैसर्गिक कॉपर लॅक्टेट तयार होते, जे रासायनिक बुरशीनाशकांपेक्षा स्वस्त व पानांसाठी सुरक्षित असते.",
         provenance=Provenance.HISTORICAL,
-        source_citation="Vasantrao Naik Marathwada Krishi Vidyapeeth (VNMKV) Organic Pathology Lab"
+        source_citation="Vasantrao Naik Marathwada Krishi Vidyapeeth (VNMKV) Department of Plant Pathology"
     )
 ]
 

@@ -73,7 +73,10 @@ def test_schemes_listing_and_filtering():
     # Every scheme must have official portal URL and provenance
     for s in all_schemes:
         assert s.official_portal_url.startswith("http")
-        assert s.provenance == Provenance.HISTORICAL
+        assert s.provenance == Provenance.CURATED_REFERENCE
+        assert s.source_url is not None
+        assert s.last_verified is not None
+        assert s.reviewed_by is not None
         assert len(s.eligibility_checklist) > 0
 
     # Filter by category

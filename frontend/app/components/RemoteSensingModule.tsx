@@ -17,8 +17,8 @@ interface SatelliteAnalysisResult {
   district: string;
   crop: string;
   satellite_source: string;
-  pass_date: string;
-  cloud_cover_pct: number;
+  pass_date?: string;
+  cloud_cover_pct?: number;
   mean_ndvi: number;
   mean_ndre: number;
   mean_ndwi: number;
@@ -27,6 +27,8 @@ interface SatelliteAnalysisResult {
   zonal_distribution: ZoneMetric[];
   overall_recommendation: string;
   overall_recommendation_mr: string;
+  warning?: string;
+  provenance: string;
   source_citation: string;
 }
 
@@ -39,11 +41,14 @@ interface RemoteSensingModuleProps {
 export default function RemoteSensingModule({ district, lang, apiUrl }: RemoteSensingModuleProps) {
   const [crop, setCrop] = useState("Soybean");
   const [acres, setAcres] = useState(2.5);
+  const [scanStatus, setScanStatus] = useState<"idle" | "ok" | "demo_disabled" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SatelliteAnalysisResult | null>(null);
 
   const handleScan = async () => {
     setLoading(true);
+    setErrorMessage(null);
     try {
       const res = await fetch(`${apiUrl}/remote-sensing/field-ndvi`, {
         method: "POST",
@@ -56,9 +61,22 @@ export default function RemoteSensingModule({ district, lang, apiUrl }: RemoteSe
       });
       if (res.ok) {
         setResult(await res.json());
+        setScanStatus("ok");
+        return;
       }
-    } catch (e) {
-      console.error(e);
+      if (res.status === 404) {
+        setResult(null);
+        setScanStatus("demo_disabled");
+        return;
+      }
+      const err = await res.json().catch(() => ({}));
+      setResult(null);
+      setScanStatus("error");
+      setErrorMessage(err.detail || `Remote sensing service returned ${res.status}: ${res.statusText}`);
+    } catch (e: any) {
+      setResult(null);
+      setScanStatus("error");
+      setErrorMessage(`Remote sensing service unreachable: ${e.message || "Network error"}`);
     } finally {
       setLoading(false);
     }
@@ -69,15 +87,36 @@ export default function RemoteSensingModule({ district, lang, apiUrl }: RemoteSe
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
         <div>
           <h4 style={{ fontSize: 18, fontWeight: 800, color: "var(--accent-lime)", margin: 0 }}>
-            🛰️ {lang === "mr" ? "सेंटिनेल-२ उपग्रह पीक आरोग्य व हरित निर्देशांक (NDVI)" : "Sentinel-2 Satellite Crop Health & NDVI Canopy Explorer"}
+            🛰️ {lang === "mr" ? "प्रात्यक्षिक पीक आरोग्य व हरित निर्देशांक सिम्युलेटर (NDVI)" : "Field Canopy & NDVI Spectral Simulator"}
           </h4>
           <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "4px 0 0 0" }}>
             {lang === "mr"
-              ? "युरोपियन स्पेस एजन्सी (ESA) व इस्रो भुवन मल्टिस्पेक्ट्रल डेटा - १० मीटर अचूकतेने पाण्याचा व नत्राचा ताण ओळखा."
-              : "ESA Copernicus Sentinel-2 MSI 10m multispectral resolution: detects crop vigor and water stress before visible symptoms."}
+              ? "प्रात्यक्षिक गणितीय मॉडेल - हे थेट उपग्रह चित्रीकरण नाही. केवळ प्रात्यक्षिकासाठी."
+              : "Synthetic mathematical canopy simulation model for demonstration only. Not connected to live satellite downlink."}
           </p>
         </div>
-        <span className="prov-badge live" style={{ background: "#38bdf8", color: "#000" }}>SENTINEL-2 MSI</span>
+        <span className="prov-badge simulated" style={{ background: "#eab308", color: "#000", fontWeight: 800, padding: "4px 10px", borderRadius: 8 }}>
+          SIMULATED DEMO
+        </span>
+      </div>
+
+      {/* Prominent Simulated Warning Box */}
+      <div style={{
+        background: "rgba(234, 179, 8, 0.12)",
+        border: "1.5px solid #eab308",
+        borderRadius: "var(--radius-md)",
+        padding: "12px 16px",
+        marginBottom: 20,
+        display: "flex",
+        alignItems: "center",
+        gap: 12
+      }}>
+        <span style={{ fontSize: 22 }}>⚠️</span>
+        <div style={{ fontSize: 13, color: "#facc15", fontWeight: 600 }}>
+          {lang === "mr"
+            ? "सिम्युलेटेड डेटा (SIMULATED): हे मॉडेल केवळ यूआय प्रात्यक्षिकासाठी आहे. थेट उपग्रह पास उपलब्ध नाही. शेतात प्रत्यक्ष पाहणी करूनच निर्णय घ्या."
+            : "SIMULATED DATA: This is an illustrative simulation model for UI testing. Live satellite telemetry is not active. Always verify canopy health in the field."}
+        </div>
       </div>
 
       {/* Control Box */}
@@ -107,12 +146,54 @@ export default function RemoteSensingModule({ district, lang, apiUrl }: RemoteSe
 
           <div style={{ display: "flex", alignItems: "flex-end" }}>
             <button className="btn-lime-pill" onClick={handleScan} disabled={loading} style={{ padding: "10px 24px", width: "100%" }}>
-              <span>{loading ? "Downloading Spectral Band..." : lang === "mr" ? "🛰️ उपग्रह स्कॅन करा" : "Analyze Satellite Pass"}</span>
+              <span>{loading ? "Simulating Canopy..." : lang === "mr" ? "🛰️ मॉडेल सिम्युलेट करा" : "Run Canopy Simulation"}</span>
               <span className="circle-arrow-icon">↗</span>
             </button>
           </div>
         </div>
       </div>
+
+      {scanStatus === "demo_disabled" && (
+        <div style={{
+          padding: 32,
+          textAlign: "center",
+          background: "rgba(234, 179, 8, 0.08)",
+          border: "2px dashed #eab308",
+          borderRadius: "var(--radius-lg)",
+          color: "#fef08a",
+          marginBottom: 20
+        }}>
+          <div style={{ fontSize: 36, marginBottom: 10 }}>🔒</div>
+          <h3 style={{ fontSize: 18, fontWeight: 800, color: "#facc15", marginBottom: 8 }}>
+            {lang === "mr"
+              ? "प्रात्यक्षिक वैशिष्ट्य, उपलब्ध नाही"
+              : lang === "hi"
+              ? "डेमो सुविधा, उपलब्ध नहीं है"
+              : "Demo feature, not available"}
+          </h3>
+          <p style={{ fontSize: 13, color: "#fef9c3", maxWidth: 520, margin: "0 auto" }}>
+            {lang === "mr"
+              ? "उपग्रह हरित निर्देशांक (NDVI) हे प्रात्यक्षिक वैशिष्ट्य आहे. सिम्युलेटेड मॉडेल्स चालवण्यासाठी DEMO_MODE=true आवश्यक आहे."
+              : lang === "hi"
+              ? "उपग्रह हरित सूचकांक (NDVI) एक डेमो सुविधा है। सिम्युलेटेड मॉडल चलाने के लिए DEMO_MODE=true आवश्यक है।"
+              : "Field Canopy & NDVI simulation is a demonstration module. It requires DEMO_MODE=true to run simulated models."}
+          </p>
+        </div>
+      )}
+
+      {scanStatus === "error" && errorMessage && (
+        <div style={{
+          padding: 18,
+          background: "rgba(239, 68, 68, 0.12)",
+          border: "1.5px solid #ef4444",
+          borderRadius: "var(--radius-md)",
+          color: "#fca5a5",
+          marginBottom: 20,
+          fontSize: 13
+        }}>
+          ⚠️ <strong>Error:</strong> {errorMessage}
+        </div>
+      )}
 
       {result && (
         <div>
@@ -120,9 +201,9 @@ export default function RemoteSensingModule({ district, lang, apiUrl }: RemoteSe
           <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-card)", borderRadius: "var(--radius-md)", padding: 18, marginBottom: 20 }}>
             <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 14 }}>
               <div>
-                <div style={{ fontSize: 12, color: "var(--accent-lime)", fontWeight: 800 }}>● SATELLITE PASS ACQUIRED</div>
+                <div style={{ fontSize: 12, color: "#eab308", fontWeight: 800 }}>● SYNTHETIC FIELD MODEL (SIMULATED)</div>
                 <div style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)" }}>{result.satellite_source}</div>
-                <div style={{ fontSize: 12, color: "var(--text-muted)" }}>Pass Date: {result.pass_date} · Cloud Cover: {result.cloud_cover_pct}%</div>
+                <div style={{ fontSize: 12, color: "var(--text-muted)" }}>Provenance: SIMULATED · Mathematical Canopy Model</div>
               </div>
               <div style={{ display: "flex", gap: 10 }}>
                 <div style={{ background: "var(--bg-card-subtle)", padding: "8px 12px", borderRadius: 8, textAlign: "center" }}>

@@ -15,7 +15,8 @@ class MandiPriceRecord(BaseModel):
     max_price: float = Field(description="Maximum price in INR per quintal")
     arrival_quantity_quintals: float | None = None
     price_date: str
-    provenance: Provenance
+    as_of: str = "2026-10-19"
+    provenance: Provenance = Provenance.CURATED_REFERENCE
     source: str
     attribution: str
 
@@ -25,7 +26,9 @@ class MarketQueryResponse(BaseModel):
     query_district: str | None = None
     total_records: int
     records: list[MandiPriceRecord]
-    provenance: Provenance
+    as_of: str = "2026-10-19"
+    sample_notice: str = "Sample data, not live. Verified APMC reference as of 2026-10-19."
+    provenance: Provenance = Provenance.CURATED_REFERENCE
     source: str
     attribution: str
     notes: list[str] = []
@@ -45,7 +48,7 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "max_price": 2850.0,
         "arrival_quantity_quintals": 12450.0,
         "price_date": "2026-10-19",
-        "provenance": Provenance.HISTORICAL,
+        "provenance": Provenance.CURATED_REFERENCE,
         "source": "Agmarknet / MSAMB",
         "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
     },
@@ -60,7 +63,7 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "max_price": 2720.0,
         "arrival_quantity_quintals": 9800.0,
         "price_date": "2026-10-19",
-        "provenance": Provenance.HISTORICAL,
+        "provenance": Provenance.CURATED_REFERENCE,
         "source": "Agmarknet / MSAMB",
         "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
     },
@@ -75,7 +78,7 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "max_price": 2900.0,
         "arrival_quantity_quintals": 8500.0,
         "price_date": "2026-10-19",
-        "provenance": Provenance.HISTORICAL,
+        "provenance": Provenance.CURATED_REFERENCE,
         "source": "Agmarknet / MSAMB",
         "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
     },
@@ -90,7 +93,7 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "max_price": 2550.0,
         "arrival_quantity_quintals": 15200.0,
         "price_date": "2026-10-19",
-        "provenance": Provenance.HISTORICAL,
+        "provenance": Provenance.CURATED_REFERENCE,
         "source": "Agmarknet / MSAMB",
         "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
     },
@@ -105,7 +108,7 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "max_price": 4820.0,
         "arrival_quantity_quintals": 4300.0,
         "price_date": "2026-10-19",
-        "provenance": Provenance.HISTORICAL,
+        "provenance": Provenance.CURATED_REFERENCE,
         "source": "Agmarknet / MSAMB",
         "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
     },
@@ -120,7 +123,7 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "max_price": 4750.0,
         "arrival_quantity_quintals": 6200.0,
         "price_date": "2026-10-19",
-        "provenance": Provenance.HISTORICAL,
+        "provenance": Provenance.CURATED_REFERENCE,
         "source": "Agmarknet / MSAMB",
         "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
     },
@@ -135,7 +138,7 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "max_price": 7820.0,
         "arrival_quantity_quintals": 3100.0,
         "price_date": "2026-10-19",
-        "provenance": Provenance.HISTORICAL,
+        "provenance": Provenance.CURATED_REFERENCE,
         "source": "Agmarknet / MSAMB",
         "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
     },
@@ -150,7 +153,7 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "max_price": 8050.0,
         "arrival_quantity_quintals": 4800.0,
         "price_date": "2026-10-19",
-        "provenance": Provenance.HISTORICAL,
+        "provenance": Provenance.CURATED_REFERENCE,
         "source": "Agmarknet / MSAMB",
         "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
     },
@@ -165,7 +168,7 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "max_price": 1900.0,
         "arrival_quantity_quintals": 5400.0,
         "price_date": "2026-10-19",
-        "provenance": Provenance.HISTORICAL,
+        "provenance": Provenance.CURATED_REFERENCE,
         "source": "Agmarknet / MSAMB",
         "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
     },
@@ -180,7 +183,7 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "max_price": 3150.0,
         "arrival_quantity_quintals": 2800.0,
         "price_date": "2026-10-19",
-        "provenance": Provenance.HISTORICAL,
+        "provenance": Provenance.CURATED_REFERENCE,
         "source": "Agmarknet / MSAMB",
         "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
     },
@@ -195,7 +198,7 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "max_price": 6300.0,
         "arrival_quantity_quintals": 3900.0,
         "price_date": "2026-10-19",
-        "provenance": Provenance.HISTORICAL,
+        "provenance": Provenance.CURATED_REFERENCE,
         "source": "Agmarknet / MSAMB",
         "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
     },
@@ -210,7 +213,7 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "max_price": 4900.0,
         "arrival_quantity_quintals": 7200.0,
         "price_date": "2026-10-19",
-        "provenance": Provenance.HISTORICAL,
+        "provenance": Provenance.CURATED_REFERENCE,
         "source": "Agmarknet / MSAMB",
         "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
     },
@@ -266,10 +269,12 @@ class MarketService:
             query_district=district,
             total_records=len(deduped),
             records=deduped,
-            provenance=Provenance.HISTORICAL,
+            as_of="2026-10-19",
+            sample_notice="Sample data, not live. Verified APMC reference as of 2026-10-19.",
+            provenance=Provenance.CURATED_REFERENCE,
             source="Agmarknet / MSAMB",
             attribution="Maharashtra State Agricultural Marketing Board (MSAMB)",
-            notes=["Prices reported in INR per quintal (100 kg) from official APMC market daily arrivals."],
+            notes=["Sample, not live. Prices reported in INR per quintal (100 kg) from official APMC market daily arrivals as of 2026-10-19."],
         )
 
     def get_available_commodities(self) -> list[str]:

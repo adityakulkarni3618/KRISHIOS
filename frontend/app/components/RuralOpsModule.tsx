@@ -16,6 +16,8 @@ interface FeederScheduleItem {
   irrigation_advisory: string;
   irrigation_advisory_mr: string;
   helpline_number: string;
+  schedule_note?: string;
+  schedule_note_mr?: string;
   provenance: string;
   source_citation: string;
 }
@@ -26,8 +28,8 @@ interface EmergencyHospital {
   facility_type: string;
   taluka: string;
   district: string;
-  asv_stock_status: string;
-  available_asv_vials: number;
+  availability_note?: string;
+  availability_note_mr?: string;
   emergency_phone: string;
   distance_km: number;
   ambulance_available: boolean;
@@ -42,13 +44,15 @@ interface FirstAidProtocol {
   immediate_dos_mr: string[];
   strict_donts: string[];
   strict_donts_mr: string[];
-  medical_antidote_info: string;
-  medical_antidote_info_mr: string;
+  medical_action_info?: string;
+  medical_action_info_mr?: string;
 }
 
 interface EmergencySOSResult {
   district: string;
   emergency_toll_free: string;
+  hospital_directory_note?: string;
+  hospital_directory_note_mr?: string;
   snakebite_protocol: FirstAidProtocol;
   pesticide_poisoning_protocol: FirstAidProtocol;
   nearby_asv_hospitals: EmergencyHospital[];
@@ -183,7 +187,10 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
         <div className="feeder-section-grid">
           <div className="glass-card feeder-status-card">
             <div className="card-top-header">
-              <span className="source-chip">⚡ {feeder.provenance} • {feeder.source_citation}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <span className="prov-badge curated">{feeder.provenance}</span>
+                <span className="source-chip">⚡ {feeder.source_citation}</span>
+              </div>
               <span className={`status-badge ${isPowerOn ? "badge-success" : "badge-danger"}`}>
                 {isPowerOn
                   ? (lang === "mr" ? "🟢 वीज सुरू आहे (POWER ON)" : "🟢 POWER ACTIVE")
@@ -193,6 +200,28 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
 
             <h3 className="feeder-name">{feeder.feeder_name}</h3>
             <p className="feeder-substation">📍 {feeder.substation_name}, {feeder.district}</p>
+
+            {/* Feeder schedule sample notice */}
+            <div style={{
+              background: "rgba(245, 158, 11, 0.1)",
+              border: "1px solid #f59e0b",
+              borderRadius: "8px",
+              padding: "8px 12px",
+              margin: "10px 0 14px 0",
+              fontSize: 12,
+              color: "#fbbf24",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              lineHeight: 1.4
+            }}>
+              <span>ℹ️</span>
+              <span>
+                {lang === "mr"
+                  ? (feeder.schedule_note_mr || "नमुना माहिती - वेळापत्रक प्रत्येक फिडरनुसार बदलते. कृपया आपल्या स्थानिक महावितरण (MSEDCL) कार्यालयातून खात्री करा.")
+                  : (feeder.schedule_note || "Sample data - schedules vary by feeder. Confirm with your local MSEDCL office.")}
+              </span>
+            </div>
 
             <div className="feeder-time-box">
               <div className="time-col">
@@ -288,16 +317,19 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
           </div>
 
           <div className="sos-grid">
-            {/* Hospital ASV Locator */}
+            {/* Hospital Directory */}
             <div className="glass-card asv-hospitals-box">
-              <h4>🏥 {lang === "mr" ? `जिल्हा रुग्णालये व सर्पदंश लस (ASV) साठा - ${district}` : `ASV Stocked Centers in ${district}`}</h4>
+              <h4>🏥 {lang === "mr" ? `आपत्कालीन रुग्णालय सूची - ${district}` : `Emergency Hospital Directory - ${district}`}</h4>
+              <p style={{ fontSize: 13, color: "#fbbf24", margin: "6px 0 12px 0", lineHeight: 1.4 }}>
+                ⚠️ {lang === "mr" ? (sosData.hospital_directory_note_mr || "नमुना सूची - उपलब्धतेची खात्री करण्यासाठी कॉल करा") : (sosData.hospital_directory_note || "sample directory - call to confirm availability")}
+              </p>
               <div className="hospital-list">
                 {sosData.nearby_asv_hospitals.map((hosp, idx) => (
                   <div key={idx} className="hospital-item-card">
                     <div className="hospital-item-top">
                       <span className="hosp-name">{lang === "mr" ? hosp.name_mr : hosp.name}</span>
                       <span className="hosp-asv-badge">
-                        💉 {hosp.available_asv_vials} {lang === "mr" ? "डोस उपलब्ध" : "ASV Vials"}
+                        📞 {lang === "mr" ? "उपलब्धता खात्री करा" : "Call to Confirm"}
                       </span>
                     </div>
                     <div className="hosp-details">
@@ -336,8 +368,8 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
               </div>
 
               <div className="antidote-box" style={{ marginTop: 14 }}>
-                <strong>💉 {lang === "mr" ? "वैद्यकीय उपाय" : "Medical Protocol"}:</strong>
-                <p>{lang === "mr" ? sosData.snakebite_protocol.medical_antidote_info_mr : sosData.snakebite_protocol.medical_antidote_info}</p>
+                <strong>🏥 {lang === "mr" ? "वैद्यकीय उपाययोजना" : "Medical Action"}:</strong>
+                <p>{lang === "mr" ? (sosData.snakebite_protocol.medical_action_info_mr || sosData.snakebite_protocol.medical_action_info) : (sosData.snakebite_protocol.medical_action_info || "")}</p>
               </div>
 
               <h4 style={{ marginTop: "1.5rem" }}>☣️ {lang === "mr" ? sosData.pesticide_poisoning_protocol.hazard_title_mr : sosData.pesticide_poisoning_protocol.hazard_title}</h4>
@@ -373,7 +405,10 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
             <div className="glass-card bio-recipe-card">
               <div className="recipe-hero">
                 <div>
-                  <span className="source-chip">🏛️ {selectedRecipe.provenance} • {selectedRecipe.source_citation}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
+                    <span className="prov-badge curated">{selectedRecipe.provenance}</span>
+                    <span className="source-chip">🏛️ {selectedRecipe.source_citation}</span>
+                  </div>
                   <h3 className="recipe-title">{lang === "mr" ? selectedRecipe.name_mr : selectedRecipe.name}</h3>
                   <p className="recipe-target">🎯 {lang === "mr" ? selectedRecipe.key_benefit_mr : selectedRecipe.key_benefit}</p>
                 </div>
@@ -381,8 +416,8 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
                   <div className="saving-value">₹{selectedRecipe.cost_per_acre_inr} <span className="sub-val">/ {lang === "mr" ? "एकर" : "acre"}</span></div>
                   <div className="saving-sub">
                     {lang === "mr"
-                      ? "बाजारातील रासायनिक टॉनिक खर्च ₹२,५०० पेक्षा ९०%+ बचत"
-                      : "Saves 90%+ vs ₹2,500 synthetic chemicals"}
+                      ? "रासायनिक खतांच्या तुलनेत खर्चात भरीव बचत"
+                      : "Significant cost savings compared to synthetic chemical inputs"}
                   </div>
                 </div>
               </div>

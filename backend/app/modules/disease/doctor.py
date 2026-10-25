@@ -1,11 +1,13 @@
-"""AI Crop Doctor & Plant Pathology Diagnostic Module.
+"""Crop Symptom Guide & University Package of Practices.
 
-Provides visual and symptom-based diagnosis for Maharashtra crops,
-including severity estimation, organic remedies, and precise spray dosages.
+Provides symptom keyword matching for common Maharashtra crop ailments.
+NOTE: This is a keyword-based symptom reference guide, NOT an automated AI diagnosis.
 """
 
 from typing import List, Optional
 from pydantic import BaseModel, Field
+
+from app.core.provenance import Provenance
 
 
 class TreatmentOption(BaseModel):
@@ -20,6 +22,9 @@ class TreatmentOption(BaseModel):
 
 class DiseaseDiagnosis(BaseModel):
     id: str
+    guide_title: str = "Crop Symptom Guide"
+    disclaimer: str = "Possible causes based on symptom keywords - not a diagnosis. Show the leaf to your KVK or crop expert."
+    disclaimer_mr: str = "लक्षण शब्दांवर आधारित संभाव्य कारणे - हा अंतिम रोगनिदान नाही. कृपया पान आपल्या कृषी विज्ञान केंद्र (KVK) किंवा पीक तज्ज्ञांना दाखवा."
     crop: str
     crop_mr: str
     crop_hi: str
@@ -27,7 +32,6 @@ class DiseaseDiagnosis(BaseModel):
     disease_name_mr: str
     disease_name_hi: str
     pathogen_type: str  # Fungal, Bacterial, Viral, Pest / Insect
-    confidence: float  # e.g. 0.94
     severity_level: str  # Mild (10-20%), Moderate (20-40%), Severe (>40%)
     severity_pct: int
     symptoms: List[str]
@@ -38,7 +42,12 @@ class DiseaseDiagnosis(BaseModel):
     water_management_advice_mr: str
     preventive_measures: List[str]
     preventive_measures_mr: List[str]
-    provenance: str = "ICAR - Indian Agricultural Research Institute & MPKV Rahuri"
+    provenance: Provenance = Provenance.CURATED_REFERENCE
+    source_citation: str = "ICAR Indian Agricultural Research Institute & MPKV Rahuri Package of Practices"
+
+
+# Type alias
+CropSymptomGuideItem = DiseaseDiagnosis
 
 
 DISEASE_DATABASE: List[DiseaseDiagnosis] = [
@@ -51,7 +60,6 @@ DISEASE_DATABASE: List[DiseaseDiagnosis] = [
         disease_name_mr="गुलाबी बोंडअळी प्रादुर्भाव",
         disease_name_hi="गुलाबी सुंडी (पिंक बॉलवर्म)",
         pathogen_type="Insect / Pest",
-        confidence=0.965,
         severity_level="Severe (>40%)",
         severity_pct=48,
         symptoms=[
@@ -104,7 +112,6 @@ DISEASE_DATABASE: List[DiseaseDiagnosis] = [
         disease_name_mr="सोयाबीन पिवळा मोझॅक विषाणू",
         disease_name_hi="पीला मोज़ेक वायरस",
         pathogen_type="Viral (Whitefly Vector)",
-        confidence=0.942,
         severity_level="Moderate (25-35%)",
         severity_pct=32,
         symptoms=[
@@ -157,7 +164,6 @@ DISEASE_DATABASE: List[DiseaseDiagnosis] = [
         disease_name_mr="टोमॅटोवरील लवकर येणारा करपा",
         disease_name_hi="टमाटर अगेती झुलसा",
         pathogen_type="Fungal (Alternaria solani)",
-        confidence=0.978,
         severity_level="Moderate (20-30%)",
         severity_pct=26,
         symptoms=[
@@ -210,7 +216,6 @@ DISEASE_DATABASE: List[DiseaseDiagnosis] = [
         disease_name_mr="ऊसावरील तांबडा कूज रोग",
         disease_name_hi="गन्ने का लाल सड़न रोग",
         pathogen_type="Fungal (Colletotrichum falcatum)",
-        confidence=0.931,
         severity_level="Severe (>45%)",
         severity_pct=52,
         symptoms=[
@@ -263,7 +268,6 @@ DISEASE_DATABASE: List[DiseaseDiagnosis] = [
         disease_name_mr="कांद्यावरील जांभळा करपा रोग",
         disease_name_hi="प्याज का बैंगनी धब्बा रोग",
         pathogen_type="Fungal (Alternaria porri)",
-        confidence=0.954,
         severity_level="Moderate (20-35%)",
         severity_pct=28,
         symptoms=[
