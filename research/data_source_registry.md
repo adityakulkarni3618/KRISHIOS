@@ -95,5 +95,5 @@ GET https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-ke
 | **Soil Health Card Portal** | 12-parameter soil norms & fertilizer RDF | `CURATED_REFERENCE` | None (Public portal) | N/A | Government of India Soil Health Standards | **CURATED BENCHMARK** |
 | **Kisan Credit Card (MISS)** | Subvented agricultural crop loans | `CURATED_REFERENCE` | None | N/A | RBI Circular *RBI/2025-26/193* & NABARD | **CONFIRMED BENCHMARK** |
 | **PMFME Food Processing** | 35% micro-enterprise capital subsidy | `CURATED_REFERENCE` | None | N/A | MoFPI Scheme Guidelines | **CONFIRMED BENCHMARK** |
-| **Copernicus Sentinel-2** | Satellite NDVI canopy vigor | `SIMULATED` | OAuth2 (Copernicus Hub) | Tiered | ESA Open Access Policy | **SIMULATED DEMO (Post-MVP)** |
+| **Copernicus Sentinel-2 (Candidate)** | Satellite NDVI canopy vigor | `SIMULATED` | OAuth2 (Copernicus Hub) | Tiered | ESA Open Access Policy | **SIMULATED DEMO (Post-MVP Candidate)** |
 | **Plant Pathology ML** | Automated computer vision disease diagnosis | `UNAVAILABLE` | N/A | N/A | Requires validated field dataset | **NOT IMPLEMENTED** |
