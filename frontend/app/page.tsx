@@ -108,6 +108,9 @@ interface TreatmentOption {
 
 interface DiseaseDiagnosis {
   id: string;
+  guide_title?: string;
+  disclaimer?: string;
+  disclaimer_mr?: string;
   crop: string;
   crop_mr: string;
   crop_hi: string;
@@ -115,7 +118,6 @@ interface DiseaseDiagnosis {
   disease_name_mr: string;
   disease_name_hi: string;
   pathogen_type: string;
-  confidence: number;
   severity_level: string;
   severity_pct: number;
   symptoms: string[];
@@ -127,6 +129,7 @@ interface DiseaseDiagnosis {
   preventive_measures: string[];
   preventive_measures_mr: string[];
   provenance: string;
+  source_citation?: string;
 }
 
 interface ForecastPoint {
@@ -504,6 +507,9 @@ export default function Home() {
 
   const defaultDiagnosis: DiseaseDiagnosis = {
     id: "cotton-pink-bollworm",
+    guide_title: "Crop Symptom Guide",
+    disclaimer: "Possible causes based on symptom keywords - not a diagnosis. Show the leaf to your KVK or crop expert.",
+    disclaimer_mr: "लक्षण शब्दांवर आधारित संभाव्य कारणे - हा अंतिम रोगनिदान नाही. कृपया पान आपल्या कृषी विज्ञान केंद्र (KVK) किंवा पीक तज्ज्ञांना दाखवा.",
     crop: "Cotton (कापूस)",
     crop_mr: "कापूस",
     crop_hi: "कपास",
@@ -511,7 +517,6 @@ export default function Home() {
     disease_name_mr: "गुलाबी बोंडअळी प्रादुर्भाव",
     disease_name_hi: "गुलाबी सुंडी (पिंक बॉलवर्म)",
     pathogen_type: "Insect / Pest (Pectinophora gossypiella)",
-    confidence: 0.965,
     severity_level: "Severe (>40%)",
     severity_pct: 48,
     symptoms: [
@@ -554,7 +559,8 @@ export default function Home() {
       "रोसेट फुले गोळा करून जाळून नष्ट करा",
       "ट्रायकोग्रामा बॅक्टरी परोपजीवी मित्रकीटक एकरी ६०,००० सोडा"
     ],
-    provenance: "ICAR - Central Institute for Cotton Research & MPKV Rahuri"
+    provenance: "CURATED_REFERENCE",
+    source_citation: "ICAR - Central Institute for Cotton Research & MPKV Rahuri"
   };
 
   const defaultForecast: HoldSellAdvice = {
@@ -1829,19 +1835,38 @@ export default function Home() {
               </button>
             </div>
 
-            {/* TAB: AI Crop Doctor & Leaf Diagnostic Scanner */}
+            {/* TAB: Crop Symptom Guide */}
             {activeTab === "doctor" && (
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
                   <div>
                     <h4 style={{ fontSize: 18, fontWeight: 800, color: "var(--accent-lime)", margin: 0 }}>
-                      🔬 AI Crop Doctor & Plant Pathology Diagnostic Lab
+                      🌿 Crop Symptom Guide & University Practices
                     </h4>
                     <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "4px 0 0 0" }}>
-                      ICAR & MPKV Rahuri benchmarked symptom diagnostics with exact 15L knapsack pump spray dosages.
+                      Curated symptom keyword matching based on ICAR & MPKV Rahuri Package of Practices with knapsack spray recommendations.
                     </p>
                   </div>
-                  <span className="prov-badge live">ICAR / MPKV VERIFIED</span>
+                  <span className="prov-badge curated">CURATED REFERENCE</span>
+                </div>
+
+                {/* Prominent Disclaimer Banner */}
+                <div style={{
+                  background: "rgba(245, 158, 11, 0.1)",
+                  border: "1.5px solid #f59e0b",
+                  borderRadius: "var(--radius-md)",
+                  padding: "12px 16px",
+                  marginBottom: 20,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12
+                }}>
+                  <span style={{ fontSize: 22 }}>⚠️</span>
+                  <div style={{ fontSize: 13, color: "#fbbf24", fontWeight: 600 }}>
+                    {lang === "mr"
+                      ? "लक्षण शब्दांवर आधारित संभाव्य कारणे - हा अंतिम रोगनिदान नाही. कृपया पान आपल्या कृषी विज्ञान केंद्र (KVK) किंवा पीक तज्ज्ञांना दाखवा."
+                      : "Possible causes based on symptom keywords - not a clinical diagnosis. Always show the affected leaf to your local Krishi Vigyan Kendra (KVK) or crop protection expert."}
+                  </div>
                 </div>
 
                 <div className="crop-doctor-container">
@@ -1884,7 +1909,7 @@ export default function Home() {
                           style={{ padding: "8px 16px", whiteSpace: "nowrap" }}
                           onClick={handleDiagnoseCrop}
                         >
-                          {isScanning ? "Scanning..." : "Diagnose"}
+                          {isScanning ? "Checking..." : "Check Symptoms"}
                         </button>
                       </div>
                     </div>
@@ -1893,7 +1918,7 @@ export default function Home() {
                     <div
                       className="leaf-upload-zone"
                       onClick={handleDiagnoseCrop}
-                      title="Click to simulate camera leaf inspection"
+                      title="Click to check symptoms"
                     >
                       {isScanning && <div className="scan-line-anim" />}
                       <div style={{ position: "relative", width: "100%", height: 220, borderRadius: 12, overflow: "hidden", marginBottom: 12 }}>
@@ -1903,14 +1928,14 @@ export default function Home() {
                           style={{ width: "100%", height: "100%", objectFit: "cover" }}
                         />
                         <div style={{ position: "absolute", bottom: 8, left: 8, background: "rgba(0,0,0,0.75)", padding: "4px 8px", borderRadius: 6, fontSize: 11, color: "#4ade80", fontWeight: 700 }}>
-                          📸 AI LEAF TELEMETRY ACTIVE
+                          🌿 SYMPTOM REFERENCE SPECIMEN
                         </div>
                       </div>
                       <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary)" }}>
-                        {isScanning ? "Analyzing cellular pathogen patterns..." : "Tap or drop photo to run Multimodal Plant Pathology Scan"}
+                        {isScanning ? "Checking symptom knowledgebase..." : "Sample leaf reference. Enter symptoms above to match university practices."}
                       </div>
                       <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>
-                        Supports JPG, PNG, WebP up to 10MB or direct mobile camera
+                        Reference guide covers Cotton, Soybean, Tomato, Sugarcane, Onion
                       </div>
                     </div>
                   </div>
@@ -1921,7 +1946,7 @@ export default function Home() {
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
                         <div>
                           <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 800, textTransform: "uppercase" }}>
-                            {doctorResult.pathogen_type} · {(doctorResult.confidence * 100).toFixed(1)}% CONFIDENCE
+                            {doctorResult.pathogen_type} · KEYWORD MATCH (CURATED REFERENCE)
                           </div>
                           <h3 style={{ fontSize: 22, fontWeight: 900, color: "var(--text-primary)", margin: "4px 0" }}>
                             {lang === "mr" ? doctorResult.disease_name_mr : doctorResult.disease_name}

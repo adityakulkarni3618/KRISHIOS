@@ -33,7 +33,10 @@ def test_disease_diagnose():
     assert res.status_code == 200
     data = res.json()
     assert data["crop_mr"] is not None
-    assert data["confidence"] > 0
+    assert "confidence" not in data
+    assert data["provenance"] == "CURATED_REFERENCE"
+    assert "not a diagnosis" in data["disclaimer"].lower()
+    assert "KVK" in data["disclaimer"]
 
 
 def test_mandi_forecast():
