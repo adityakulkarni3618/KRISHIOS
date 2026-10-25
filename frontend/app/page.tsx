@@ -61,6 +61,8 @@ interface WeatherData {
     precipitation_sum: number;
     precipitation_probability: number | null;
   }>;
+  condition?: string | null;
+  rainfall_probability_pct?: number | null;
   advisories: string[];
   source: string;
   fetched_at: string;
@@ -227,6 +229,7 @@ export default function Home() {
   // Problem Mapping Tool State
   const [mappingQuery, setMappingQuery] = useState("");
   const [mappingResult, setMappingResult] = useState<any>(null);
+  const [mappingError, setMappingError] = useState<string | null>(null);
 
   // 3D & Animation State
   const [cursorPos, setCursorPos] = useState({ x: -1000, y: -1000 });
@@ -242,6 +245,7 @@ export default function Home() {
   const [doctorCrop, setDoctorCrop] = useState<string>("Cotton (कापूस)");
   const [doctorQuery, setDoctorQuery] = useState<string>("");
   const [doctorResult, setDoctorResult] = useState<DiseaseDiagnosis | null>(null);
+  const [doctorError, setDoctorError] = useState<string | null>(null);
   const [remedyMode, setRemedyMode] = useState<"organic" | "chemical">("organic");
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [uploadedLeafUrl, setUploadedLeafUrl] = useState<string>("/dribbble_feat4.jpg");
@@ -251,6 +255,11 @@ export default function Home() {
   const [forecastCommodity, setForecastCommodity] = useState<string>("Soybean");
   const [forecastQuantity, setForecastQuantity] = useState<number>(50);
   const [forecastData, setForecastData] = useState<HoldSellAdvice | null>(null);
+  const [forecastStatus, setForecastStatus] = useState<"idle" | "loading" | "ok" | "demo_disabled" | "error">("idle");
+
+  const [weatherError, setWeatherError] = useState<string | null>(null);
+  const [mandiError, setMandiError] = useState<string | null>(null);
+  const [schemesError, setSchemesError] = useState<string | null>(null);
 
   // Smart Jal-Mitra (Irrigation) State
   const [irrigCrop, setIrrigCrop] = useState<string>("Soybean (सोयाबीन)");
@@ -374,41 +383,26 @@ export default function Home() {
 
   // Weather fetch
   const fetchWeather = async (dist: string) => {
+    setWeatherError(null);
     try {
       const res = await fetch(`${API_URL}/weather/advisory?district=${encodeURIComponent(dist)}`);
       if (res.ok) {
         const data = await res.json();
         setWeather(data);
         return;
+      } else {
+        setWeatherError(`Weather service returned ${res.status}: ${res.statusText}`);
+        setWeather(null);
       }
-    } catch {}
-
-    setWeather({
-      district: dist,
-      temperature: 31.8,
-      relative_humidity: 48,
-      precipitation: 0.0,
-      wind_speed: 9.4,
-      daily_forecast: [
-        { date: "2026-10-20", temp_max: 33.5, temp_min: 21.0, precipitation_sum: 0.0, precipitation_probability: 5 },
-        { date: "2026-10-21", temp_max: 34.0, temp_min: 21.5, precipitation_sum: 0.0, precipitation_probability: 10 },
-        { date: "2026-10-22", temp_max: 32.8, temp_min: 22.0, precipitation_sum: 0.2, precipitation_probability: 25 },
-        { date: "2026-10-23", temp_max: 31.2, temp_min: 20.5, precipitation_sum: 1.5, precipitation_probability: 45 },
-        { date: "2026-10-24", temp_max: 33.0, temp_min: 20.0, precipitation_sum: 0.0, precipitation_probability: 10 },
-      ],
-      advisories: [
-        "वाऱ्याचा वेग ९.४ किमी/तास: सकाळच्या वेळी कीटकनाशके व विद्राव्य खतांची फवारणी करण्यास अनुकूल हवामान.",
-        "दुपारी तापमान ३३.५° से पर्यंत जाण्याची शक्यता असल्याने फळबागांना ठिबक सिंचनाद्वारे संध्याकाळी संरक्षित पाणी द्यावे.",
-        "हवामान कोरडे राहणार असल्याने सोयाबीन व मका काढणी व मळणीची कामे वेगाने पूर्ण करावीत.",
-      ],
-      source: "Open-Meteo & IMD Agro-Advisory Service",
-      fetched_at: "2026-10-20T15:30:00Z",
-      provenance: "LIVE",
-    });
+    } catch (e: any) {
+      setWeatherError(`Weather service unreachable: ${e.message || "Network error"}`);
+      setWeather(null);
+    }
   };
 
   // Mandi fetch
   const fetchMandi = async () => {
+    setMandiError(null);
     try {
       const res = await fetch(`${API_URL}/market/prices?district=${encodeURIComponent(selectedDistrict)}`);
       if (res.ok) {
@@ -417,17 +411,14 @@ export default function Home() {
           setMandiPrices(data.records);
           return;
         }
+      } else {
+        setMandiError(`Mandi prices service returned ${res.status}: ${res.statusText}`);
+        setMandiPrices([]);
       }
-    } catch {}
-
-    setMandiPrices([
-      { id: "M1", commodity: "Soybean (सोयाबीन)", district: selectedDistrict, market: `${selectedDistrict} APMC`, variety: "Yellow", min_price: 4350, modal_price: 4680, max_price: 4850, price_date: "2026-10-20", provenance: "LIVE" },
-      { id: "M2", commodity: "Onion (कांदा)", district: selectedDistrict, market: `${selectedDistrict} APMC`, variety: "Red (गावरान)", min_price: 1800, modal_price: 2650, max_price: 3400, price_date: "2026-10-20", provenance: "LIVE" },
-      { id: "M3", commodity: "Cotton (कापूस)", district: selectedDistrict, market: `${selectedDistrict} APMC`, variety: "Medium Staple", min_price: 6800, modal_price: 7450, max_price: 7750, price_date: "2026-10-20", provenance: "LIVE" },
-      { id: "M4", commodity: "Gram / Chana (हरभरा)", district: selectedDistrict, market: `${selectedDistrict} APMC`, variety: "Deshi", min_price: 5400, modal_price: 5850, max_price: 6100, price_date: "2026-10-20", provenance: "LIVE" },
-      { id: "M5", commodity: "Maize (मका)", district: selectedDistrict, market: `${selectedDistrict} APMC`, variety: "Yellow Feed", min_price: 2150, modal_price: 2320, max_price: 2480, price_date: "2026-10-20", provenance: "LIVE" },
-      { id: "M6", commodity: "Pomegranate (डाळिंब)", district: selectedDistrict, market: `${selectedDistrict} APMC`, variety: "Bhagwa Export", min_price: 8500, modal_price: 13500, max_price: 17500, price_date: "2026-10-20", provenance: "LIVE" },
-    ]);
+    } catch (e: any) {
+      setMandiError(`Mandi service unreachable: ${e.message || "Network error"}`);
+      setMandiPrices([]);
+    }
   };
 
   // Schemes fetch
@@ -438,73 +429,17 @@ export default function Home() {
         const data = await res.json();
         if (data.schemes && data.schemes.length > 0) {
           setSchemes(data.schemes);
+          setSchemesError(null);
           return;
         }
+      } else {
+        setSchemesError(`Schemes catalog returned ${res.status}: ${res.statusText}`);
+        setSchemes([]);
       }
-    } catch {}
-
-    setSchemes([
-      {
-        id: "SCH-PMKISAN",
-        name: "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
-        name_mr: "पीएम-किसान (पंतप्रधान किसान सन्मान निधी)",
-        name_hi: "पीएम-किसान (प्रधानमंत्री किसान सम्मान निधि)",
-        category: "Direct Income",
-        sponsor: "Central Government",
-        benefit_summary: "₹6,000 per year directly transferred to bank account in 3 equal installments of ₹2,000.",
-        benefit_summary_mr: "दरवर्षी ₹६,००० थेट बँक खात्यात, तीन समान हप्त्यांमध्ये (प्रत्येकी ₹२,०००) जमा.",
-        benefit_summary_hi: "प्रत्येक वर्ष ₹६,००० सीधे बैंक खाते में तीन समान किश्तों में।",
-        eligibility_checklist: ["Landholder farmer families", "Aadhaar-linked bank account with e-KYC"],
-        official_portal_url: "https://pmkisan.gov.in/",
-        application_portal_name: "PM-KISAN National Portal",
-        provenance: "HISTORICAL",
-      },
-      {
-        id: "SCH-PMFBY",
-        name: "PMFBY (Pradhan Mantri Fasal Bima Yojana)",
-        name_mr: "पंतप्रधान पीक विमा योजना (१ रुपयात सर्वसमावेशक पीक विमा)",
-        name_hi: "प्रधानमंत्री फसल बीमा योजना (पीएमएफबीवाई)",
-        category: "Insurance",
-        sponsor: "Central & Maharashtra State Government",
-        benefit_summary: "Comprehensive crop insurance; in Maharashtra farmers pay only ₹1 token premium.",
-        benefit_summary_mr: "महाराष्ट्र शासनातर्फे शेतकऱ्यांना केवळ ₹१ भरून नैसर्गिक आपत्तीत सर्वसमावेशक पीक विमा संरक्षण मिळते.",
-        benefit_summary_hi: "महाराष्ट्र में किसानों के लिए मात्र ₹१ टोकन प्रीमियम में व्यापक फसल सुरक्षा।",
-        eligibility_checklist: ["All farmers growing notified crops", "Sowing certificate / e-Pik Pahani entry"],
-        official_portal_url: "https://pmfby.gov.in/",
-        application_portal_name: "PMFBY & Aaple Sarkar DBT",
-        provenance: "HISTORICAL",
-      },
-      {
-        id: "SCH-POCRA",
-        name: "Nanaji Deshmukh Krishi Sanjivani Yojana (PoCRA)",
-        name_mr: "नानाजी देशमुख कृषी संजीवनी प्रकल्प (पोकरा)",
-        name_hi: "नानाजी देशमुख कृषि संजीवनी योजना (पोकरा)",
-        category: "Water & Irrigation",
-        sponsor: "Government of Maharashtra & World Bank",
-        benefit_summary: "50% to 75% subsidy for drip irrigation, farm ponds, and shade nets in 5,142 drought-prone villages.",
-        benefit_summary_mr: "ठिबक सिंचन, शेततळे, शेडनेट गृह आणि फळबाग लागवडीसाठी ५०% ते ७५% थेट बँक अनुदान.",
-        benefit_summary_hi: "सूखाग्रस्त क्षेत्रों में ड्रिप, खेत तालाब और शेडनेट के लिए ५०% से ७५% तक अनुदान।",
-        eligibility_checklist: ["Small and marginal farmers in 5,142 project villages"],
-        official_portal_url: "https://mahapocra.gov.in/",
-        application_portal_name: "MahaPoCRA Portal",
-        provenance: "HISTORICAL",
-      },
-      {
-        id: "SCH-SHET-TALE",
-        name: "Magel Tyala Shet Tale (Farm Ponds on Demand)",
-        name_mr: "मागेल त्याला शेततळे योजना",
-        name_hi: "मागेल त्याला शेततळे (मांग पर खेत तालाब)",
-        category: "Water & Irrigation",
-        sponsor: "Government of Maharashtra",
-        benefit_summary: "Subsidy of up to ₹50,000 to ₹75,000 for digging plastic-lined farm ponds for protective irrigation.",
-        benefit_summary_mr: "पावसाचा खंड पडल्यास पिकांना संरक्षित पाणी मिळावे म्हणून शेततळे खोदण्यासाठी ₹५०,००० ते ₹७५,००० पर्यंत अनुदान.",
-        benefit_summary_hi: "सूखे से बचाव हेतु प्लास्टिक-अस्तर खेत तालाब निर्माण के लिए ₹५०,००० से ₹७५,००० का अनुदान।",
-        eligibility_checklist: ["Farmer owning minimum 0.60 hectares (1.5 acres) of land"],
-        official_portal_url: "https://mahadbt.maharashtra.gov.in/",
-        application_portal_name: "MahaDBT Farmer Schemes Portal",
-        provenance: "HISTORICAL",
-      },
-    ]);
+    } catch (e: any) {
+      setSchemesError(`Schemes service unreachable: ${e.message || "Network error"}`);
+      setSchemes([]);
+    }
   };
 
   const defaultDiagnosis: DiseaseDiagnosis = {
@@ -565,54 +500,6 @@ export default function Home() {
     source_citation: "ICAR - Central Institute for Cotton Research & MPKV Rahuri"
   };
 
-  const defaultForecast: HoldSellAdvice = {
-    commodity: "Soybean",
-    district: "Latur",
-    market: "Latur APMC",
-    current_modal_price: 4650,
-    quantity_quintals: 50,
-    recommendation: "HOLD",
-    recommendation_mr: "काही दिवस साठवून ठेवा (HOLD)",
-    confidence_pct: 88,
-    executive_summary: "Soymeal export demand is accelerating and arrivals in Madhya Pradesh/Maharashtra are slowing down. Price expected to rally towards ₹5,030.",
-    executive_summary_mr: "सोयापेंड निर्यातीची मागणी वाढली असून बाजारातील आवक मंदावली आहे. पुढील १५ दिवसांत भाव ₹५,०३० पर्यंत जाण्याची शक्यता आहे.",
-    forecast_curve: [
-      { days_ahead: 0, projected_date: "Today", expected_modal_price: 4650, min_confidence_price: 4550, max_confidence_price: 4750, trend: "STABLE" },
-      { days_ahead: 7, projected_date: "+7 Days", expected_modal_price: 4820, min_confidence_price: 4700, max_confidence_price: 4940, trend: "UPWARD" },
-      { days_ahead: 15, projected_date: "+15 Days", expected_modal_price: 5030, min_confidence_price: 4880, max_confidence_price: 5180, trend: "UPWARD" },
-      { days_ahead: 30, projected_date: "+30 Days", expected_modal_price: 5160, min_confidence_price: 4950, max_confidence_price: 5350, trend: "UPWARD" },
-    ],
-    storage_economics: {
-      warehouse_charge_per_quintal_month: 22,
-      estimated_moisture_shrinkage_pct: 1.2,
-      total_carrying_cost_15_days: 67,
-      projected_gross_gain_per_quintal: 380,
-      net_profit_per_quintal: 313,
-      total_net_gain_for_lot: 15650
-    },
-    market_drivers: [
-      {
-        factor: "Crude Degummed Soybean Oil Import Tariff",
-        factor_mr: "आयात शुल्क वाढीचा निर्णय",
-        impact: "Bullish (+)",
-        description: "Government raised effective import tariff on edible oils by 20%, supporting domestic crush margins.",
-        description_mr: "खाद्यतेलावरील आयात शुल्कात २०% वाढ झाल्याने देशांतर्गत सोयाबीनला जोरदार उठाव मिळतो आहे."
-      },
-      {
-        factor: "Poultry Feed Industry Demand",
-        factor_mr: "पोल्ट्री फीड उद्योगाकडून वाढती मागणी",
-        impact: "Bullish (+)",
-        description: "Feed millers operating at 85% capacity with lean 12-day inventory.",
-        description_mr: "पोल्ट्री खाद्य उत्पादकांकडे कमी साठा असल्याने खरेदीचा जोर कायम."
-      }
-    ],
-    nearby_warehouses: [
-      { name: "Maharashtra State Warehousing Corporation (MSWC), Latur", distance: "4.2 km", capacity: "12,000 MT", contact: "02382-245120" },
-      { name: "Central Warehousing Corporation (CWC), Barshi Road", distance: "7.8 km", capacity: "25,000 MT", contact: "02382-251890" }
-    ],
-    provenance: "Agmarknet APMC Historical Time-Series & MSAMB Seasonal Indices"
-  };
-
   const speakText = (text: string) => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
@@ -634,24 +521,30 @@ export default function Home() {
   };
 
   const fetchForecast = async (crop: string, qty: number) => {
+    setForecastStatus("loading");
     try {
       const res = await fetch(`${API_URL}/market/forecast?commodity=${encodeURIComponent(crop)}&district=${encodeURIComponent(selectedDistrict)}&market=${encodeURIComponent(selectedDistrict + " APMC")}&quantity_quintals=${qty}`);
       if (res.ok) {
         setForecastData(await res.json());
+        setForecastStatus("ok");
         return;
       }
-    } catch {}
-    setForecastData({
-      ...defaultForecast,
-      commodity: crop,
-      quantity_quintals: qty,
-      district: selectedDistrict,
-      market: `${selectedDistrict} APMC`
-    });
+      if (res.status === 404) {
+        setForecastData(null);
+        setForecastStatus("demo_disabled");
+        return;
+      }
+      setForecastData(null);
+      setForecastStatus("error");
+    } catch {
+      setForecastData(null);
+      setForecastStatus("error");
+    }
   };
 
   const handleDiagnoseCrop = async () => {
     setIsScanning(true);
+    setDoctorError(null);
     try {
       const res = await fetch(`${API_URL}/disease/diagnose`, {
         method: "POST",
@@ -661,15 +554,22 @@ export default function Home() {
       if (res.ok) {
         const data = await res.json();
         setDoctorResult(data);
-        setIsScanning(false);
         return;
       }
-    } catch {}
-
-    setTimeout(() => {
-      setDoctorResult(defaultDiagnosis);
+      if (res.status === 404) {
+        setDoctorResult(null);
+        setDoctorError("Demo feature, not available");
+        return;
+      }
+      const err = await res.json().catch(() => ({}));
+      setDoctorResult(null);
+      setDoctorError(err.detail || `Diagnosis service returned ${res.status}: ${res.statusText}`);
+    } catch (e: any) {
+      setDoctorResult(null);
+      setDoctorError(`Diagnosis service unreachable: ${e.message || "Network error"}`);
+    } finally {
       setIsScanning(false);
-    }, 600);
+    }
   };
 
   useEffect(() => {
@@ -735,6 +635,7 @@ export default function Home() {
   // Problem classification
   const handleAnalyzeMapping = async () => {
     if (!mappingQuery.trim()) return;
+    setMappingError(null);
     try {
       const res = await fetch(`${API_URL}/mapping/classify`, {
         method: "POST",
@@ -745,39 +646,13 @@ export default function Home() {
         setMappingResult(await res.json());
         return;
       }
-    } catch {}
-
-    const q = mappingQuery.toLowerCase();
-    const domains: string[] = [];
-    const modules: string[] = [];
-    if (q.includes("weather") || q.includes("rain") || q.includes("हवामान") || q.includes("पाऊस")) {
-      domains.push("weather_climate (हवामान व पर्जन्यमान)");
-      modules.push("E_weather (Agro-Meteorology Advisory)");
+      const err = await res.json().catch(() => ({}));
+      setMappingResult(null);
+      setMappingError(err.detail || `Problem classification service returned ${res.status}: ${res.statusText}`);
+    } catch (e: any) {
+      setMappingResult(null);
+      setMappingError(`Problem classification service unreachable: ${e.message || "Network error"}`);
     }
-    if (q.includes("market") || q.includes("price") || q.includes("बाजारभाव") || q.includes("कांदा") || q.includes("मंडी")) {
-      domains.push("market_supply_chain (बाजारभाव व पुरवठा साखळी)");
-      modules.push("I_market (APMC Mandi Price Board)");
-    }
-    if (q.includes("soil") || q.includes("माती") || q.includes("खत") || q.includes("ph")) {
-      domains.push("soil_health (मृदा आरोग्य व पोषण)");
-      modules.push("C_soil_health (ICAR Soil Interpretation)");
-    }
-    if (q.includes("cost") || q.includes("profit") || q.includes("नफा") || q.includes("खर्च")) {
-      domains.push("finance_insurance (कृषी वित्त व अर्थशास्त्र)");
-      modules.push("J_finance (Farm Economics Calculator)");
-    }
-    if (q.includes("scheme") || q.includes("योजना") || q.includes("अनुदान")) {
-      domains.push("schemes (शासकीय योजना व लाभ)");
-      modules.push("K_schemes (Government Schemes Catalog)");
-    }
-    setMappingResult({
-      title: mappingQuery,
-      candidate_domains: domains.length ? domains : ["crop_production (सर्वसाधारण कृषी उत्पादन)"],
-      relevant_modules: modules.length ? modules : ["A_farm_management (शेतकरी व जमीन अभिलेख)"],
-      verification_status: "VERIFIED (Evidence Matrix)",
-      needs_human_review: true,
-      notes: ["पारदर्शक कीवर्ड वर्गीकरण: शास्त्रोक्त व अधिकृत अंमलबजावणीपूर्वी तज्ज्ञांचा सल्ला घ्यावा."],
-    });
   };
 
   const districtsList = [
@@ -993,20 +868,27 @@ export default function Home() {
                     <button
                       className="tts-audio-btn"
                       style={{ fontSize: 13, padding: "8px 16px" }}
-                      onClick={() => speakText(
-                        lang === "mr" 
-                          ? `आज फवारणी करण्यास हवामान अनुकूल आहे. वाऱ्याचा वेग ${weather?.wind_speed || 9.4} किमी प्रतितास असून पाऊस पडण्याची शक्यता ५ टक्के आहे. कापूस पिकावरील कीड नियंत्रणासाठी योग्य सल्ला घ्या. बाजार समितीतील आजचे दर तपासा.`
-                          : `Today weather is optimal for spray. Wind speed is ${weather?.wind_speed || 9.4} km per hour with negligible rain. Check APMC mandi rates for prevailing commodity prices.`
-                      )}
+                      onClick={() => {
+                        if (!weather) return;
+                        speakText(
+                          lang === "mr" 
+                            ? `आज फवारणी सल्ला: वाऱ्याचा वेग ${weather.wind_speed} किमी प्रतितास असून पाऊस पडण्याची शक्यता ${weather.rainfall_probability_pct ?? 0} टक्के आहे.`
+                            : `Today spray advisory: Wind speed is ${weather.wind_speed} km per hour with ${weather.rainfall_probability_pct ?? 0}% rain probability.`
+                        );
+                      }}
                     >
                       {speakingText ? "🔊 वाचन सुरू आहे..." : "🔊 आजचा सल्ला ऐका"}
                     </button>
                     <button
                       className="whatsapp-share-btn"
                       style={{ fontSize: 13, padding: "8px 16px" }}
-                      onClick={() => shareToWhatsApp(
-                        `🌾 *कृषी ओएस - आजचा शेती सल्ला*\n📍 जिल्हा: ${selectedDistrict}\n⛅ हवामान: ${weather?.temperature || 31.8}°C | वाऱ्याचा वेग: ${weather?.wind_speed || 9.4} km/h\n✅ फवारणी: सकाळच्या वेळेत फवारणीस अनुकूल\n💰 कृषी उत्पन्न बाजार समिती दर तपासा\n📞 २४x७ किसान मदत: 1800-180-1551`
-                      )}
+                      onClick={() => {
+                        const tempStr = weather?.temperature != null ? `${weather.temperature.toFixed(1)}°C` : "N/A";
+                        const windStr = weather?.wind_speed != null ? `${weather.wind_speed} km/h` : "N/A";
+                        shareToWhatsApp(
+                          `🌾 *कृषी ओएस - आजचा शेती सल्ला*\n📍 जिल्हा: ${selectedDistrict}\n⛅ हवामान: ${tempStr} | वाऱ्याचा वेग: ${windStr}\n✅ फवारणी: सकाळच्या वेळेत फवारणीस अनुकूल\n💰 कृषी उत्पन्न बाजार समिती दर तपासा\n📞 २४x७ किसान मदत: 1800-180-1551`
+                        );
+                      }}
                     >
                       📲 व्हॉट्सॲपवर पाठवा
                     </button>
@@ -1019,7 +901,11 @@ export default function Home() {
                     <div className="kisan-card-icon">🌦️</div>
                     <div className="kisan-card-title">{t("kisan_spray_q")}</div>
                     <div className="kisan-card-desc">
-                      {lang === "mr" ? "हवेचा वेग ९.४ किमी/तास आणि पावसाची शक्यता ५% आहे. सकाळच्या प्रहरी फवारणी उत्तम." : "Wind 9.4 km/h, rain 5%. Favorable morning spray window."}
+                      {weather
+                        ? (lang === "mr"
+                            ? `हवेचा वेग ${weather.wind_speed} किमी/तास आणि पावसाची शक्यता ${weather.rainfall_probability_pct ?? 0}% आहे.`
+                            : `Wind ${weather.wind_speed} km/h, rain ${weather.rainfall_probability_pct ?? 0}%.`)
+                        : (weatherError || (lang === "mr" ? "हवामान माहिती लोड होत आहे..." : "Loading live weather telemetry..."))}
                     </div>
                     <div className="kisan-status-badge safe">
                       🟢 {lang === "mr" ? "फवारणीसाठी अनुकूल (SAFE)" : "SAFE TO SPRAY"}
@@ -1109,54 +995,6 @@ export default function Home() {
                       🖨️ {lang === "mr" ? "कार्ड डाऊनलोड करा" : "PRINT HEALTH CARD"}
                     </div>
                   </div>
-
-                  {/* Card 9: 3-Phase Electricity Schedule */}
-                  <div className="kisan-card" onClick={() => { setActiveTab("rural_ops"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
-                    <div className="kisan-card-icon" style={{ background: "rgba(234, 179, 8, 0.2)" }}>⚡</div>
-                    <div className="kisan-card-title">{lang === "mr" ? "३-फेज वीज वेळापत्रक" : "3-Phase Power Roster"}</div>
-                    <div className="kisan-card-desc">
-                      {lang === "mr" ? "महावितरण फिडरनुसार दिवसा/रात्रीचे ८ तास वीज वेळापत्रक व व्होल्टेज आरोग्य तपासा." : "MSEDCL 3-phase rural feeder active hours, voltage quality, and motor protection tips."}
-                    </div>
-                    <div className="kisan-status-badge safe">
-                      🔌 {lang === "mr" ? "वीज वेळ तपासा" : "CHECK FEEDER SHIFT"}
-                    </div>
-                  </div>
-
-                  {/* Card 10: Snakebite & Poison SOS */}
-                  <div className="kisan-card" onClick={() => { setActiveTab("rural_ops"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
-                    <div className="kisan-card-icon" style={{ background: "rgba(239, 68, 68, 0.2)" }}>🚨</div>
-                    <div className="kisan-card-title">{lang === "mr" ? "सर्पदंश व विषबाधा SOS" : "Snakebite & Poison SOS"}</div>
-                    <div className="kisan-card-desc">
-                      {lang === "mr" ? "१०८ रुग्णवाहिका थेट संपर्क, तालुक्यातील ASV सर्पदंश लस साठा व प्रथमोपचार मार्गदर्शन." : "108 ambulance one-tap call, certified Anti-Snake Venom (ASV) hospital locator."}
-                    </div>
-                    <div className="kisan-status-badge danger">
-                      🏥 {lang === "mr" ? "तातडीचे उपचार केंद्र" : "EMERGENCY ASV"}
-                    </div>
-                  </div>
-
-                  {/* Card 11: Direct Farm Bazaar */}
-                  <div className="kisan-card" onClick={() => { setActiveTab("kisan_bazaar"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
-                    <div className="kisan-card-icon" style={{ background: "rgba(34, 197, 94, 0.2)" }}>🤝</div>
-                    <div className="kisan-card-title">{lang === "mr" ? "थेट शेतकरी बाजार (०% आडत)" : "Direct Kisan Bazaar"}</div>
-                    <div className="kisan-card-desc">
-                      {lang === "mr" ? "दलाल आणि अडत्यांशिवाय थेट व्यापारी व ग्राहकांना शेतीमाल विका किंवा डाळ मिल योजना पहा." : "Trade produce directly at 0% commission or explore PMFME 35% processing subsidy."}
-                    </div>
-                    <div className="kisan-status-badge safe">
-                      🌾 {lang === "mr" ? "थेट माल विका" : "DIRECT TRADE"}
-                    </div>
-                  </div>
-
-                  {/* Card 12: KCC Loan & Farm Rights */}
-                  <div className="kisan-card" onClick={() => { setActiveTab("kcc_legal"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
-                    <div className="kisan-card-icon" style={{ background: "rgba(56, 189, 248, 0.2)" }}>💳</div>
-                    <div className="kisan-card-title">{lang === "mr" ? "४% केसीसी कर्ज व शेतरस्ता हक्क" : "4% KCC & Farm Rights"}</div>
-                    <div className="kisan-card-desc">
-                      {lang === "mr" ? "४% सवलतीचे पीक कर्ज डॉसियर तयार करा किंवा शेतरस्ता अडवल्यास मामलतदार कोर्ट अर्ज करा." : "RBI 4% subsidized crop loan dossier & Mamlatdar Courts Act Sec 143 road dispute remedies."}
-                    </div>
-                    <div className="kisan-status-badge safe">
-                      ⚖️ {lang === "mr" ? "हक्क व अर्ज मिळवा" : "KCC & LEGAL AID"}
-                    </div>
-                  </div>
                 </div>
               </div>
             </section>
@@ -1225,7 +1063,7 @@ export default function Home() {
                   ● LIVE TELEMETRY
                 </div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary)" }}>
-                  {selectedDistrict} District: {weather?.temperature ? `${weather.temperature.toFixed(1)}°C` : "31.8°C"} · Clear Sky
+                  {selectedDistrict} District: {weather?.temperature != null ? `${weather.temperature.toFixed(1)}°C · ${weather.condition || "Clear"}` : (weatherError || "Loading weather telemetry...")}
                 </div>
               </div>
               <span className="prov-badge live">AgriStack</span>
@@ -1943,6 +1781,13 @@ export default function Home() {
                   </div>
 
                   {/* Right Column: Diagnostic Result & Dual Remedy */}
+                  {doctorError && (
+                    <div style={{ background: "rgba(239, 68, 68, 0.12)", border: "1.5px solid #ef4444", borderRadius: "var(--radius-lg)", padding: 24, color: "#fca5a5" }}>
+                      <h4 style={{ margin: "0 0 8px 0", color: "#f87171" }}>⚠️ {doctorError.includes("Demo") ? (lang === "mr" ? "प्रात्यक्षिक वैशिष्ट्य, उपलब्ध नाही" : lang === "hi" ? "डेमो सुविधा, उपलब्ध नहीं है" : "Demo feature, not available") : "Symptom Guide Error"}</h4>
+                      <p style={{ margin: 0, fontSize: 13 }}>{doctorError}</p>
+                    </div>
+                  )}
+
                   {doctorResult && (
                     <div style={{ background: "var(--bg-card-subtle)", border: "1.5px solid var(--border-lime)", borderRadius: "var(--radius-lg)", padding: 24 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
@@ -2076,44 +1921,64 @@ export default function Home() {
                     <button
                       type="button"
                       className="tts-audio-btn"
-                      onClick={() => speakText(
-                        lang === "mr"
-                          ? `जिल्हा ${selectedDistrict}. तापमान ${weather?.temperature || 31.8} अंश सेल्सिअस, वाऱ्याचा वेग ${weather?.wind_speed || 9.4} किमी प्रतितास. सकाळच्या वेळी कीटकनाशक फवारणी करण्यास हवामान अनुकूल आहे.`
-                          : `District ${selectedDistrict}. Temperature ${weather?.temperature || 31.8} Celsius, wind speed ${weather?.wind_speed || 9.4} km/h. Morning weather is favorable for spraying.`
-                      )}
+                      onClick={() => {
+                        if (!weather || weather.temperature == null) return;
+                        speakText(
+                          lang === "mr"
+                            ? `जिल्हा ${selectedDistrict}. तापमान ${weather.temperature.toFixed(1)} अंश सेल्सिअस, वाऱ्याचा वेग ${weather.wind_speed ?? 0} किमी प्रतितास. फवारणी सल्ला ऐका.`
+                            : `District ${selectedDistrict}. Temperature ${weather.temperature.toFixed(1)} Celsius, wind speed ${weather.wind_speed ?? 0} km/h.`
+                        );
+                      }}
                     >
                       🔊 {t("tts_listen")}
                     </button>
                     <button
                       type="button"
                       className="whatsapp-share-btn"
-                      onClick={() => shareToWhatsApp(
-                        `⛅ *कृषी ओएस - हवामान व फवारणी सल्ला*\n📍 जिल्हा: ${selectedDistrict}\n🌡️ तापमान: ${weather?.temperature || 31.8}°C | आर्द्रता: ${weather?.relative_humidity || 48}%\n💨 वाऱ्याचा वेग: ${weather?.wind_speed || 9.4} km/h (फवारणीस अनुकूल)\n🌧️ पाऊस: ${weather?.precipitation || 0.0} mm\n🏛️ अधिकृत स्त्रोत: IMD & Open-Meteo`
-                      )}
+                      onClick={() => {
+                        if (!weather || weather.temperature == null) return;
+                        shareToWhatsApp(
+                          `⛅ *कृषी ओएस - हवामान व फवारणी सल्ला*\n📍 जिल्हा: ${selectedDistrict}\n🌡️ तापमान: ${weather.temperature.toFixed(1)}°C | आर्द्रता: ${weather.relative_humidity ?? "N/A"}%\n💨 वाऱ्याचा वेग: ${weather.wind_speed ?? "N/A"} km/h\n🌧️ पाऊस: ${weather.precipitation != null ? weather.precipitation.toFixed(1) : "0.0"} mm\n🏛️ अधिकृत स्त्रोत: IMD & Open-Meteo`
+                        );
+                      }}
                     >
                       📲 {t("share_whatsapp")}
                     </button>
                   </div>
                 </div>
 
+                {weatherError && (
+                  <div style={{
+                    padding: 16,
+                    background: "rgba(239, 68, 68, 0.12)",
+                    border: "1.5px solid #ef4444",
+                    borderRadius: "var(--radius-md)",
+                    color: "#fca5a5",
+                    fontSize: 13,
+                    marginBottom: 16
+                  }}>
+                    ⚠️ <strong>Weather Telemetry Error:</strong> {weatherError}
+                  </div>
+                )}
+
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, marginBottom: 20 }}>
                   <div style={{ background: "var(--bg-card-subtle)", padding: 20, borderRadius: "var(--radius-md)", border: "1px solid var(--border-card)" }}>
                     <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase" }}>Current Temperature</div>
                     <div style={{ fontSize: 36, fontWeight: 800, color: "var(--accent-lime)", margin: "4px 0" }}>
-                      {weather?.temperature ? `${weather.temperature.toFixed(1)}°C` : "31.8°C"}
+                      {weather?.temperature != null ? `${weather.temperature.toFixed(1)}°C` : "N/A"}
                     </div>
                     <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>
-                      Humidity: {weather?.relative_humidity || 48}% · Wind: {weather?.wind_speed || 9.4} km/h
+                      Humidity: {weather?.relative_humidity != null ? `${weather.relative_humidity}%` : "N/A"} · Wind: {weather?.wind_speed != null ? `${weather.wind_speed} km/h` : "N/A"}
                     </div>
                   </div>
 
                   <div style={{ background: "var(--bg-card-subtle)", padding: 20, borderRadius: "var(--radius-md)", border: "1px solid var(--border-card)" }}>
                     <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase" }}>Rainfall Today</div>
                     <div style={{ fontSize: 36, fontWeight: 800, color: "var(--text-primary)", margin: "4px 0" }}>
-                      {weather?.precipitation ? `${weather.precipitation.toFixed(1)} mm` : "0.0 mm"}
+                      {weather?.precipitation != null ? `${weather.precipitation.toFixed(1)} mm` : "N/A"}
                     </div>
                     <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>
-                      Rain Probability: 5% (Dry Window Optimal for Harvesting)
+                      Rain Probability: {weather?.rainfall_probability_pct !== undefined ? `${weather.rainfall_probability_pct}%` : "N/A"}
                     </div>
                   </div>
 
@@ -2210,6 +2075,20 @@ export default function Home() {
                       </span>
                     </div>
 
+                    {mandiError && (
+                      <div style={{
+                        padding: 16,
+                        background: "rgba(239, 68, 68, 0.12)",
+                        border: "1.5px solid #ef4444",
+                        borderRadius: "var(--radius-md)",
+                        color: "#fca5a5",
+                        fontSize: 13,
+                        marginBottom: 16
+                      }}>
+                        ⚠️ <strong>Mandi Board Error:</strong> {mandiError}
+                      </div>
+                    )}
+
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                       <input
                         type="text"
@@ -2253,10 +2132,50 @@ export default function Home() {
                 ) : (
                   /* Illustrative Price Scenario (Simulated Demo Only) */
                   <div>
-                    {/* Prominent Simulated Warning */}
-                    <div style={{ marginBottom: 16, padding: "12px 16px", background: "rgba(245, 158, 11, 0.15)", border: "1.5px solid #f59e0b", borderRadius: 10, color: "#fcd34d", fontSize: 13, lineHeight: 1.5 }}>
-                      ⚠️ <strong>{lang === "mr" ? "काल्पनिक आकडेवारी (SIMULATED):" : "SIMULATED WARNING:"}</strong> {forecastData?.warning || "This is an illustrative price scenario for UI demonstration only. It is NOT real market intelligence or financial/selling advice."}
-                    </div>
+                    {forecastStatus === "demo_disabled" ? (
+                      <div style={{
+                        padding: 32,
+                        textAlign: "center",
+                        background: "rgba(245, 158, 11, 0.08)",
+                        border: "2px dashed #f59e0b",
+                        borderRadius: "var(--radius-lg)",
+                        color: "#fef08a",
+                        margin: "20px 0"
+                      }}>
+                        <div style={{ fontSize: 36, marginBottom: 10 }}>🔒</div>
+                        <h3 style={{ fontSize: 18, fontWeight: 800, color: "#facc15", marginBottom: 8 }}>
+                          {lang === "mr"
+                            ? "प्रात्यक्षिक वैशिष्ट्य, उपलब्ध नाही"
+                            : lang === "hi"
+                            ? "डेमो सुविधा, उपलब्ध नहीं है"
+                            : "Demo feature, not available"}
+                        </h3>
+                        <p style={{ fontSize: 13, color: "#fef9c3", maxWidth: 520, margin: "0 auto" }}>
+                          {lang === "mr"
+                            ? "बाजार भाव अंदाज हे प्रात्यक्षिक वैशिष्ट्य आहे. सिम्युलेटेड मॉडेल्स चालवण्यासाठी DEMO_MODE=true आवश्यक आहे."
+                            : lang === "hi"
+                            ? "बाजार मूल्य पूर्वानुमान एक डेमो सुविधा है। सिम्युलेटेड मॉडल चलाने के लिए DEMO_MODE=true आवश्यक है।"
+                            : "Market price forecasting is a demonstration module. It requires DEMO_MODE=true to run simulated models."}
+                        </p>
+                      </div>
+                    ) : forecastStatus === "error" ? (
+                      <div style={{
+                        padding: 18,
+                        background: "rgba(239, 68, 68, 0.12)",
+                        border: "1.5px solid #ef4444",
+                        borderRadius: "var(--radius-md)",
+                        color: "#fca5a5",
+                        margin: "20px 0",
+                        fontSize: 13
+                      }}>
+                        ⚠️ <strong>Error:</strong> Failed to fetch market price forecast from backend.
+                      </div>
+                    ) : (
+                      <>
+                        {/* Prominent Simulated Warning */}
+                        <div style={{ marginBottom: 16, padding: "12px 16px", background: "rgba(245, 158, 11, 0.15)", border: "1.5px solid #f59e0b", borderRadius: 10, color: "#fcd34d", fontSize: 13, lineHeight: 1.5 }}>
+                          ⚠️ <strong>{lang === "mr" ? "काल्पनिक आकडेवारी (SIMULATED):" : "SIMULATED WARNING:"}</strong> {forecastData?.warning || "This is an illustrative price scenario for UI demonstration only. It is NOT real market intelligence or financial/selling advice."}
+                        </div>
 
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, marginBottom: 20, background: "var(--bg-card-subtle)", padding: 20, borderRadius: "var(--radius-md)", border: "1px solid var(--border-card)" }}>
                       <div>
@@ -2378,8 +2297,10 @@ export default function Home() {
                         </div>
                       </>
                     )}
-                  </div>
+                  </>
                 )}
+              </div>
+            )}
               </div>
             )}
 
@@ -2651,6 +2572,20 @@ export default function Home() {
                     Diagnose
                   </button>
                 </div>
+
+                {mappingError && (
+                  <div style={{
+                    padding: 16,
+                    background: "rgba(239, 68, 68, 0.12)",
+                    border: "1.5px solid #ef4444",
+                    borderRadius: "var(--radius-md)",
+                    color: "#fca5a5",
+                    fontSize: 13,
+                    marginBottom: 16
+                  }}>
+                    ⚠️ <strong>Error:</strong> {mappingError}
+                  </div>
+                )}
 
                 {mappingResult && (
                   <div style={{ background: "var(--bg-card-subtle)", border: "1px solid var(--border-lime)", borderRadius: "var(--radius-md)", padding: 20 }}>

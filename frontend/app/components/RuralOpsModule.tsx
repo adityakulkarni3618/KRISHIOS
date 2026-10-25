@@ -416,8 +416,8 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
                   <div className="saving-value">₹{selectedRecipe.cost_per_acre_inr} <span className="sub-val">/ {lang === "mr" ? "एकर" : "acre"}</span></div>
                   <div className="saving-sub">
                     {lang === "mr"
-                      ? "बाजारातील रासायनिक टॉनिक खर्च ₹२,५०० पेक्षा ९०%+ बचत"
-                      : "Saves 90%+ vs ₹2,500 synthetic chemicals"}
+                      ? "रासायनिक खतांच्या तुलनेत खर्चात भरीव बचत"
+                      : "Significant cost savings compared to synthetic chemical inputs"}
                   </div>
                 </div>
               </div>

@@ -41,11 +41,14 @@ interface RemoteSensingModuleProps {
 export default function RemoteSensingModule({ district, lang, apiUrl }: RemoteSensingModuleProps) {
   const [crop, setCrop] = useState("Soybean");
   const [acres, setAcres] = useState(2.5);
+  const [scanStatus, setScanStatus] = useState<"idle" | "ok" | "demo_disabled" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SatelliteAnalysisResult | null>(null);
 
   const handleScan = async () => {
     setLoading(true);
+    setErrorMessage(null);
     try {
       const res = await fetch(`${apiUrl}/remote-sensing/field-ndvi`, {
         method: "POST",
@@ -58,9 +61,22 @@ export default function RemoteSensingModule({ district, lang, apiUrl }: RemoteSe
       });
       if (res.ok) {
         setResult(await res.json());
+        setScanStatus("ok");
+        return;
       }
-    } catch (e) {
-      console.error(e);
+      if (res.status === 404) {
+        setResult(null);
+        setScanStatus("demo_disabled");
+        return;
+      }
+      const err = await res.json().catch(() => ({}));
+      setResult(null);
+      setScanStatus("error");
+      setErrorMessage(err.detail || `Remote sensing service returned ${res.status}: ${res.statusText}`);
+    } catch (e: any) {
+      setResult(null);
+      setScanStatus("error");
+      setErrorMessage(`Remote sensing service unreachable: ${e.message || "Network error"}`);
     } finally {
       setLoading(false);
     }
@@ -136,6 +152,48 @@ export default function RemoteSensingModule({ district, lang, apiUrl }: RemoteSe
           </div>
         </div>
       </div>
+
+      {scanStatus === "demo_disabled" && (
+        <div style={{
+          padding: 32,
+          textAlign: "center",
+          background: "rgba(234, 179, 8, 0.08)",
+          border: "2px dashed #eab308",
+          borderRadius: "var(--radius-lg)",
+          color: "#fef08a",
+          marginBottom: 20
+        }}>
+          <div style={{ fontSize: 36, marginBottom: 10 }}>🔒</div>
+          <h3 style={{ fontSize: 18, fontWeight: 800, color: "#facc15", marginBottom: 8 }}>
+            {lang === "mr"
+              ? "प्रात्यक्षिक वैशिष्ट्य, उपलब्ध नाही"
+              : lang === "hi"
+              ? "डेमो सुविधा, उपलब्ध नहीं है"
+              : "Demo feature, not available"}
+          </h3>
+          <p style={{ fontSize: 13, color: "#fef9c3", maxWidth: 520, margin: "0 auto" }}>
+            {lang === "mr"
+              ? "उपग्रह हरित निर्देशांक (NDVI) हे प्रात्यक्षिक वैशिष्ट्य आहे. सिम्युलेटेड मॉडेल्स चालवण्यासाठी DEMO_MODE=true आवश्यक आहे."
+              : lang === "hi"
+              ? "उपग्रह हरित सूचकांक (NDVI) एक डेमो सुविधा है। सिम्युलेटेड मॉडल चलाने के लिए DEMO_MODE=true आवश्यक है।"
+              : "Field Canopy & NDVI simulation is a demonstration module. It requires DEMO_MODE=true to run simulated models."}
+          </p>
+        </div>
+      )}
+
+      {scanStatus === "error" && errorMessage && (
+        <div style={{
+          padding: 18,
+          background: "rgba(239, 68, 68, 0.12)",
+          border: "1.5px solid #ef4444",
+          borderRadius: "var(--radius-md)",
+          color: "#fca5a5",
+          marginBottom: 20,
+          fontSize: 13
+        }}>
+          ⚠️ <strong>Error:</strong> {errorMessage}
+        </div>
+      )}
 
       {result && (
         <div>
