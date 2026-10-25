@@ -4,9 +4,9 @@
 Project: KRISHIOS / AGRINEXUS (कृषी ओएस)
 Repository: https://github.com/adityakulkarni3618/KRISHIOS.git
 Branch: feature/universal-problem-solver
-Date Updated: 2026-10-24
-Status: Verified Production-Ready & Omnichannel Agrarian Platform
-Automated Backend Tests: 66/66 Passing (100% Pass Rate across 15 Suites)
+Date Updated: 2026-10-25
+Status: Verified Omnichannel Agrarian Decision Platform & Grounded AgriStack Portal
+Automated Backend Tests: 73/73 Passing (100% Pass Rate across 17 Suites)
 Frontend Build: Next.js 14.2.15 (Clean Compile, 0 Errors, Prerendered Static)
 
 ================================================================================
@@ -19,28 +19,28 @@ Organizations (FPOs), agribusinesses, and agronomic researchers.
 Solving from micro/nano ground operational challenges up to macro market linkage
 and institutional access:
 - Micro/Nano: 3-Phase rural electricity feeder schedules, emergency snakebite &
-  pesticide poisoning first-aid triage with Anti-Snake Venom (ASV) hospital locator,
-  and zero-cost university DIY desi bio-inputs (Jeevamrut, Dashparni Ark).
+  pesticide poisoning first-aid triage with sample hospital directory (no drug dosages),
+  and university DIY desi bio-inputs (Jeevamrut, Dashparni Ark).
 - Meso/Operations: Farm labor (Krishi Majur) wage matching and labor gang directory,
-  spurious seed/pesticide lot authenticity verification, and groundwater depth
-  monitoring with aquifer recharge pit advisory.
-- Macro/Market Linkage: Direct farm-to-buyer Kisan Bazaar (0% APMC commission) and
+  seed lot format validation, and groundwater depth monitoring with aquifer recharge pit advisory.
+- Macro/Market Linkage: Direct farm-to-buyer Kisan Bazaar (simulated demo) and
   PMFME micro food-processing profiles with 35% government capital subsidies.
-- Institutional & Access: RBI/NABARD 4% subsidized KCC loan dossiers, Kisan Nyay
-  legal dispute resolution (Mamlatdar Courts Act Sec 143 for farm roads), and
+- Institutional & Access: RBI/NABARD KCC loan dossiers (Maharashtra 0% interest subvention),
+  Kisan Nyay legal dispute resolution (Mamlatdar Courts Act Sec 143 for farm roads), and
   omnichannel IVR missed-call & WhatsApp bot gateways for non-smartphone farmers.
 
 Core Technical Stack:
 - Backend: FastAPI 0.115+, Python 3.11+, SQLAlchemy 2.0+, Pydantic v2, Argon2
 - Frontend: Next.js 14, React 18, TypeScript, Vanilla CSS (Dual-Theme System)
-- Data Integrations: Open-Meteo, IMD, MSAMB APMC, ICAR, MSEDCL, CGWB/GSDA, PMFME
-- Data Provenance Framework: Strict enforcement of zero hallucination. Every
-  recommendation is stamped LIVE, HISTORICAL, ESTIMATED, USER_PROVIDED, or UNAVAILABLE.
+- Data Integrations: Open-Meteo, MSAMB APMC, ICAR, MSEDCL, PMFME, WDRA
+- Data Provenance Framework: Strict enforcement of data integrity. Every
+  recommendation is stamped LIVE, HISTORICAL, CURATED_REFERENCE, ESTIMATED, SIMULATED,
+  USER_PROVIDED, or UNAVAILABLE.
 
 Dual-Theme Architecture & Rural Accessibility:
 - Theme 1: "🌿 Dribbble Modern Precision AgTech" (Dark forest #08160c, lime #d4f936)
 - Theme 2: "🏛️ Official Govt AgriStack Portal" (Light high-contrast e-Governance)
-- 🌾 Easy Kisan Mode (सुलभ शेतकरी मोड): 12 one-tap cards with Devanagari TTS audio.
+- 🌾 Easy Kisan Mode (सुलभ शेतकरी मोड): Exactly 8 one-tap cards with Devanagari TTS audio.
 
 ================================================================================
 2. DIRECTORY STRUCTURE & FILE INVENTORY
@@ -57,8 +57,8 @@ agrinexus/
 │   ├── app/
 │   │   ├── main.py                # FastAPI factory, CORS, exception handlers
 │   │   ├── core/
-│   │   │   ├── config.py          # Settings, env variables, JWT secret
-│   │   │   ├── provenance.py      # Data provenance enums (LIVE, HISTORICAL, etc.)
+│   │   │   ├── config.py          # Settings, env variables, JWT secret, require_demo_mode
+│   │   │   ├── provenance.py      # Data provenance enums (LIVE, CURATED_REFERENCE, etc.)
 │   │   │   └── security.py        # Argon2 hashing, JWT access token handlers
 │   │   ├── models/
 │   │   │   ├── base.py            # SQLAlchemy declarative base & timestamps
@@ -66,15 +66,25 @@ agrinexus/
 │   │   │   └── farm.py            # Farm holding & SoilTest entities
 │   │   ├── modules/
 │   │   │   ├── weather/           # Open-Meteo adapter, TTL cache, spray rules
-│   │   │   ├── market/            # APMC mandi prices adapter & MSAMB schema
+│   │   │   ├── market/            # APMC mandi prices adapter & sample reference schema
+│   │   │   ├── forecasting/       # Mandi price forecasting scenario (gated behind DEMO_MODE)
 │   │   │   ├── calculator/        # Pure economics engine & sensitivity matrix
 │   │   │   ├── soil/              # ICAR soil test interpretation engine
-│   │   │   ├── schemes/           # Central & Maharashtra government schemes
-│   │   │   ├── mapping/           # Agronomic challenge classifier
-│   │   │   ├── rural_ops/         # 3-Phase electricity, snakebite SOS, bio-inputs
-│   │   │   ├── operations/        # Labor wage hub, seed verifier, groundwater
-│   │   │   ├── market_linkage/    # Direct kisan bazaar, PMFME food processing
-│   │   │   └── institutional/     # KCC loan dossier, kisan nyay, omnichannel
+│   │   │   ├── schemes/           # Central & Maharashtra government schemes catalog
+│   │   │   ├── disease/           # ICAR/KVK crop symptom guide & disclaimer
+│   │   │   ├── crops/             # Agro-climatic crop recommender
+│   │   │   ├── fertilizer/        # ICAR RDF NPK split dosing calculator
+│   │   │   ├── insurance/         # PMFBY insurance calculator & disaster intimation
+│   │   │   ├── equipment/         # CHC machinery rate cards & fuel estimator
+│   │   │   ├── livestock/         # Dairy ration & NDDB vaccination schedule
+│   │   │   ├── remote_sensing/    # Canopy NDVI simulation (gated behind DEMO_MODE)
+│   │   │   ├── postharvest/       # MSWC warehouses & e-NWR pledge loan calculator
+│   │   │   ├── assistant/         # Krishi FAQ & KVK directory fallback
+│   │   │   ├── rural_ops/         # 3-Phase electricity, emergency SOS, bio-inputs
+│   │   │   ├── operations/        # Labor wage hub, seed format checker, groundwater
+│   │   │   ├── market_linkage/    # Direct kisan bazaar (simulated), PMFME food processing
+│   │   │   ├── institutional/     # KCC loan dossier, kisan nyay, omnichannel simulation
+│   │   │   └── mapping/           # Agronomic challenge classifier
 │   │   └── routers/
 │   │       ├── auth.py            # Registration, login, token refresh, /me
 │   │       ├── farms.py           # Farm CRUD, plot management, ownership
@@ -83,18 +93,29 @@ agrinexus/
 │   │       ├── calculator.py      # Economics & break-even calculation endpoints
 │   │       ├── soil.py            # Soil test submission & ICAR interpretation
 │   │       ├── schemes.py         # Schemes catalog & eligibility filters
-│   │       ├── mapping.py         # Problem classification endpoints
+│   │       ├── disease.py         # Symptom guide catalog & search
+│   │       ├── crops.py           # Crop suitability recommendation endpoints
+│   │       ├── fertilizer.py      # NPK dosage calculation endpoints
+│   │       ├── insurance.py       # PMFBY claim intimation endpoints
+│   │       ├── equipment.py       # CHC machinery rental endpoints
+│   │       ├── livestock.py       # Dairy ration & vaccination endpoints
+│   │       ├── remote_sensing.py  # NDVI simulation endpoints (DEMO_MODE)
+│   │       ├── postharvest.py     # Warehouse locator & pledge loan endpoints
+│   │       ├── assistant.py       # Krishi FAQ query endpoints
 │   │       ├── rural_ops.py       # Electricity, emergency SOS, bio-recipes
 │   │       ├── operations.py      # Labor hub, seed verification, groundwater
 │   │       ├── market_linkage.py  # Bazaar listings & food processing profiles
-│   │       └── institutional.py   # KCC eligibility, legal guides, omnichannel
-│   └── tests/                     # 15 automated pytest test suites (66 tests)
+│   │       ├── institutional.py   # KCC eligibility, legal guides, omnichannel
+│   │       ├── data_registry.py   # Full system data source and provenance registry
+│   │       └── mapping.py         # Problem classification endpoints
+│   └── tests/                     # 17 automated pytest test suites (73 tests)
 │       ├── test_api.py            # Health, farm CRUD, validation tests (8 tests)
-│       ├── test_assistant.py      # Multilingual AI Krishi Mitra tests (3 tests)
+│       ├── test_assistant.py      # Krishi FAQ & KVK directory tests (4 tests)
 │       ├── test_auth.py           # Registration, login, JWT, RBAC tests (6 tests)
 │       ├── test_calculator.py     # Hand-calculated economics tests (2 tests)
 │       ├── test_crops.py          # Crop recommendations tests (3 tests)
-│       ├── test_disease_forecast.py# Disease diagnosis & price forecast tests (4 tests)
+│       ├── test_data_registry.py  # Data registry audit endpoints (1 test)
+│       ├── test_disease_forecast.py# Symptom guide & price forecast tests (4 tests)
 │       ├── test_equipment_livestock.py# CHC custom hiring & livestock tests (3 tests)
 │       ├── test_fertilizer.py     # NPK dosage & soil adjustment tests (2 tests)
 │       ├── test_institutional.py  # KCC loan, Kisan Nyay, omnichannel tests (3 tests)
@@ -103,8 +124,9 @@ agrinexus/
 │       ├── test_market.py         # Mandi query, deduplication, schema tests (5 tests)
 │       ├── test_market_linkage.py # Kisan bazaar & PMFME profile tests (2 tests)
 │       ├── test_operations.py     # Labor wages, seed verify, groundwater tests (3 tests)
+│       ├── test_provenance_integrity.py # LIVE and CURATED_REFERENCE audit tests (4 tests)
 │       ├── test_remote_sensing_postharvest.py # NDVI & MSWC warehouses (2 tests)
-│       ├── test_rural_ops.py      # Electricity, snakebite SOS, bio-inputs (3 tests)
+│       ├── test_rural_ops.py      # Electricity, snakebite SOS, bio-inputs (4 tests)
 │       ├── test_soil_schemes.py   # ICAR soil interpretation & schemes (5 tests)
 │       └── test_weather.py        # Weather caching, timeout resilience (7 tests)
 └── frontend/
@@ -117,78 +139,63 @@ agrinexus/
     └── app/
         ├── layout.tsx             # Root layout, metadata, Plus Jakarta Sans font
         ├── globals.css            # Responsive styles & complete light/dark theme rules
-        ├── page.tsx               # Main Next.js reactive console & Easy Kisan Mode
-        └── components/
-            ├── AssistantVoiceModule.tsx   # AI Krishi Mitra speech assistant
-            ├── CropsModule.tsx            # MPKV crop recommendations
-            ├── EquipmentModule.tsx        # Custom Hiring Centre machinery booking
-            ├── FertilizerModule.tsx       # Soil-adjusted NPK dosage calculator
-            ├── InsuranceModule.tsx        # PMFBY ₹1 crop insurance claim guide
-            ├── LivestockModule.tsx        # Pashu-Mitra TMR feed & vaccine calendar
-            ├── PostharvestModule.tsx      # MSWC warehouses & e-NWR pledge loans
-            ├── RemoteSensingModule.tsx    # Sentinel-2 NDVI multispectral explorer
-            ├── SatbaraModule.tsx          # 7/12 Land record & digital health card
-            ├── RuralOpsModule.tsx         # 3-Phase power, Snakebite SOS, Bio-inputs
-            ├── OperationsHubModule.tsx    # Labor wage hub, seed QR check, aquifer
-            ├── KisanBazaarModule.tsx      # Direct bazaar lots & PMFME 35% subsidy
-            └── KCCAndLegalModule.tsx      # KCC loan dossier & Kisan Nyay land rights
+        └── page.tsx               # Main Next.js reactive console & Easy Kisan Mode (8 cards)
 
 ================================================================================
 3. KEY DOMAIN ALGORITHMS & PROVENANCE LAWS
 ================================================================================
 
 3.1 3-Phase Rural Electricity Feeder Roster
-- 8-Hour Rotational Cycles: Day Shift (08:00 to 16:00) vs. Night Shift (23:00 to 07:00).
+- 8-Hour Rotational Cycles: Day Shift (08:00 AM to 04:00 PM) vs. Night Shift (11:00 PM to 07:00 AM).
 - Voltage Quality Health Check: Monitors 3-phase steady state (415V optimal,
   <380V low voltage alert with single phase preventer and shunt capacitor rules).
+- Feeder Schedule Note: Sample data - Schedules vary by feeder. Confirm with your local MSEDCL office.
 
-3.2 Kisan Emergency SOS & ASV Hospital Locator
-- Golden Hour 60-Minute Triage: Immediate immobilization, no tourniquets, no incision.
-- ASV Inventory: District Civil Hospital, Sub-District Hospital, and Rural PHC stock
-  tracking with direct call to 108 Ambulance and 104 Health Information Helpline.
-- Organophosphate Toxicity Protocol: Decontamination, skin wash, emergency atropine.
+3.2 Kisan Emergency SOS & Hospital Locator
+- Golden Hour 60-Minute Triage: Immediate immobilization, no tourniquets, no incision, call 108.
+- Sample Directory: Sample hospital directory labelled to call and confirm Anti-Snake Venom (ASV)
+  availability prior to transport. Zero numeric stock counts or unverified drug dosages.
+- Pesticide Toxicity Protocol: Immediate decontamination, skin wash, take chemical container to hospital.
 
-3.3 Zero-Cost Desi Bio-Inputs ("Ghar-cha-Doctor")
+3.3 University Desi Bio-Inputs
 - Formulations: Jeevamrut, Dashparni Ark, Sour Buttermilk (Khati Chhach), Neemastra.
-- Cost Guarantee: ₹0 to ₹50/acre using farm-available cow dung, cow urine, besan, jaggery.
-- Economic Benefit: Saves ₹2,500/acre over synthetic chemical inputs.
+- Cost Guarantee: Low-cost traditional organic preparations using farm-available cow dung, urine, besan, jaggery.
 
 3.4 Krishi Majur Labor Wage Matching Hub
 - Prevailing Benchmarks: Standard 8-hour daily wage rates and piece-rate benchmarks
-  for cotton picking, soybean harvesting, and onion transplanting.
-- Crew Registry: Contactable labor toli mukadams with member count and availability.
+  for cotton picking, soybean harvesting, and onion transplanting (Sample data, UNREVIEWED).
+- Crew Directory: Contactable labor toli mukadams with member count and availability.
 
-3.5 Spurious Seed & Input Fraud Verification
-- Lot Format Verification: Validates format against Mahabeej / National Seed Corp norms.
-- Notified Pricing & Germination: Checks minimum statutory germination % (70-75%) and
-  notified maximum retail price (MRP) with direct link to Quality Control Inspector.
+3.5 Seed Format Checker
+- Lot Format Verification: Format syntax check against Indian seed lot naming conventions.
+  Note: This is a format check only. It does NOT confirm the seed is genuine.
 
-3.6 Groundwater Depth & Aquifer Recharge Design
-- CGWB/GSDA Basalt Classification: Depth below ground level (pre vs. post monsoon).
-- Safe Drilling Limit: Flags 300ft basalt fracture risk to prevent dry borewell loss.
+3.6 Groundwater Depth & Aquifer Advisory
+- GSDA Basalt Classification: Depth below ground level (pre vs. post monsoon).
+- Safe Drilling Limit: Flags basalt fracture risks to prevent dry borewell loss.
 - 4-Layer Recharge Pit Design: Sand (6"), Gravel (12"), Boulders (18"), SS mesh casing.
 
 3.7 Direct Kisan Bazaar & PMFME 35% Processing
-- Farm-Gate Direct Lots: 0% APMC commission with direct telephone and WhatsApp link.
+- Farm-Gate Direct Lots: Simulated demo community marketplace.
 - PMFME Value-Add Units: Mini Dal Mills, Lakadi Ghani oil expeller, solar onion
-  dehydration with 35% capital subsidy (up to ₹10 Lakhs) and 10% farmer margin.
+  dehydration with 35% capital subsidy calculations.
 
 3.8 KCC Loan Dossier & Kisan Nyay Legal Aid
 - Scale of Finance: DLTC district rates (e.g. ₹28,000/acre for Soybean, ₹36,000 for Cotton).
-- Composite Credit Limit: Base crop loan + 10% post-harvest/household + 20% maintenance.
-- Interest Subvention: 7% base minus 3% timely repayment = 0% to 4% effective interest.
+- Interest Subvention: 0% net farmer interest in Maharashtra up to ₹3 Lakhs under prompt repayment.
 - Kisan Nyay: Mamlatdar Courts Act Sec 143 for farm roads; Consumer Protection Act for seeds.
 
 ================================================================================
 4. VERIFICATION SUITE & COMPLIANCE SUMMARY
 ================================================================================
 Backend Pytest Suite:
-- 66 automated tests across 15 test files:
+- 73 automated tests across 17 test files:
   * test_api.py (8 tests)
-  * test_assistant.py (3 tests)
+  * test_assistant.py (4 tests)
   * test_auth.py (6 tests)
   * test_calculator.py (2 tests)
   * test_crops.py (3 tests)
+  * test_data_registry.py (1 test)
   * test_disease_forecast.py (4 tests)
   * test_equipment_livestock.py (3 tests)
   * test_fertilizer.py (2 tests)
@@ -198,38 +205,35 @@ Backend Pytest Suite:
   * test_market.py (5 tests)
   * test_market_linkage.py (2 tests)
   * test_operations.py (3 tests)
+  * test_provenance_integrity.py (4 tests)
   * test_remote_sensing_postharvest.py (2 tests)
-  * test_rural_ops.py (3 tests)
+  * test_rural_ops.py (4 tests)
   * test_soil_schemes.py (5 tests)
   * test_weather.py (7 tests)
-- 100% Pass Rate: 66 passed in 2.08s.
+- 100% Pass Rate: 73 passed in ~2.5s.
 
 Frontend Validation:
 - Next.js 14 Production Build: Compiled successfully with zero errors.
 - Zero TypeScript diagnostics.
 - Fully tested in both Dark Theme and Light Theme.
-- Fluid, non-overflowing capsule navbar with responsive horizontal controls.
+- Exactly 8 Easy Kisan cards.
 
 ================================================================================
-5. GIT COMMIT TIMELINE
+5. DATA REGISTRY & PROVENANCE STATUS
 ================================================================================
-Remote URL: https://github.com/adityakulkarni3618/KRISHIOS.git
-Branch: feature/universal-problem-solver
-
-Recent Atomic Commits:
-- 1769155 fix(components): align API endpoints and response schemas for rural ops, operations hub, bazaar and KCC legal modules
-- 9b9d175 fix(ui): streamline top navbar layout and add comprehensive light theme styling
-- 13b17fa docs: document 66 passing tests and universal agrarian problem-solving suite in README
-- b7a2fc9 feat(frontend): integrate rural ops, operations hub, kisan bazaar and KCC legal modules into UI
-- 113c1ab feat(institutional): implement KCC loan dossier, kisan nyay land rights & omnichannel access
-- a66e8e2 feat(market-linkage): add direct kisan bazaar listings and PMFME food processing profiles
-- 4002a88 feat(operations): implement farm labor wage hub, seed authenticity checker & groundwater advisory
-- fc933bd feat(rural-ops): implement 3-phase electricity scheduler, snakebite emergency SOS & DIY bio-inputs
-- 88206a2 docs: update README and roadmap with 55 passing tests and full AgriStack modules
-- 1697a3e feat(frontend): integrate AgriStack decision suite modules, speech voice assistant, and 7/12 digital card
-- 8dc5454 feat(assistant-core): implement multilingual AI Krishi Mitra agent and register all AgriStack routers
-- 3091b02 feat(remote-sensing-warehouses): add Sentinel-2 NDVI canopy explorer and MSWC warehouse e-NWR pledge loans
+All 27 system modules and static datasets audited under `/data-registry`:
+- LIVE: Hyperlocal weather (Open-Meteo CC BY 4.0) with TTL cache and UNAVAILABLE fallback.
+- CURATED_REFERENCE: Mandi prices (Agmarknet/MSAMB), Government Schemes (MyScheme/MahaDBT),
+  Crop Symptom Guide (ICAR/KVK), Soil norms (Soil Health Card), CHC Machinery (SMAM),
+  Livestock (NDDB), Warehouses (MSWC/WDRA), Krishi FAQ (KVK), Electricity (MahaDiscom/MSEDCL),
+  Emergency First Aid (Arogya Maharashtra), Bio-Recipes (NCOF), Input Format (Seednet),
+  Groundwater (GSDA), Food Processing (PMFME MoFPI), Kisan Nyay (MLRC Sec 143),
+  Problem Mapping (SIH).
+- ESTIMATED: Crop Economics Calculator, Crop Recommender, Fertilizer RDF, PMFBY Insurance,
+  Pashu-Mitra TMR Feed Ration, KCC Loan Dossier.
+- SIMULATED: Mandi Price Forecaster (DEMO_MODE), NDVI Canopy Simulation (DEMO_MODE),
+  Kisan Bazaar Direct Listings, Omnichannel IVR & WhatsApp Simulation.
 
 ================================================================================
-                               END OF DIGEST
+                                END OF DIGEST
 ================================================================================
