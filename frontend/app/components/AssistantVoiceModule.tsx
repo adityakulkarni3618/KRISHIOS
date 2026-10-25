@@ -106,7 +106,7 @@ export default function AssistantVoiceModule({
           <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "4px 0 0 0" }}>
             {lang === "mr"
               ? "राहुरी, अकोला व परभणी कृषी विद्यापीठांच्या अधिकृत पॅकेज ऑफ प्रॅक्टिसेसवर आधारित प्रश्नोत्तरे."
-              : "Curated questions and answers based on verified MPKV, PDKV, and VNMKV agricultural university guidelines."}
+              : "Curated questions and answers based on MPKV, PDKV, and VNMKV agricultural university guidelines."}
           </p>
         </div>
         <span className="prov-badge curated" style={{ background: "#22c55e", color: "#000", fontWeight: 800, padding: "4px 10px", borderRadius: 8 }}>
@@ -222,7 +222,7 @@ export default function AssistantVoiceModule({
           {/* Action button */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, paddingTop: 14, borderTop: "1px solid var(--border-card)" }}>
             <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
-              🏛️ <strong>{lang === "mr" ? "अधिकृत स्त्रोत:" : "Verified Citation:"}</strong> {response.source_citation}
+              🏛️ <strong>{lang === "mr" ? "अधिकृत स्त्रोत:" : "Source Citation:"}</strong> {response.source_citation}
             </div>
 
             {response.suggested_tab && (

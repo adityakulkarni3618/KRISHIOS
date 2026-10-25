@@ -22,7 +22,7 @@ interface LaborGroup {
   specialization: string;
   specialization_mr: string;
   available_now: boolean;
-  verified_identity: boolean;
+  registered_identity: boolean;
 }
 
 interface LaborHubResult {
@@ -318,7 +318,7 @@ export default function OperationsHubModule({ district, lang, apiUrl }: Operatio
           </div>
 
           {verificationResult && (
-            <div className={`glass-card result-card ${verificationResult.is_genuine_format ? "card-verified" : "card-danger"}`}>
+            <div className={`glass-card result-card ${verificationResult.is_genuine_format ? "card-valid-format" : "card-danger"}`}>
               <div className="result-header">
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>

@@ -47,7 +47,7 @@ KB_ENTRIES = [
         "tts_mr": "वाऱ्याचा वेग जास्त असल्यास फवारणी टाळा. सकाळी सात ते साडे दहा ही वेळ सर्वोत्तम आहे.",
         "followups_en": ["What is today's hourly wind speed?", "Can I mix insecticide with fungicide?"],
         "followups_mr": ["आजचा वाऱ्याचा वेग किती आहे?", "कीटकनाशकात बुरशीनाशक मिसळू का?"],
-        "citation": "IMD Agro-Advisory & MPKV Rahuri Meteorology Cell"
+        "citation": "Open-Meteo & MPKV Rahuri Meteorology Cell"
     },
     {
         "keywords": ["whitefly", "बोंडअळी", "पांढरी माशी", "मावा", "तुडतुडे", "कीड", "रोग", "disease", "pest", "bollworm", "blight", "yellow"],
@@ -95,7 +95,7 @@ KB_ENTRIES = [
         "tts_mr": "बाजार समितीत माल विकण्यापूर्वी आजचा सरासरी भाव व आवक तपासून घ्या.",
         "followups_en": ["What is today's soybean rate in Latur?", "Where is the nearest MSWC warehouse?"],
         "followups_mr": ["आज लातूरमध्ये सोयाबीनचा भाव काय आहे?", "जवळचे शासकीय गोदाम कुठे आहे?"],
-        "citation": "Maharashtra State Agricultural Marketing Board (MSAMB) & Agmarknet"
+        "citation": "APMC Market Directory & Agmarknet reference bulletins"
     }
 ]
 

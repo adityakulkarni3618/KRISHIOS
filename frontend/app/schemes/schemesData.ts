@@ -32,7 +32,7 @@ export interface SchemeData {
   officialPortalUrl: string;
   applicationPortalName: string;
   helplineNumber: string;
-  lastVerifiedDate: string;
+  lastReviewedDate: string;
   quickStats: Array<{
     labelEn: string;
     labelMr: string;
@@ -147,7 +147,7 @@ export const SCHEMES_DATA: SchemeData[] = [
     officialPortalUrl: "https://pmkisan.gov.in/",
     applicationPortalName: "PM-KISAN Central DBT Portal",
     helplineNumber: "155261 / 1800-115-526",
-    lastVerifiedDate: "2026-10-20",
+    lastReviewedDate: "2026-10-20",
     quickStats: [
       { labelEn: "Annual Grant", labelMr: "वार्षिक निधी", labelHi: "वार्षिक अनुदान", value: "₹6,000", icon: "💰" },
       { labelEn: "Installments", labelMr: "हप्ते", labelHi: "किश्तें", value: "3 x ₹2,000", icon: "📅" },
@@ -380,7 +380,7 @@ export const SCHEMES_DATA: SchemeData[] = [
     officialPortalUrl: "https://pmfby.gov.in/",
     applicationPortalName: "National Crop Insurance Portal & Aaple Sarkar DBT",
     helplineNumber: "14447 (Kisan Call Center / PMFBY Toll-Free)",
-    lastVerifiedDate: "2026-10-20",
+    lastReviewedDate: "2026-10-20",
     quickStats: [
       { labelEn: "Farmer Premium", labelMr: "शेतकरी हप्ता", labelHi: "किसान प्रीमियम", value: "₹1 Token", icon: "🪙" },
       { labelEn: "Max Coverage", labelMr: "कमाल संरक्षण", labelHi: "अधिकतम सुरक्षा", value: "100% Sum Insured", icon: "🛡️" },
@@ -590,7 +590,7 @@ export const SCHEMES_DATA: SchemeData[] = [
     officialPortalUrl: "https://pmkusum.mnre.gov.in/",
     applicationPortalName: "Mahavitaran MahaKUSUM Portal",
     helplineNumber: "1800-102-3435 / 1912",
-    lastVerifiedDate: "2026-10-20",
+    lastReviewedDate: "2026-10-20",
     quickStats: [
       { labelEn: "Subsidy Share", labelMr: "शासकीय अनुदान", labelHi: "सब्सिडी हिस्सा", value: "90% - 95%", icon: "☀️" },
       { labelEn: "Farmer Share", labelMr: "शेतकरी हिस्सा", labelHi: "किसान हिस्सा", value: "Only 10% (5% SC/ST)", icon: "🏷️" },
@@ -800,7 +800,7 @@ export const SCHEMES_DATA: SchemeData[] = [
     officialPortalUrl: "https://mahapocra.gov.in/",
     applicationPortalName: "MahaPoCRA Direct Benefit Transfer Portal",
     helplineNumber: "022-22163351 / 1800-233-4000",
-    lastVerifiedDate: "2026-10-20",
+    lastReviewedDate: "2026-10-20",
     quickStats: [
       { labelEn: "Target Villages", labelMr: "समाविष्ट गावे", labelHi: "परियोजना गांव", value: "5,142 Villages", icon: "🏡" },
       { labelEn: "Micro-Irrigation Subsidy", labelMr: "ठिबक अनुदान", labelHi: "ड्रिप सब्सिडी", value: "75% (Small Farmers)", icon: "💧" },
@@ -1001,7 +1001,7 @@ export const SCHEMES_DATA: SchemeData[] = [
     officialPortalUrl: "https://mahadbt.maharashtra.gov.in/",
     applicationPortalName: "MahaDBT Farmer Schemes Portal",
     helplineNumber: "022-49150800 (MahaDBT Helpline)",
-    lastVerifiedDate: "2026-10-20",
+    lastReviewedDate: "2026-10-20",
     quickStats: [
       { labelEn: "Max Subsidy", labelMr: "कमाल अनुदान", labelHi: "अधिकतम अनुदान", value: "₹75,000", icon: "💧" },
       { labelEn: "Min Land Required", labelMr: "किमान जमीन", labelHi: "न्यूनतम भूमि", value: "0.60 Hectare", icon: "📐" },
@@ -1206,7 +1206,7 @@ export const SCHEMES_DATA: SchemeData[] = [
     officialPortalUrl: "https://soilhealth.dac.gov.in/",
     applicationPortalName: "National Soil Health Card Portal",
     helplineNumber: "1800-180-1551 (Kisan Call Center)",
-    lastVerifiedDate: "2026-10-20",
+    lastReviewedDate: "2026-10-20",
     quickStats: [
       { labelEn: "Testing Fee", labelMr: "परीक्षण शुल्क", labelHi: "जांच शुल्क", value: "100% Free", icon: "🆓" },
       { labelEn: "Parameters Tested", labelMr: "तपासलेले घटक", labelHi: "जांच घटक", value: "12 Parameters", icon: "🧪" },
@@ -1384,7 +1384,7 @@ export const SCHEMES_DATA: SchemeData[] = [
     officialPortalUrl: "https://www.myscheme.gov.in/schemes/kcc",
     applicationPortalName: "Local Bank Branch & JanSamarth National Portal",
     helplineNumber: "1800-180-1111 / 155261",
-    lastVerifiedDate: "2026-10-20",
+    lastReviewedDate: "2026-10-20",
     quickStats: [
       { labelEn: "Effective Rate", labelMr: "सवलतीचा दर", labelHi: "प्रभावी ब्याज दर", value: "4% (with Subvention)", icon: "🏷️" },
       { labelEn: "Limit up to", labelMr: "कमाल मर्यादा", labelHi: "ऋण सीमा", value: "₹3,00,000", icon: "💳" },
@@ -1585,7 +1585,7 @@ export const SCHEMES_DATA: SchemeData[] = [
     officialPortalUrl: "https://agrimachinery.nic.in/",
     applicationPortalName: "MahaDBT Krushi Yantrikikaran Portal",
     helplineNumber: "1800-180-1551 / 022-49150800",
-    lastVerifiedDate: "2026-10-20",
+    lastReviewedDate: "2026-10-20",
     quickStats: [
       { labelEn: "Subsidy on Tractors", labelMr: "ट्रॅक्टर अनुदान", labelHi: "ट्रैक्टर सब्सिडी", value: "Up to ₹1,25,000", icon: "🚜" },
       { labelEn: "Implements Subsidy", labelMr: "अवजारे अनुदान", labelHi: "यंत्र अनुदान", value: "Up to 50%", icon: "⚙️" },

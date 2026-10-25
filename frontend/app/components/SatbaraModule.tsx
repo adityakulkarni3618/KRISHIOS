@@ -127,7 +127,7 @@ export default function SatbaraModule({ district, lang }: SatbaraModuleProps) {
           </div>
 
           <div style={{ textAlign: "right" }}>
-            <span className="prov-badge live" style={{ background: "#10b981", color: "#000" }}>VERIFIED 7/12</span>
+            <span className="prov-badge live" style={{ background: "#10b981", color: "#000" }}>DIGITIZED 7/12</span>
             <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 6 }}>Valid for KCC Loan & DBT Subsidies</div>
           </div>
         </div>

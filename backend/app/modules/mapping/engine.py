@@ -27,9 +27,9 @@ CAPABILITIES: dict[str, Coverage] = {
     "F_irrigation": Coverage.TESTED,                      # Jal-Mitra ET_c water requirement & drip run times
     "G_fertilizer": Coverage.TESTED,                      # RDF N-P-K nutrient & bag schedule engine
     "H_yield": Coverage.NOT_IMPLEMENTED,                  # Multi-year yield prediction ML model
-    "I_market": Coverage.TESTED,                          # APMC mandi price query with MSAMB/Agmarknet schema and min/modal/max
+    "I_market": Coverage.TESTED,                          # APMC mandi price query with Agmarknet schema and min/modal/max
     "J_finance": Coverage.TESTED,                         # Farm economics calculator, break-even price/yield & sensitivity matrix
-    "K_schemes": Coverage.TESTED,                         # Verified central & state schemes catalog with official portals
+    "K_schemes": Coverage.TESTED,                         # Curated central & state schemes catalog with official portals
     "L_insurance": Coverage.TESTED,                       # PMFBY ₹1 insurance claim & 72-hour disaster intimation
     "M_remote_sensing": Coverage.TESTED,                  # Canopy NDVI simulation & vegetation vigor engine
     "N_postharvest": Coverage.TESTED,                     # MSWC/CWC warehouse directory & e-NWR pledge loan calculator

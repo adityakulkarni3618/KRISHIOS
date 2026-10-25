@@ -215,7 +215,7 @@ export default function SchemeDetailPage({
                 >
                   {scheme.category[lang]}
                 </span>
-                <span className="prov-badge live">VERIFIED • {scheme.lastVerifiedDate}</span>
+                <span className="prov-badge live">REVIEWED • {scheme.lastReviewedDate}</span>
               </div>
 
               <h1

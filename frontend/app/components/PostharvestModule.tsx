@@ -193,7 +193,7 @@ export default function PostharvestModule({ district, lang, apiUrl }: Postharves
 
       {/* Warehouses Directory */}
       <h5 style={{ fontSize: 16, fontWeight: 800, color: "var(--accent-lime)", marginBottom: 12 }}>
-        🏛️ {lang === "mr" ? `${district} जिल्ह्यातील अधिकृत शासकीय वखार गोदामे:` : `Verified WDRA Warehouses in ${district} & Surrounds:`}
+        🏛️ {lang === "mr" ? `${district} जिल्ह्यातील नोंदणीकृत शासकीय वखार गोदामे:` : `WDRA Warehouses in ${district} & Surrounds:`}
       </h5>
       <div style={{ display: "grid", gap: 12 }}>
         {warehouses.map((w) => (

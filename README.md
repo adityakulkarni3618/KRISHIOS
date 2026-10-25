@@ -55,7 +55,7 @@ KRISHIOS features a seamless **Dual-Theme System** and **Rural-First Accessibili
 - **Provenance:** `LIVE` with in-memory TTL caching and graceful `UNAVAILABLE` fallback.
 
 ### 2. 📊 APMC Mandi Rate Board & Price Forecaster Scenario
-- **Market Schema:** Curated reference daily modal prices compatible with Agmarknet and Maharashtra State Agricultural Marketing Board (MSAMB).
+- **Market Schema:** Curated reference daily modal prices compatible with Agmarknet APMC bulletin schema.
 - **Price Forecasting Scenario:** Illustrative heuristic price scenario model gated behind `DEMO_MODE` and labeled `SIMULATED`.
 - **Hold vs. Sell Engine:** Computes warehouse storage carrying costs, shrinkage loss %, and net gain to protect farmers from distress selling.
 

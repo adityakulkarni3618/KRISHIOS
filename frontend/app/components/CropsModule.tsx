@@ -82,10 +82,10 @@ export default function CropsModule({ district, lang, apiUrl }: CropsModuleProps
           <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "4px 0 0 0" }}>
             {lang === "mr"
               ? "राहुरी कृषी विद्यापीठ (MPKV) व अकोला विद्यापीठ (PDKV) प्रमाणित वाण व आंतरपीक शिफारशी."
-              : "State Agricultural University (MPKV Rahuri & PDKV Akola) verified varietal packages & intercrop row ratios."}
+              : "State Agricultural University (MPKV Rahuri & PDKV Akola) recommended varietal packages & intercrop row ratios."}
           </p>
         </div>
-        <span className="prov-badge live">MPKV / ICAR VERIFIED</span>
+        <span className="prov-badge curated">MPKV / ICAR CURATED</span>
       </div>
 
       {/* Input Parameters Box */}
@@ -221,7 +221,7 @@ export default function CropsModule({ district, lang, apiUrl }: CropsModuleProps
         <div style={{ textAlign: "center", padding: "40px 20px", color: "var(--text-muted)", background: "var(--bg-card)", borderRadius: "var(--radius-md)", border: "1px dashed var(--border-card)" }}>
           <div style={{ fontSize: 32, marginBottom: 8 }}>🌱</div>
           <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-secondary)" }}>
-            {lang === "mr" ? "आपला हंगाम व माती निवडून 'योग्य पिके शोधा' वर क्लिक करा" : "Select season & soil conditions above to generate verified crop recommendations"}
+            {lang === "mr" ? "आपला हंगाम व माती निवडून 'योग्य पिके शोधा' वर क्लिक करा" : "Select season & soil conditions above to generate crop recommendations"}
           </div>
         </div>
       )}

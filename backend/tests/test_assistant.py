@@ -14,7 +14,7 @@ def test_assistant_weather_spray_query():
     assert res.suggested_tab == "weather"
     assert "फवारणी" in res.response_mr
     assert res.audio_tts_script != ""
-    assert "IMD" in res.source_citation or "MPKV" in res.source_citation
+    assert "Open-Meteo" in res.source_citation or "MPKV" in res.source_citation
     assert res.provenance == Provenance.CURATED_REFERENCE
 
 
