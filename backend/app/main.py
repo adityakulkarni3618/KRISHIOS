@@ -7,6 +7,7 @@ from app.routers import (
     auth,
     calculator,
     crops,
+    data_registry,
     disease,
     equipment,
     farms,
@@ -60,6 +61,7 @@ app.include_router(rural_ops.router)
 app.include_router(operations.router)
 app.include_router(market_linkage.router)
 app.include_router(institutional.router)
+app.include_router(data_registry.router)
 
 
 @app.get("/health", tags=["system"])
