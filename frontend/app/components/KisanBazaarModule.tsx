@@ -222,7 +222,7 @@ export default function KisanBazaarModule({ district, lang, apiUrl }: KisanBazaa
                 ? "सिम्युलेटेड शेतकरी बाजार (SIMULATED): ही प्रात्यक्षिक सूची आहे. थेट शेतकरी-खरेदीदार प्रणाली तपासण्यासाठी."
                 : "SIMULATED MARKETPLACE: Demonstration listings for platform testing only. Direct farmer contacts shown are mock samples."}
             </div>
-            <span style={{ marginLeft: "auto", background: "#eab308", color: "#000", fontSize: 10, fontWeight: 900, padding: "2px 8px", borderRadius: 4 }}>
+            <span className="prov-badge simulated" style={{ marginLeft: "auto" }}>
               SIMULATED
             </span>
           </div>
@@ -231,8 +231,8 @@ export default function KisanBazaarModule({ district, lang, apiUrl }: KisanBazaa
             <div key={item.id} className="glass-card produce-lot-card">
               <div className="lot-card-top">
                 <span className="source-chip">📍 {item.village}, {item.taluka}, {item.district}</span>
-                <span className="source-chip" style={{ background: "rgba(234, 179, 8, 0.2)", color: "#facc15", fontWeight: 700 }}>
-                  🟡 SIMULATED
+                <span className="prov-badge simulated">
+                  SIMULATED
                 </span>
                 {item.fpo_verified && <span className="organic-chip" style={{ background: "rgba(34, 197, 94, 0.15)", color: "#4ade80", padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 700 }}>✓ FPO Verified</span>}
               </div>

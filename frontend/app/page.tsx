@@ -174,6 +174,8 @@ interface HoldSellAdvice {
   market_drivers: MarketDriver[];
   nearby_warehouses: Array<Record<string, string>>;
   provenance: string;
+  warning?: string;
+  scenario_note?: string;
 }
 
 export default function Home() {

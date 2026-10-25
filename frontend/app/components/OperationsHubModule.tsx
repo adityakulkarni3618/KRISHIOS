@@ -197,7 +197,10 @@ export default function OperationsHubModule({ district, lang, apiUrl }: Operatio
           {/* Wage Rates Table */}
           <div className="glass-card wages-table-box">
             <div className="card-top-header">
-              <span className="source-chip">🏛️ {laborData.provenance} • {laborData.source_citation}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <span className="prov-badge curated">{laborData.provenance}</span>
+                <span className="source-chip">🏛️ {laborData.source_citation}</span>
+              </div>
               <span className="info-chip">📍 {laborData.district}</span>
             </div>
             <h4>📋 {lang === "mr" ? "प्रचलित मजुरी दर (प्रति दिवस)" : "Prevailing Daily Wage Benchmarks"}</h4>
@@ -318,7 +321,10 @@ export default function OperationsHubModule({ district, lang, apiUrl }: Operatio
             <div className={`glass-card result-card ${verificationResult.is_genuine_format ? "card-verified" : "card-danger"}`}>
               <div className="result-header">
                 <div>
-                  <span className="source-chip">🏛️ {verificationResult.provenance} • {verificationResult.source_citation}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
+                    <span className="prov-badge curated">{verificationResult.provenance}</span>
+                    <span className="source-chip">🏛️ {verificationResult.source_citation}</span>
+                  </div>
                   <h3 className="product-title">{companyInput} - {varietyInput}</h3>
                   <div className="product-variety">🌾 Lot: <strong>{lotInput}</strong></div>
                 </div>
@@ -395,7 +401,10 @@ export default function OperationsHubModule({ district, lang, apiUrl }: Operatio
         <div className="groundwater-grid">
           <div className="glass-card gw-stats-card">
             <div className="card-top-header">
-              <span className="source-chip">🏛️ {groundwater.provenance} • {groundwater.source_citation}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <span className="prov-badge curated">{groundwater.provenance}</span>
+                <span className="source-chip">🏛️ {groundwater.source_citation}</span>
+              </div>
               <span className="info-chip">📍 {groundwater.taluka}, {groundwater.district}</span>
             </div>
 

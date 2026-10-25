@@ -187,7 +187,10 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
         <div className="feeder-section-grid">
           <div className="glass-card feeder-status-card">
             <div className="card-top-header">
-              <span className="source-chip">⚡ {feeder.provenance} • {feeder.source_citation}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <span className="prov-badge curated">{feeder.provenance}</span>
+                <span className="source-chip">⚡ {feeder.source_citation}</span>
+              </div>
               <span className={`status-badge ${isPowerOn ? "badge-success" : "badge-danger"}`}>
                 {isPowerOn
                   ? (lang === "mr" ? "🟢 वीज सुरू आहे (POWER ON)" : "🟢 POWER ACTIVE")
@@ -402,7 +405,10 @@ export default function RuralOpsModule({ district, lang, apiUrl }: RuralOpsModul
             <div className="glass-card bio-recipe-card">
               <div className="recipe-hero">
                 <div>
-                  <span className="source-chip">🏛️ {selectedRecipe.provenance} • {selectedRecipe.source_citation}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
+                    <span className="prov-badge curated">{selectedRecipe.provenance}</span>
+                    <span className="source-chip">🏛️ {selectedRecipe.source_citation}</span>
+                  </div>
                   <h3 className="recipe-title">{lang === "mr" ? selectedRecipe.name_mr : selectedRecipe.name}</h3>
                   <p className="recipe-target">🎯 {lang === "mr" ? selectedRecipe.key_benefit_mr : selectedRecipe.key_benefit}</p>
                 </div>
