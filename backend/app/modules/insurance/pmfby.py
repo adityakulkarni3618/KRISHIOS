@@ -83,6 +83,7 @@ class InsuranceClaimEstimateResult(BaseModel):
     official_portal_url: str
     provenance: Provenance = Provenance.ESTIMATED
     source_citation: str
+    currency_notice: str = "UNREVIEWED - may be outdated, confirm with your bank/KVK. Maharashtra state ₹1 token scheme was scrapped; standard PMFBY rules on pmfby.gov.in mandate 2% Kharif / 1.5% Rabi farmer share."
 
 
 def estimate_pmfby_claim(request: InsuranceClaimEstimateRequest) -> InsuranceClaimEstimateResult:
@@ -174,5 +175,5 @@ def estimate_pmfby_claim(request: InsuranceClaimEstimateRequest) -> InsuranceCla
         required_documents_mr=docs_mr,
         official_portal_url="https://pmfby.gov.in",
         provenance=Provenance.ESTIMATED,
-        source_citation="Pradhan Mantri Fasal Bima Yojana (PMFBY) Guidelines & Govt of Maharashtra ₹1 Scheme Resolution"
+        source_citation="Pradhan Mantri Fasal Bima Yojana (pmfby.gov.in) & Department of Agriculture, Govt of Maharashtra (Revised PMFBY Framework)"
     )

@@ -37,6 +37,7 @@ class KCCLoanResult(BaseModel):
     application_steps_mr: List[str]
     provenance: Provenance = Provenance.ESTIMATED
     source_citation: str
+    currency_notice: str = "UNREVIEWED - Scale of Finance values vary by district DLTC and year; may be outdated, confirm with your bank/KVK."
     source_url: Optional[str] = "https://www.myscheme.gov.in/schemes/kcc"
     last_verified: Optional[str] = "2026-10-20"
     reviewed_by: str = "UNREVIEWED"
@@ -124,5 +125,5 @@ def calculate_kcc_eligibility(req: KCCLoanRequest) -> KCCLoanResult:
         application_steps=steps_en,
         application_steps_mr=steps_mr,
         provenance=Provenance.ESTIMATED,
-        source_citation="NABARD / DLTC District Scale of Finance & Govt. of Maharashtra Zero-Interest Crop Loan Resolution"
+        source_citation="RBI Circular RBI/2025-26/193 (MISS Subvention) & SLBC Maharashtra DLTC Guidelines (Indicative SoF)"
     )

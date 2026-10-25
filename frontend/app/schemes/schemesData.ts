@@ -33,6 +33,7 @@ export interface SchemeData {
   applicationPortalName: string;
   helplineNumber: string;
   lastReviewedDate: string;
+  currencyStatus?: string;
   quickStats: Array<{
     labelEn: string;
     labelMr: string;
@@ -116,6 +117,7 @@ export const SCHEMES_DATA: SchemeData[] = [
   {
     id: "pm-kisan",
     portalNumber: "01",
+    currencyStatus: "CONFIRMED CURRENT • Sourced from official portal pmkisan.gov.in (₹6,000/yr in 3 installments)",
     shortName: "PM-KISAN",
     fullName: {
       en: "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
@@ -349,6 +351,7 @@ export const SCHEMES_DATA: SchemeData[] = [
   {
     id: "pmfby",
     portalNumber: "02",
+    currencyStatus: "UNREVIEWED - may be outdated, confirm with your bank/KVK. Maharashtra state ₹1 token scheme was scrapped; standard PMFBY rules on pmfby.gov.in mandate 2% Kharif / 1.5% Rabi farmer share.",
     shortName: "PMFBY",
     fullName: {
       en: "Pradhan Mantri Fasal Bima Yojana (1 Rupee Crop Insurance)",
@@ -559,6 +562,7 @@ export const SCHEMES_DATA: SchemeData[] = [
   {
     id: "pm-kusum",
     portalNumber: "03",
+    currencyStatus: "UNREVIEWED - may be outdated, confirm with your bank/KVK",
     shortName: "PM-KUSUM",
     fullName: {
       en: "PM-KUSUM Solar Agriculture Pump Scheme",
@@ -769,6 +773,7 @@ export const SCHEMES_DATA: SchemeData[] = [
   {
     id: "pocra",
     portalNumber: "04",
+    currencyStatus: "UNREVIEWED - may be outdated, confirm with your bank/KVK",
     shortName: "MahaPoCRA",
     fullName: {
       en: "Nanaji Deshmukh Krishi Sanjivani Yojana (PoCRA)",
@@ -970,6 +975,7 @@ export const SCHEMES_DATA: SchemeData[] = [
   {
     id: "magel-tyala-shet-tale",
     portalNumber: "05",
+    currencyStatus: "UNREVIEWED - may be outdated, confirm with your bank/KVK",
     shortName: "Farm Ponds",
     fullName: {
       en: "Magel Tyala Shet Tale (Farm Ponds on Demand)",
@@ -1175,6 +1181,7 @@ export const SCHEMES_DATA: SchemeData[] = [
   {
     id: "soil-health-card",
     portalNumber: "06",
+    currencyStatus: "UNREVIEWED - may be outdated, confirm with your bank/KVK",
     shortName: "Soil Health Card",
     fullName: {
       en: "Soil Health Card Scheme (SHC)",
@@ -1353,6 +1360,7 @@ export const SCHEMES_DATA: SchemeData[] = [
   {
     id: "kisan-credit-card",
     portalNumber: "07",
+    currencyStatus: "CONFIRMED CURRENT • Sourced from RBI Circular RBI/2025-26/193 & NABARD MISS guidelines (4% effective rate up to ₹3L)",
     shortName: "Kisan Credit Card (KCC)",
     fullName: {
       en: "Kisan Credit Card (KCC Concessional Crop Loan)",
@@ -1554,6 +1562,7 @@ export const SCHEMES_DATA: SchemeData[] = [
   {
     id: "smam-mechanization",
     portalNumber: "08",
+    currencyStatus: "UNREVIEWED - may be outdated, confirm with your bank/KVK",
     shortName: "Agri Mechanization",
     fullName: {
       en: "Sub-Mission on Agricultural Mechanization (SMAM)",

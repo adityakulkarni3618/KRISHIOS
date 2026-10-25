@@ -33,6 +33,7 @@ class ProcessingUnitProfile(BaseModel):
     market_demand_summary_mr: str
     provenance: Provenance = Provenance.CURATED_REFERENCE
     source_citation: str
+    currency_notice: str = "CONFIRMED CURRENT • Sourced from MoFPI PMFME Operational Guidelines (35% Credit-Linked Capital Subsidy, Max ₹10 Lakh)"
     source_url: Optional[str] = "https://pmfme.mofpi.gov.in/"
     last_verified: Optional[str] = "2026-10-20"
     reviewed_by: str = "Ministry of Food Processing Industries (PMFME Guidelines)"
