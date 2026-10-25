@@ -11,6 +11,11 @@ from app.modules.remote_sensing.ndvi import (
 
 
 def test_satellite_remote_sensing_ndvi():
+    from fastapi.testclient import TestClient
+    from app.main import app
+    from app.core.config import settings
+    from app.core.provenance import Provenance
+
     req = SatelliteAnalysisRequest(
         district="Nashik",
         crop="Soybean",
@@ -19,8 +24,33 @@ def test_satellite_remote_sensing_ndvi():
     result = analyze_field_remote_sensing(req)
     assert result.mean_ndvi > 0.5
     assert len(result.zonal_distribution) >= 2
-    assert "Sentinel-2" in result.satellite_source
+    assert "Sentinel-2" not in result.satellite_source
+    assert result.provenance == Provenance.SIMULATED
+    assert "SIMULATED" in result.warning
     assert result.overall_recommendation != ""
+
+    # Test API endpoint under DEMO_MODE=True and False
+    client = TestClient(app)
+    res = client.post("/remote-sensing/field-ndvi", json={
+        "district": "Nashik",
+        "crop": "Soybean",
+        "farm_area_acres": 3.0
+    })
+    assert res.status_code == 200
+    assert res.json()["provenance"] == "SIMULATED"
+
+    original_demo_mode = settings.demo_mode
+    try:
+        settings.demo_mode = False
+        res_disabled = client.post("/remote-sensing/field-ndvi", json={
+            "district": "Nashik",
+            "crop": "Soybean",
+            "farm_area_acres": 3.0
+        })
+        assert res_disabled.status_code == 404
+        assert "disabled" in res_disabled.json()["detail"].lower()
+    finally:
+        settings.demo_mode = original_demo_mode
 
 
 def test_warehouse_listing_and_pledge_loan():

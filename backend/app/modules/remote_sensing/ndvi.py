@@ -39,9 +39,7 @@ class SatelliteAnalysisRequest(BaseModel):
 class SatelliteAnalysisResult(BaseModel):
     district: str
     crop: str
-    satellite_source: str
-    pass_date: str
-    cloud_cover_pct: float
+    satellite_source: str = "Synthetic Field Canopy Model (Not live satellite data)"
     mean_ndvi: float
     mean_ndre: float  # Red-edge chlorophyll index
     mean_ndwi: float  # Water index
@@ -50,12 +48,13 @@ class SatelliteAnalysisResult(BaseModel):
     zonal_distribution: List[FieldZoneMetric]
     overall_recommendation: str
     overall_recommendation_mr: str
-    provenance: Provenance = Provenance.ESTIMATED
-    source_citation: str
+    warning: str = "SIMULATED DATA: This is an illustrative demonstration and not a real satellite telemetry observation."
+    provenance: Provenance = Provenance.SIMULATED
+    source_citation: str = "Synthetic mathematical canopy model - for demonstration only"
 
 
 def analyze_field_remote_sensing(req: SatelliteAnalysisRequest) -> SatelliteAnalysisResult:
-    # Deterministic calculation based on crop and area
+    # Deterministic illustrative calculation based on crop and area
     mean_ndvi = 0.74 if "sugar" in req.crop.lower() else 0.68
     mean_ndre = round(mean_ndvi * 0.72, 2)
     mean_ndwi = 0.42
@@ -66,8 +65,8 @@ def analyze_field_remote_sensing(req: SatelliteAnalysisRequest) -> SatelliteAnal
             zone_name_mr="उत्तर विभाग (प्लॉट अ-१)",
             area_pct=55.0,
             avg_ndvi=0.76,
-            vigor_status="High Vigor / हिरवेगार दाट पीक",
-            vigor_status_mr="उत्कृष्ट वाढ, दाट पाने व योग्य प्रकाशसंश्लेषण",
+            vigor_status="High Vigor / हिरवेगार दाट पीक (Simulated)",
+            vigor_status_mr="उत्कृष्ट वाढ, दाट पाने व योग्य प्रकाशसंश्लेषण (प्रात्यक्षिक)",
             action_item="Maintain standard fertigation cycle; no corrective spray needed.",
             action_item_mr="नियमित पाणी व खत सुरू ठेवावे; कोणत्याही उपचाराची गरज नाही."
         ),
@@ -76,8 +75,8 @@ def analyze_field_remote_sensing(req: SatelliteAnalysisRequest) -> SatelliteAnal
             zone_name_mr="मध्यवर्ती भाग (प्लॉट अ-२)",
             area_pct=30.0,
             avg_ndvi=0.62,
-            vigor_status="Optimal / मध्यम वाढ",
-            vigor_status_mr="समाधानकारक वाढ, किंचित विरळ झाडे",
+            vigor_status="Optimal / मध्यम वाढ (Simulated)",
+            vigor_status_mr="समाधानकारक वाढ, किंचित विरळ झाडे (प्रात्यक्षिक)",
             action_item="Inspect dripper lateral pressure; apply 19:19:19 foliar spray.",
             action_item_mr="ठिबक नळ्यांचा दाब तपासा; १९:१९:१९ विद्राव्य खताची फवारणी करा."
         ),
@@ -86,30 +85,28 @@ def analyze_field_remote_sensing(req: SatelliteAnalysisRequest) -> SatelliteAnal
             zone_name_mr="दक्षिण बांधालगतचा पट्टा (प्लॉट अ-३)",
             area_pct=15.0,
             avg_ndvi=0.41,
-            vigor_status="Moisture / Nutrient Stress (पाण्याचा ताण)",
-            vigor_status_mr="पाण्याचा किंवा नत्राचा ताण आढळला",
+            vigor_status="Moisture / Nutrient Stress (पाण्याचा ताण - Simulated)",
+            vigor_status_mr="पाण्याचा किंवा नत्राचा ताण आढळला (प्रात्यक्षिक)",
             action_item="Check for root grubs or subsoil compaction; provide protective light irrigation.",
             action_item_mr="हुमणी कीड किंवा माती घट्ट झाल्याची शक्यता तपासा; हलके पाणी द्यावे."
         ),
     ]
 
-    rec_en = "Overall field canopy health is 85% optimal. Focus localized soil drenching on the Southern 15% edge quadrant to equalize uniform yield."
-    rec_mr = "एकूण शेतातील पिकाची प्रकृती ८५% निरोगी आहे. दक्षिण भागातील १५% पट्ट्यात सूक्ष्म सिंचन देऊन पिकाची वाढ एकसमान करा."
+    rec_en = "Illustrative simulation: Field canopy health modeled at 85% optimal. Ground truthing required before taking agronomic action."
+    rec_mr = "प्रात्यक्षिक मॉडेल: शेतातील पिकाची प्रकृती ८५% निरोगी दर्शविली आहे. प्रत्यक्ष शेतात जाऊन खात्री केल्याशिवाय निर्णय घेऊ नये."
 
     return SatelliteAnalysisResult(
         district=req.district,
         crop=req.crop,
-        satellite_source="ESA Copernicus Sentinel-2 MSI (10m Multi-spectral Resolution)",
-        pass_date="2026-10-22 (Cloud-free composite)",
-        cloud_cover_pct=2.1,
+        satellite_source="Synthetic Field Canopy Model (Not live satellite data)",
         mean_ndvi=mean_ndvi,
         mean_ndre=mean_ndre,
         mean_ndwi=mean_ndwi,
-        canopy_status="Lush & Healthy (निरोगी हरित आवरण)",
-        canopy_status_mr="उत्कृष्ट प्रकाशसंश्लेषण व हिरवेगार निरोगी पीक",
+        canopy_status="Lush & Healthy (निरोगी हरित आवरण - Simulated)",
+        canopy_status_mr="उत्कृष्ट प्रकाशसंश्लेषण व हिरवेगार निरोगी पीक (प्रात्यक्षिक)",
         zonal_distribution=zones,
         overall_recommendation=rec_en,
         overall_recommendation_mr=rec_mr,
-        provenance=Provenance.ESTIMATED,
-        source_citation="European Space Agency (ESA) Sentinel-2 Level-2A & ISRO Bhuvan Agronomy"
+        provenance=Provenance.SIMULATED,
+        source_citation="Synthetic mathematical canopy model - for demonstration only"
     )
