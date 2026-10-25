@@ -10,11 +10,14 @@ from app.modules.remote_sensing.ndvi import (
 )
 
 
-def test_satellite_remote_sensing_ndvi():
+def test_satellite_remote_sensing_ndvi_enabled(monkeypatch):
+    import json
     from fastapi.testclient import TestClient
     from app.main import app
     from app.core.config import settings
     from app.core.provenance import Provenance
+
+    monkeypatch.setattr(settings, "demo_mode", True)
 
     req = SatelliteAnalysisRequest(
         district="Nashik",
@@ -24,12 +27,11 @@ def test_satellite_remote_sensing_ndvi():
     result = analyze_field_remote_sensing(req)
     assert result.mean_ndvi > 0.5
     assert len(result.zonal_distribution) >= 2
-    assert "Sentinel-2" not in result.satellite_source
+    assert "sentinel" not in result.satellite_source.lower()
     assert result.provenance == Provenance.SIMULATED
     assert "SIMULATED" in result.warning
     assert result.overall_recommendation != ""
 
-    # Test API endpoint under DEMO_MODE=True and False
     client = TestClient(app)
     res = client.post("/remote-sensing/field-ndvi", json={
         "district": "Nashik",
@@ -37,20 +39,27 @@ def test_satellite_remote_sensing_ndvi():
         "farm_area_acres": 3.0
     })
     assert res.status_code == 200
-    assert res.json()["provenance"] == "SIMULATED"
+    data = res.json()
+    # Verify simulated response does not claim downlink satellite identity
+    text_content = json.dumps(data)
+    assert "sentinel" not in text_content.lower(), f"Found 'Sentinel' text in NDVI response: {text_content}"
 
-    original_demo_mode = settings.demo_mode
-    try:
-        settings.demo_mode = False
-        res_disabled = client.post("/remote-sensing/field-ndvi", json={
-            "district": "Nashik",
-            "crop": "Soybean",
-            "farm_area_acres": 3.0
-        })
-        assert res_disabled.status_code == 404
-        assert "disabled" in res_disabled.json()["detail"].lower()
-    finally:
-        settings.demo_mode = original_demo_mode
+
+def test_satellite_remote_sensing_ndvi_disabled(monkeypatch):
+    from fastapi.testclient import TestClient
+    from app.main import app
+    from app.core.config import settings
+
+    monkeypatch.setattr(settings, "demo_mode", False)
+
+    client = TestClient(app)
+    res_disabled = client.post("/remote-sensing/field-ndvi", json={
+        "district": "Nashik",
+        "crop": "Soybean",
+        "farm_area_acres": 3.0
+    })
+    assert res_disabled.status_code == 404
+    assert "disabled" in res_disabled.json()["detail"].lower()
 
 
 def test_warehouse_listing_and_pledge_loan():

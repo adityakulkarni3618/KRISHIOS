@@ -1,7 +1,7 @@
-"""Satellite Remote Sensing & Canopy Health Explorer (Sentinel-2 Engine).
+"""Satellite Remote Sensing & Canopy Health Explorer (Synthetic Simulation Model).
 
-Provides spectral vegetative indices (NDVI, NDRE, NDWI) and zonal canopy stress analysis
-grounded in ISRO Bhuvan & Copernicus Sentinel-2 agronomic algorithms.
+Provides simulated spectral vegetative indices (NDVI, NDRE, NDWI) and zonal canopy stress analysis
+grounded in mathematical canopy reflectance formulas for UI demonstration.
 """
 from enum import Enum
 from typing import Dict, List, Optional

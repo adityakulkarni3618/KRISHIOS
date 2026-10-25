@@ -2646,7 +2646,7 @@ export default function Home() {
               />
             )}
 
-            {/* TAB: Remote Sensing Sentinel-2 NDVI */}
+            {/* TAB: Remote Sensing Canopy NDVI Simulator */}
             {activeTab === "remotesensing" && (
               <RemoteSensingModule
                 district={selectedDistrict}

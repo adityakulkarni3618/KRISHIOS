@@ -39,10 +39,21 @@ def test_disease_diagnose():
     assert "KVK" in data["disclaimer"]
 
 
-def test_mandi_forecast():
-    from app.core.config import settings
+def test_disease_response_has_no_confidence_and_no_ai_text():
+    import json
+    import re
+    res = client.post("/disease/diagnose", json={"crop": "Cotton", "symptom_description": "pink bollworm rosette flowers"})
+    assert res.status_code == 200
+    data = res.json()
+    assert "confidence" not in data
+    text = json.dumps(data)
+    assert not re.search(r"\bAI\b", text), f"Found 'AI' text in disease response: {text}"
 
-    # In DEMO_MODE=True (default), returns SIMULATED scenario with visible warning
+
+def test_mandi_forecast_enabled(monkeypatch):
+    from app.core.config import settings
+    monkeypatch.setattr(settings, "demo_mode", True)
+
     res = client.get("/market/forecast?commodity=Soybean&district=Latur&market=Latur%20APMC&quantity_quintals=60")
     assert res.status_code == 200
     data = res.json()
@@ -54,12 +65,11 @@ def test_mandi_forecast():
     assert len(data["forecast_curve"]) >= 3
     assert data["storage_economics"]["net_profit_per_quintal"] is not None
 
-    # When DEMO_MODE=False, simulated endpoint returns 404
-    original_demo_mode = settings.demo_mode
-    try:
-        settings.demo_mode = False
-        res_disabled = client.get("/market/forecast?commodity=Soybean&district=Latur&market=Latur%20APMC&quantity_quintals=60")
-        assert res_disabled.status_code == 404
-        assert "disabled" in res_disabled.json()["detail"].lower()
-    finally:
-        settings.demo_mode = original_demo_mode
+
+def test_mandi_forecast_disabled(monkeypatch):
+    from app.core.config import settings
+    monkeypatch.setattr(settings, "demo_mode", False)
+
+    res_disabled = client.get("/market/forecast?commodity=Soybean&district=Latur&market=Latur%20APMC&quantity_quintals=60")
+    assert res_disabled.status_code == 404
+    assert "disabled" in res_disabled.json()["detail"].lower()

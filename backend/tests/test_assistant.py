@@ -61,3 +61,19 @@ def test_assistant_unmatched_query_returns_kvk_contact():
     assert "KVK" in res_mr.response_mr or "कृषी विज्ञान केंद्र" in res_mr.response_mr
     assert "१८००-१८०-१५५१" in res_mr.response_mr
     assert res_mr.provenance == Provenance.CURATED_REFERENCE
+
+
+def test_assistant_response_has_no_ai_text():
+    import json
+    import re
+    queries = [
+        ("आज फवारणी करू का?", "mr"),
+        ("कपाशीवर बोंडअळीचा प्रादुर्भाव आहे", "mr"),
+        ("What is PMFBY crop insurance?", "en"),
+        ("General question about Mars rockets", "en"),
+    ]
+    for q, lang in queries:
+        req = AssistantQueryRequest(query=q, language=lang)
+        res = answer_krishi_query(req)
+        raw = res.model_dump_json()
+        assert not re.search(r"\bAI\b", raw), f"Found 'AI' text in assistant response for query '{q}': {raw}"
