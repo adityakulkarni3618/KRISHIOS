@@ -1,6 +1,6 @@
-"""Voice-First Multilingual AI Krishi Mitra Conversational Assistant.
+"""Krishi FAQ & University Agronomic Knowledge Guide.
 
-Provides grounded agricultural consultation in Marathi (मराठी), Hindi (हिन्दी), and English.
+Provides curated agricultural question-answering in Marathi (मराठी), Hindi (हिन्दी), and English.
 Answers are strictly cited against Maharashtra State Agricultural Universities:
 - MPKV Rahuri (Mahatma Phule Krishi Vidyapeeth)
 - Dr. PDKV Akola (Panjabrao Deshmukh Krishi Vidyapeeth)
@@ -32,7 +32,7 @@ class AssistantQueryResponse(BaseModel):
     followup_questions: List[str]
     followup_questions_mr: List[str]
     source_citation: str
-    provenance: Provenance = Provenance.HISTORICAL
+    provenance: Provenance = Provenance.CURATED_REFERENCE
 
 
 # Grounded agronomic knowledge patterns
@@ -102,9 +102,10 @@ KB_ENTRIES = [
 
 def answer_krishi_query(request: AssistantQueryRequest) -> AssistantQueryResponse:
     q_lower = request.query.lower()
+    lang = request.language.lower()
 
     # Best pattern match
-    best_match = KB_ENTRIES[0]
+    best_match = None
     max_hits = 0
 
     for entry in KB_ENTRIES:
@@ -113,7 +114,26 @@ def answer_krishi_query(request: AssistantQueryRequest) -> AssistantQueryRespons
             max_hits = hits
             best_match = entry
 
-    lang = request.language.lower()
+    if max_hits == 0 or best_match is None:
+        resp_en = "I don't have an answer, contact your KVK / call 1800-180-1551"
+        resp_mr = "माझ्याकडे याचे अधिकृत उत्तर नाही, कृपया आपल्या जवळच्या कृषी विज्ञान केंद्राशी (KVK) संपर्क साधा किंवा १८००-१८०-१५५१ वर कॉल करा."
+        resp_hi = "मेरे पास इसका उत्तर नहीं है, कृपया अपने नजदीकी KVK से संपर्क करें या 1800-180-1551 पर कॉल करें।"
+        text = resp_mr if lang == "mr" else (resp_hi if lang == "hi" else resp_en)
+        tts = resp_mr if lang == "mr" else (resp_hi if lang == "hi" else resp_en)
+        return AssistantQueryResponse(
+            query=request.query,
+            detected_domain="Unmatched Query",
+            response_text=text,
+            response_mr=resp_mr,
+            response_hi=resp_hi,
+            audio_tts_script=tts,
+            suggested_tab="overview",
+            followup_questions=["Call Kisan Call Centre 1800-180-1551", "Visit nearest KVK office"],
+            followup_questions_mr=["किसान कॉल सेंटर १८००-१८०-१५५१ वर कॉल करा", "जवळच्या KVK केंद्रास भेट द्या"],
+            source_citation="Kisan Call Centre (Toll-Free 1800-180-1551)",
+            provenance=Provenance.CURATED_REFERENCE
+        )
+
     if lang == "mr":
         text = best_match["response_mr"]
         tts = best_match["tts_mr"]
@@ -135,5 +155,5 @@ def answer_krishi_query(request: AssistantQueryRequest) -> AssistantQueryRespons
         followup_questions=best_match["followups_en"],
         followup_questions_mr=best_match["followups_mr"],
         source_citation=best_match["citation"],
-        provenance=Provenance.HISTORICAL
+        provenance=Provenance.CURATED_REFERENCE
     )

@@ -1060,15 +1060,15 @@ export default function Home() {
                     </div>
                   </a>
 
-                  {/* Card 5: AI Krishi Mitra Voice */}
+                  {/* Card 5: Krishi FAQ Voice & Advisory */}
                   <div className="kisan-card" onClick={() => { setActiveTab("assistant"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
                     <div className="kisan-card-icon" style={{ background: "rgba(212, 249, 54, 0.2)" }}>🎙️</div>
-                    <div className="kisan-card-title">{lang === "mr" ? "कृषी मित्राशी बोला" : "Talk to AI Krishi Mitra"}</div>
+                    <div className="kisan-card-title">{lang === "mr" ? "कृषी प्रश्नोत्तरे (FAQ)" : "Krishi FAQ & Knowledge Guide"}</div>
                     <div className="kisan-card-desc">
-                      {lang === "mr" ? "माईकवर मराठीत शेतीचा कोणताही प्रश्न विचारा, राहुरी विद्यापीठाचा अधिकृत सल्ला त्वरित ऐका." : "Speak your query in Marathi, Hindi, or English for instant university-cited answers."}
+                      {lang === "mr" ? "माईकवर मराठीत शेतीचा कोणताही प्रश्न विचारा, राहुरी विद्यापीठाचा अधिकृत सल्ला त्वरित ऐका." : "Ask farming questions or tap mic for verified university-cited answers."}
                     </div>
                     <div className="kisan-status-badge safe">
-                      🔊 {lang === "mr" ? "माईक सुरू करा" : "START VOICE CHAT"}
+                      🔊 {lang === "mr" ? "प्रश्नोत्तरे उघडा" : "OPEN KRISHI FAQ"}
                     </div>
                   </div>
 
@@ -2644,7 +2644,7 @@ export default function Home() {
               </div>
             )}
 
-            {/* TAB: AI Krishi Mitra Voice Assistant */}
+            {/* TAB: Krishi FAQ Knowledge Guide */}
             {activeTab === "assistant" && (
               <AssistantVoiceModule
                 district={selectedDistrict}
