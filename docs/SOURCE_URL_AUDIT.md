@@ -1,49 +1,70 @@
-# Source URL Verification Audit (Step 4)
+# Source URL Verification Audit (Step 4c - Honest Verification)
 
-Conducted on: **25-Oct-2026**
-Verification Method: Direct HTTP retrieval with browser user-agent and SSL handling.
-
-Status Classification Criteria:
-- **`OPENED_AND_MATCHES`**: Successfully connected with HTTP 200 OK, page content matches the agronomic or governmental dataset cited.
-- **`OPENED_BUT_DIFFERENT`**: Connected with HTTP 200 OK, but portal content has diverged or redirected to an unrelated service.
-- **`COULD_NOT_VERIFY`**: Network timeout, DNS resolution failure (Errno 11001), or server-side error (HTTP 503). *No URLs have been modified without explicit user approval.*
+Conducted on: **25-Oct-2026**  
+Verification Method: Direct HTTP retrieval, header & redirect analysis, HTML title parsing, and full-text inspection.
 
 ---
 
-## Audit Registry Table
+## 1. Classification Criteria
 
-| # | Source URL in Codebase | Module / Dataset | Status | HTTP / Title | Audit Findings & Recommendations |
-|---|------------------------|------------------|--------|--------------|-----------------------------------|
-| 1 | `https://pmkisan.gov.in/` | `schemes/pmkisan` | **OPENED_AND_MATCHES** | 200 OK ("PM-Kisan Samman Nidhi") | Official national direct DBT portal. Confirms ₹6,000/year in 3 installments. |
-| 2 | `https://pmfby.gov.in/` | `insurance/pmfby` | **OPENED_AND_MATCHES** | 200 OK ("Pradhan Mantri Fasal Bima Yojana - Crop Insurance") | National crop insurance portal for premium calculation and claims. |
-| 3 | `https://mahapocra.gov.in/` | `schemes/pocra` | **OPENED_AND_MATCHES** | 200 OK | World Bank & Maharashtra Government PoCRA project portal for drip & farm pond subsidies. |
-| 4 | `https://mahadbt.maharashtra.gov.in/` | `schemes/mahadbt` | **OPENED_AND_MATCHES** | 200 OK | Aaple Sarkar MahaDBT farmer welfare portal for farm ponds on demand and drip schemes. |
-| 5 | `https://soilhealth.dac.gov.in/` | `schemes/soilhealth` | **OPENED_AND_MATCHES** | 200 OK ("Soil Health") | Ministry of Agriculture & Farmers Welfare Soil Health Card portal. |
-| 6 | `https://www.myscheme.gov.in/schemes/kcc` | `institutional/kcc` | **OPENED_AND_MATCHES** | 200 OK | myScheme national portal entry for Kisan Credit Card (4% subsidized interest). |
-| 7 | `https://myscheme.gov.in/` | `schemes/catalog` | **OPENED_AND_MATCHES** | 200 OK | Central citizen services platform listing verified government schemes. |
-| 8 | `https://pmfme.mofpi.gov.in/` | `market_linkage/pmfme` | **OPENED_AND_MATCHES** | 200 OK ("Welcome to PMFME-MOFPI") | Ministry of Food Processing Industries portal for 35% credit-linked capital subsidy. |
-| 9 | `https://agmarknet.gov.in/` | `market/agmarknet` | **OPENED_AND_MATCHES** | 200 OK ("Agmarknet 2.0") | Directorate of Marketing & Inspection portal for APMC Mandi daily arrival and modal prices. |
-| 10 | `https://open-meteo.com/` | `weather/open_meteo` | **OPENED_AND_MATCHES** | 200 OK ("Free Open-Source Weather API") | Live weather telemetry and agro-meteorological advisory endpoint. |
-| 11 | `https://agrimachinery.nic.in/` | `equipment/chc` | **OPENED_AND_MATCHES** | 200 OK ("Digital Platform for Farm Mechanization and Technology") | Sub-Mission on Agricultural Mechanization (SMAM) Custom Hiring Centres portal. |
-| 12 | `https://www.nddb.coop/` | `livestock/nddb` | **OPENED_AND_MATCHES** | 200 OK ("National Dairy Development Board (NDDB)") | NDDB portal for livestock feed ration formulations and dairy data. |
-| 13 | `https://www.mswarehousing.com/` | `postharvest/mswc` | **OPENED_AND_MATCHES** | 200 OK ("Maharashtra warehousing corporation") | Official MSWC portal for state warehouse directory, storage charges, and cold chain capacity. |
-| 14 | `https://wdra.gov.in/` | `postharvest/wdra` | **OPENED_AND_MATCHES** | 200 OK ("Home - WDRA") | Statutory Warehousing Development and Regulatory Authority e-NWR pledge loan rules. |
-| 15 | `https://icar.org.in/` | `soil_health/icar` | **OPENED_AND_MATCHES** | 200 OK ("Indian Council of Agricultural Research") | Official ICAR research portal for Package of Practices and RDF fertilizer standards. |
-| 16 | `https://www.mahadiscom.in/` | `rural_ops/mahadiscom` | **OPENED_AND_MATCHES** | 200 OK ("Maharashtra State Electricity Distribution Co. Ltd.") | MSEDCL official portal for 3-phase agricultural feeder shift rosters. |
-| 17 | `https://gsda.maharashtra.gov.in/` | `operations/gsda` | **OPENED_AND_MATCHES** | 200 OK ("GSDA") | Groundwater Surveys and Development Agency Maharashtra watershed observation wells. |
-| 18 | `https://krishi.maharashtra.gov.in/` | `mapping/krishi_dept` | **OPENED_AND_MATCHES** | 200 OK | Official Department of Agriculture Government of Maharashtra administrative portal. |
-| 19 | `https://seednet.gov.in/` | `operations/seednet` | **COULD_NOT_VERIFY** | HTTP 503 (Service Unavailable) | NIC Seednet India portal is legitimate but currently returning 503 error on server side. Retained without modification. |
-| 20 | `https://kvk.icar.gov.in/` | `assistant/kvk` | **COULD_NOT_VERIFY** | DNS Error (`getaddrinfo` failed) | Hostname `kvk.icar.gov.in` failed DNS lookup. Potential official alternative: `https://icar.org.in/content/krishi-vigyan-kendras`. Retained existing URL pending approval. |
-| 21 | `https://arogya.maharashtra.gov.in/` | `rural_ops/arogya` | **COULD_NOT_VERIFY** | DNS Error (`getaddrinfo` failed) | Maharashtra Public Health Dept subdomain failed DNS resolution. Potential official alternative: `https://phd.maharashtra.gov.in/`. Retained existing URL pending approval. |
-| 22 | `https://revenue.maharashtra.gov.in/` | `institutional/revenue` | **COULD_NOT_VERIFY** | DNS Error (`getaddrinfo` failed) | Subdomain failed DNS resolution. Official revenue portal for land records is `https://mahabhulekh.maharashtra.gov.in`. Retained existing URL pending approval. |
-| 23 | `https://smartindiahackathon.gov.in/` | `data_registry/sih` | **COULD_NOT_VERIFY** | DNS Error (`getaddrinfo` failed) | Domain failed DNS lookup. Official Smart India Hackathon portal is `https://www.sih.gov.in`. Retained existing URL pending approval. |
-| 24 | `https://ncof.dacnet.nic.in/` | `rural_ops/ncof` | **COULD_NOT_VERIFY** | DNS Error (`getaddrinfo` failed) | DACNET National Centre for Organic Farming portal restructured into NCONF. Retained existing URL pending approval. |
+To ensure strict evidentiary honesty, HTTP reachability is separated from content verification:
+
+- **`CONTENT_MATCHES`**: The URL is reachable (HTTP 200) AND its page content directly includes the specific agronomic, tariff, or scheme figures cited by the codebase.
+- **`REACHABLE_ONLY`**: The URL is reachable (HTTP 200), but it is a general corporate/departmental homepage, an administrative portal landing, or an empty client-side SPA shell (React/Vite) that does NOT contain the specific data points cited in the code.
+- **`CONTENT_DIFFERENT`**: The URL is reachable (HTTP 200), but the published content has diverged or contradicts what the codebase claims.
+- **`UNREACHABLE`**: The URL could not be connected to due to an upstream server-side failure (e.g., HTTP 503) or an invalid/obsolete hostname (DNS resolution error).
 
 ---
 
-## Summary
-- **Total Source URLs Audited:** 24
-- **OPENED_AND_MATCHES:** 18 (75.0%)
-- **OPENED_BUT_DIFFERENT:** 0 (0.0%)
-- **COULD_NOT_VERIFY:** 6 (25.0% - 1 HTTP 503, 5 DNS resolution issues on current network)
-- **URLs Changed:** 0 (Strict policy: no URLs modified or invented without user authorization).
+## 2. Comprehensive Audit Registry
+
+| # | Source URL in Codebase | Module / Claimed Dataset | HTTP Status | Page Title & Details | Honest Audit Status | Audit Findings & Reason for Classification |
+|---|------------------------|--------------------------|-------------|----------------------|---------------------|--------------------------------------------|
+| 1 | `https://pmkisan.gov.in/` | `schemes/pmkisan` (₹6,000/yr in 3 installments) | 200 OK | `PM-Kisan Samman Nidhi` | **CONTENT_MATCHES** | Homepage text directly verifies the ₹6,000 annual benefit disbursed in three equal 4-monthly installments. |
+| 2 | `https://pmfby.gov.in/` | `insurance/pmfby` (₹1 farmer token premium) | 200 OK | `Pradhan Mantri Fasal Bima Yojana - Crop Insurance` | **REACHABLE_ONLY** | Official national PMFBY portal is reachable, but national rules charge 1.5%–2% actuarial farmer premium. The ₹1 token premium is a Maharashtra state decision (G.R.), which is not published on this national root page. |
+| 3 | `https://mahapocra.gov.in/` | `schemes/pocra` (World Bank climate resilience) | 200 OK | `नानाजी देशमुख कृषि संजीवनी प्रकल्प २.०` | **CONTENT_MATCHES** | Homepage text directly identifies PoCRA 2.0 as the joint Government of Maharashtra & World Bank Climate Resilient Agriculture project. |
+| 4 | `https://mahadbt.maharashtra.gov.in/` | `schemes/mahadbt` (Farmer farm ponds & drip) | 200 OK | `Aaple Sarkar MahaDBT Portal` | **REACHABLE_ONLY** | General state DBT umbrella portal with links to education/scholarships. The specific farmer scheme terms are in an internal sub-portal (`/Farmer/Login/Login`), not on this root page. |
+| 5 | `https://soilhealth.dac.gov.in/` | `schemes/soilhealth` (12 testing parameters) | 200 OK | `Soil Health` | **REACHABLE_ONLY** | Reachable, but serves a bare Vite/React SPA shell (`<div id="root"></div>`) requiring client-side JS bundle execution. Parameter thresholds are not in the raw HTML response. |
+| 6 | `https://www.myscheme.gov.in/schemes/kcc` | `institutional/kcc` (4% subvented interest) | 200 OK | `myScheme` | **REACHABLE_ONLY** | Reachable, but is a Next.js/React SPA returning a fallback skeleton on raw HTTP requests. Specific subvention terms require client hydration. |
+| 7 | `https://myscheme.gov.in/` | `schemes/catalog` (Central schemes registry) | 200 OK (301 redirect) | `myScheme` | **REACHABLE_ONLY** | General citizen services catalog landing page. Scheme listings require user search interaction. |
+| 8 | `https://pmfme.mofpi.gov.in/` | `market_linkage/pmfme` (35% capital subsidy) | 200 OK | `Welcome to PMFME-MOFPI | Ministry of Food Processing Industries` | **REACHABLE_ONLY** | Official PMFME portal is live, but the 35% capital subsidy and ₹10 lakh ceiling details reside in scheme guidelines PDFs, not on the homepage text. |
+| 9 | `https://agmarknet.gov.in/` | `market/agmarknet` (APMC mandi arrival & modal rates) | 200 OK | `Agmarknet 2.0` | **REACHABLE_ONLY** | Reachable, but is a React single-page app (`<div id="root"></div>`). Dynamic modal rates and arrival quantities are loaded via API calls. |
+| 10 | `https://open-meteo.com/` | `weather/open_meteo` (Free open weather telemetry) | 200 OK | `🌤️ Free Open-Source Weather API | Open-Meteo.com` | **CONTENT_MATCHES** | Homepage text directly confirms free weather forecast & historical archive API from 30+ weather models without API keys. |
+| 11 | `https://agrimachinery.nic.in/` | `equipment/chc` (SMAM Custom Hiring Centre subsidies) | 200 OK | `Digital Platform for Farm Mechanization and Technology` | **CONTENT_MATCHES** | Homepage text directly verifies the portal as the Ministry of Agriculture & Farmers Welfare's mechanization and CHC subsidy platform. |
+| 12 | `https://www.nddb.coop/` | `livestock/nddb` (Cattle feed formulation & vaccines) | 200 OK | `National Dairy Development Board (NDDB)` | **REACHABLE_ONLY** | General corporate homepage of NDDB. Detailed ration balancing software (INAPH/RBP) is a separate internal tool. |
+| 13 | `https://www.mswarehousing.com/` | `postharvest/mswc` (MSWC warehouse directory & tariffs) | 200 OK (302 redirect) | `Maharashtra warehousing corporation` | **REACHABLE_ONLY** | Homepage of the corporation is reachable, but specific warehouse directories and storage tariffs are in downloadable PDF circulars. |
+| 14 | `https://wdra.gov.in/` | `postharvest/wdra` (WDRA registered warehouses & e-NWR) | 200 OK | `Home - WDRA` | **REACHABLE_ONLY** | General statutory authority homepage. List of registered warehouses and pledge loan guidelines are inside sub-menus. |
+| 15 | `https://icar.org.in/` | `soil_health/icar` (Soil nutrient thresholds & RDF) | 200 OK | `Home | Indian Council of Agricultural Research` | **REACHABLE_ONLY** | General research council homepage. Package of practices and fertilizer recommendations are published across ICAR institutes. |
+| 16 | `https://www.mahadiscom.in/` | `rural_ops/mahadiscom` (3-phase feeder shift roster) | 200 OK | `मुख्य पृष्ठ - Maharashtra State Electricity Distribution Co. Ltd.` | **REACHABLE_ONLY** | General power utility billing and consumer homepage. Agricultural feeder rosters are behind a separate portal section. |
+| 17 | `https://gsda.maharashtra.gov.in/` | `operations/gsda` (Groundwater observation wells) | 200 OK | `GSDA` | **REACHABLE_ONLY** | Official GSDA administrative homepage. Seasonal watershed observation well tables are in periodic assessment reports. |
+| 18 | `https://krishi.maharashtra.gov.in/` | `mapping/krishi_dept` (Department of Agriculture) | 200 OK | `Commissionerate of Agriculture, Maharashtra State` | **CONTENT_MATCHES** | Directly matches the official administrative portal for the Department of Agriculture, Government of Maharashtra. |
+| 19 | `https://seednet.gov.in/` | `operations/seednet` (Seed lot verification format) | 503 Service Unavailable | None | **UNREACHABLE** | **Failure Diagnosis:** Upstream server-side issue. DNS resolves correctly to `35.207.209.47` (NIC), but the web server returns HTTP 503. Not a local network failure. |
+| 20 | `https://kvk.icar.gov.in/` | `assistant/kvk` (KVK network directory) | DNS Failed (Errno 11001) | None | **UNREACHABLE** | **Failure Diagnosis:** Bad URL. The subdomain `kvk.icar.gov.in` has no active DNS record in public nameservers. KVK directory is under `https://icar.org.in/content/krishi-vigyan-kendras`. |
+| 21 | `https://arogya.maharashtra.gov.in/` | `rural_ops/arogya` (ASV hospital directory) | DNS Failed (Errno 11001) | None | **UNREACHABLE** | **Failure Diagnosis:** Bad URL. Maharashtra Public Health Department domain is `phd.maharashtra.gov.in` (`164.100.52.236`). `arogya.maharashtra.gov.in` does not exist. |
+| 22 | `https://revenue.maharashtra.gov.in/` | `institutional/revenue` (7/12 land records) | DNS Failed (Errno 11001) | None | **UNREACHABLE** | **Failure Diagnosis:** Bad URL. Maharashtra Land Records operate under `mahabhumi.gov.in` and `mahabhulekh.maharashtra.gov.in`. `revenue.maharashtra.gov.in` is not a registered public host. |
+| 23 | `https://smartindiahackathon.gov.in/` | `data_registry/sih` (Smart India Hackathon problem statements) | DNS Failed (Errno 11001) | None | **UNREACHABLE** | **Failure Diagnosis:** Bad URL. The domain `smartindiahackathon.gov.in` does not exist. The official portal is **`https://www.sih.gov.in`** (DNS IP: `20.204.13.165`, currently "Website Under Maintenance"). URL retained in code pending user approval. |
+| 24 | `https://ncof.dacnet.nic.in/` | `rural_ops/ncof` (Organic farming bio-inputs) | DNS Failed (Errno 11001) | None | **UNREACHABLE** | **Failure Diagnosis:** Bad URL (Obsolete domain). `dacnet.nic.in` subdomains were decommissioned; NCOF was reorganized into NCONF (`https://naturalfarming.dac.gov.in/`). |
+
+---
+
+## 3. Findings on Failed URLs & Official SIH Site
+
+1. **Local Network vs. Bad URL Analysis:**
+   - **`seednet.gov.in`**: Server-side outage (HTTP 503). DNS successfully resolves (`35.207.209.47`).
+   - **`kvk.icar.gov.in`**, **`arogya.maharashtra.gov.in`**, **`revenue.maharashtra.gov.in`**, **`smartindiahackathon.gov.in`**, **`ncof.dacnet.nic.in`**: Bad URLs. Public DNS nameservers return NXDOMAIN (`[Errno 11001] getaddrinfo failed`).
+
+2. **Smart India Hackathon (SIH) Investigation:**
+   - The official, registered government portal for Smart India Hackathon is **`https://www.sih.gov.in`** (hosted under Ministry of Education / AICTE).
+   - The domain `smartindiahackathon.gov.in` is an invented or invalid hostname.
+   - **Recommendation:** When user approves, update `smartindiahackathon.gov.in` to `https://www.sih.gov.in`. No changes have been made to code URLs.
+
+---
+
+## 4. Audit Summary Statistics
+
+- **Total URLs Audited:** 24
+- **CONTENT_MATCHES:** 5 (20.8%)
+- **REACHABLE_ONLY:** 13 (54.2%)
+- **CONTENT_DIFFERENT:** 0 (0.0%)
+- **UNREACHABLE:** 6 (25.0% — 1 upstream 503, 5 bad/obsolete URLs)
+- **Code URLs Modified:** 0 (Retained existing URLs pending explicit user confirmation).
