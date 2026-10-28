@@ -2971,7 +2971,7 @@ body.theme-govt-active .forecast-card-item {
   cursor: pointer;
 }
 
-.result-card.card-verified {
+.result-card.card-valid-format {
   border-color: #22c55e;
 }
 

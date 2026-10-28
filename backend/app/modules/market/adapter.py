@@ -27,18 +27,18 @@ class MarketQueryResponse(BaseModel):
     total_records: int
     records: list[MandiPriceRecord]
     as_of: str = "2026-10-19"
-    sample_notice: str = "Sample data, not live. Verified APMC reference as of 2026-10-19."
+    sample_notice: str = "Sample reference rates, reference date shown, not live."
     provenance: Provenance = Provenance.CURATED_REFERENCE
     source: str
     attribution: str
     notes: list[str] = []
 
 
-# Verified benchmark APMC daily price dataset for Maharashtra key agricultural commodities
-# Based on official MSAMB / Agmarknet bulletins
+# Benchmark APMC daily price dataset for Maharashtra key agricultural commodities
+# Based on APMC / Agmarknet reference bulletins
 BENCHMARK_APMC_PRICES: list[dict] = [
     {
-        "id": "MSAMB-NSK-ONION-01",
+        "id": "APMC-REF-NSK-ONION-01",
         "commodity": "Onion",
         "district": "Nashik",
         "market": "Lasalgaon",
@@ -49,11 +49,11 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "arrival_quantity_quintals": 12450.0,
         "price_date": "2026-10-19",
         "provenance": Provenance.CURATED_REFERENCE,
-        "source": "Agmarknet / MSAMB",
-        "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
+        "source": "Agmarknet APMC Reference",
+        "attribution": "APMC Daily Reference Bulletin (Sample data, not live feed)",
     },
     {
-        "id": "MSAMB-NSK-ONION-02",
+        "id": "APMC-REF-NSK-ONION-02",
         "commodity": "Onion",
         "district": "Nashik",
         "market": "Pimpalgaon",
@@ -64,11 +64,11 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "arrival_quantity_quintals": 9800.0,
         "price_date": "2026-10-19",
         "provenance": Provenance.CURATED_REFERENCE,
-        "source": "Agmarknet / MSAMB",
-        "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
+        "source": "Agmarknet APMC Reference",
+        "attribution": "APMC Daily Reference Bulletin (Sample data, not live feed)",
     },
     {
-        "id": "MSAMB-PUN-ONION-01",
+        "id": "APMC-REF-PUN-ONION-01",
         "commodity": "Onion",
         "district": "Pune",
         "market": "Pune Gultekdi",
@@ -79,11 +79,11 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "arrival_quantity_quintals": 8500.0,
         "price_date": "2026-10-19",
         "provenance": Provenance.CURATED_REFERENCE,
-        "source": "Agmarknet / MSAMB",
-        "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
+        "source": "Agmarknet APMC Reference",
+        "attribution": "APMC Daily Reference Bulletin (Sample data, not live feed)",
     },
     {
-        "id": "MSAMB-SOL-ONION-01",
+        "id": "APMC-REF-SOL-ONION-01",
         "commodity": "Onion",
         "district": "Solapur",
         "market": "Solapur APMC",
@@ -94,11 +94,11 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "arrival_quantity_quintals": 15200.0,
         "price_date": "2026-10-19",
         "provenance": Provenance.CURATED_REFERENCE,
-        "source": "Agmarknet / MSAMB",
-        "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
+        "source": "Agmarknet APMC Reference",
+        "attribution": "APMC Daily Reference Bulletin (Sample data, not live feed)",
     },
     {
-        "id": "MSAMB-NAG-SOY-01",
+        "id": "APMC-REF-NAG-SOY-01",
         "commodity": "Soybean",
         "district": "Nagpur",
         "market": "Nagpur APMC",
@@ -109,11 +109,11 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "arrival_quantity_quintals": 4300.0,
         "price_date": "2026-10-19",
         "provenance": Provenance.CURATED_REFERENCE,
-        "source": "Agmarknet / MSAMB",
-        "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
+        "source": "Agmarknet APMC Reference",
+        "attribution": "APMC Daily Reference Bulletin (Sample data, not live feed)",
     },
     {
-        "id": "MSAMB-AKL-SOY-01",
+        "id": "APMC-REF-AKL-SOY-01",
         "commodity": "Soybean",
         "district": "Akola",
         "market": "Akola APMC",
@@ -124,11 +124,11 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "arrival_quantity_quintals": 6200.0,
         "price_date": "2026-10-19",
         "provenance": Provenance.CURATED_REFERENCE,
-        "source": "Agmarknet / MSAMB",
-        "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
+        "source": "Agmarknet APMC Reference",
+        "attribution": "APMC Daily Reference Bulletin (Sample data, not live feed)",
     },
     {
-        "id": "MSAMB-AMR-COT-01",
+        "id": "APMC-REF-AMR-COT-01",
         "commodity": "Cotton",
         "district": "Amravati",
         "market": "Amravati APMC",
@@ -139,11 +139,11 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "arrival_quantity_quintals": 3100.0,
         "price_date": "2026-10-19",
         "provenance": Provenance.CURATED_REFERENCE,
-        "source": "Agmarknet / MSAMB",
-        "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
+        "source": "Agmarknet APMC Reference",
+        "attribution": "APMC Daily Reference Bulletin (Sample data, not live feed)",
     },
     {
-        "id": "MSAMB-AUR-COT-01",
+        "id": "APMC-REF-AUR-COT-01",
         "commodity": "Cotton",
         "district": "Chhatrapati Sambhajinagar",
         "market": "Jalna APMC",
@@ -154,11 +154,11 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "arrival_quantity_quintals": 4800.0,
         "price_date": "2026-10-19",
         "provenance": Provenance.CURATED_REFERENCE,
-        "source": "Agmarknet / MSAMB",
-        "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
+        "source": "Agmarknet APMC Reference",
+        "attribution": "APMC Daily Reference Bulletin (Sample data, not live feed)",
     },
     {
-        "id": "MSAMB-PUN-TOM-01",
+        "id": "APMC-REF-PUN-TOM-01",
         "commodity": "Tomato",
         "district": "Pune",
         "market": "Narayangaon",
@@ -169,11 +169,11 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "arrival_quantity_quintals": 5400.0,
         "price_date": "2026-10-19",
         "provenance": Provenance.CURATED_REFERENCE,
-        "source": "Agmarknet / MSAMB",
-        "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
+        "source": "Agmarknet APMC Reference",
+        "attribution": "APMC Daily Reference Bulletin (Sample data, not live feed)",
     },
     {
-        "id": "MSAMB-AHM-WHT-01",
+        "id": "APMC-REF-AHM-WHT-01",
         "commodity": "Wheat",
         "district": "Ahmednagar",
         "market": "Rahuri APMC",
@@ -184,11 +184,11 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "arrival_quantity_quintals": 2800.0,
         "price_date": "2026-10-19",
         "provenance": Provenance.CURATED_REFERENCE,
-        "source": "Agmarknet / MSAMB",
-        "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
+        "source": "Agmarknet APMC Reference",
+        "attribution": "APMC Daily Reference Bulletin (Sample data, not live feed)",
     },
     {
-        "id": "MSAMB-LAT-CHN-01",
+        "id": "APMC-REF-LAT-CHN-01",
         "commodity": "Gram (Chana)",
         "district": "Latur",
         "market": "Latur APMC",
@@ -199,11 +199,11 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "arrival_quantity_quintals": 3900.0,
         "price_date": "2026-10-19",
         "provenance": Provenance.CURATED_REFERENCE,
-        "source": "Agmarknet / MSAMB",
-        "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
+        "source": "Agmarknet APMC Reference",
+        "attribution": "APMC Daily Reference Bulletin (Sample data, not live feed)",
     },
     {
-        "id": "MSAMB-KOL-JAG-01",
+        "id": "APMC-REF-KOL-JAG-01",
         "commodity": "Jaggery (Gul)",
         "district": "Kolhapur",
         "market": "Kolhapur APMC",
@@ -214,8 +214,8 @@ BENCHMARK_APMC_PRICES: list[dict] = [
         "arrival_quantity_quintals": 7200.0,
         "price_date": "2026-10-19",
         "provenance": Provenance.CURATED_REFERENCE,
-        "source": "Agmarknet / MSAMB",
-        "attribution": "Maharashtra State Agricultural Marketing Board (MSAMB) Daily APMC Bulletin",
+        "source": "Agmarknet APMC Reference",
+        "attribution": "APMC Daily Reference Bulletin (Sample data, not live feed)",
     },
 ]
 
@@ -259,9 +259,9 @@ class MarketService:
                 total_records=0,
                 records=[],
                 provenance=Provenance.UNAVAILABLE,
-                source="Agmarknet / MSAMB",
-                attribution="Maharashtra State Agricultural Marketing Board (MSAMB)",
-                notes=["No verified mandi price records found matching the requested query parameters."],
+                source="Agmarknet APMC Reference",
+                attribution="APMC Reference Dataset (Sample, not live)",
+                notes=["No reference mandi price records found matching the requested query parameters."],
             )
 
         return MarketQueryResponse(
@@ -270,11 +270,11 @@ class MarketService:
             total_records=len(deduped),
             records=deduped,
             as_of="2026-10-19",
-            sample_notice="Sample data, not live. Verified APMC reference as of 2026-10-19.",
+            sample_notice="Sample reference rates, reference date shown, not live.",
             provenance=Provenance.CURATED_REFERENCE,
-            source="Agmarknet / MSAMB",
-            attribution="Maharashtra State Agricultural Marketing Board (MSAMB)",
-            notes=["Sample, not live. Prices reported in INR per quintal (100 kg) from official APMC market daily arrivals as of 2026-10-19."],
+            source="Agmarknet APMC Reference",
+            attribution="APMC Reference Dataset (Sample, not live)",
+            notes=["Sample, not live. Reference rates, reference date shown. Prices reported in INR per quintal (100 kg) as of 2026-10-19."],
         )
 
     def get_available_commodities(self) -> list[str]:

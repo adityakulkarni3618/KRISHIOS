@@ -17,7 +17,7 @@ interface FarmProduceListing {
   district: string;
   contact_phone: string;
   whatsapp_enabled: boolean;
-  fpo_verified: boolean;
+  fpo_registered: boolean;
   provenance?: string;
   warning?: string;
 }
@@ -103,7 +103,7 @@ export default function KisanBazaarModule({ district, lang, apiUrl }: KisanBazaa
       district: district,
       contact_phone: newPhone,
       whatsapp_enabled: true,
-      fpo_verified: true,
+      fpo_registered: true,
     };
     setListings([newLot, ...listings]);
     setShowAddForm(false);
@@ -234,7 +234,7 @@ export default function KisanBazaarModule({ district, lang, apiUrl }: KisanBazaa
                 <span className="prov-badge simulated">
                   SIMULATED
                 </span>
-                {item.fpo_verified && <span className="organic-chip" style={{ background: "rgba(34, 197, 94, 0.15)", color: "#4ade80", padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 700 }}>✓ FPO Verified</span>}
+                {item.fpo_registered && <span className="organic-chip" style={{ background: "rgba(34, 197, 94, 0.15)", color: "#4ade80", padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 700 }}>✓ FPO Registered</span>}
               </div>
 
               <div className="lot-main-info" style={{ margin: "10px 0" }}>

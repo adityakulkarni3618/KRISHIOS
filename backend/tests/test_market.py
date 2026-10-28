@@ -50,8 +50,8 @@ def test_market_deduplication():
             "max_price": 2000.0,
             "price_date": "2026-10-19",
             "provenance": Provenance.CURATED_REFERENCE,
-            "source": "MSAMB",
-            "attribution": "MSAMB",
+            "source": "APMC-REF",
+            "attribution": "APMC-REF",
         },
         {
             "id": "DUP-01",
@@ -64,8 +64,8 @@ def test_market_deduplication():
             "max_price": 2000.0,
             "price_date": "2026-10-19",
             "provenance": Provenance.CURATED_REFERENCE,
-            "source": "MSAMB",
-            "attribution": "MSAMB",
+            "source": "APMC-REF",
+            "attribution": "APMC-REF",
         },
     ]
     svc = MarketService(records=dupes)

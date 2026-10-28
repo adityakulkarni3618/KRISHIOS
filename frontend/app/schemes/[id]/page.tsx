@@ -215,8 +215,36 @@ export default function SchemeDetailPage({
                 >
                   {scheme.category[lang]}
                 </span>
-                <span className="prov-badge live">VERIFIED • {scheme.lastVerifiedDate}</span>
+                <span className="prov-badge live">REVIEWED • {scheme.lastReviewedDate}</span>
               </div>
+
+              {scheme.currencyStatus && (
+                <div
+                  style={{
+                    padding: "8px 14px",
+                    background: scheme.currencyStatus.includes("CONFIRMED")
+                      ? "rgba(34, 197, 94, 0.12)"
+                      : "rgba(245, 158, 11, 0.12)",
+                    border: scheme.currencyStatus.includes("CONFIRMED")
+                      ? "1px solid #22c55e"
+                      : "1px solid #f59e0b",
+                    borderRadius: 8,
+                    color: scheme.currencyStatus.includes("CONFIRMED")
+                      ? "#86efac"
+                      : "#fde68a",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    marginBottom: 16,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                    maxWidth: 720,
+                  }}
+                >
+                  <span>{scheme.currencyStatus.includes("CONFIRMED") ? "🏛️" : "⚠️"}</span>
+                  <span>{scheme.currencyStatus}</span>
+                </div>
+              )}
 
               <h1
                 style={{

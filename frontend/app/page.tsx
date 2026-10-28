@@ -908,7 +908,7 @@ export default function Home() {
                         : (weatherError || (lang === "mr" ? "हवामान माहिती लोड होत आहे..." : "Loading live weather telemetry..."))}
                     </div>
                     <div className="kisan-status-badge safe">
-                      🟢 {lang === "mr" ? "फवारणीसाठी अनुकूल (SAFE)" : "SAFE TO SPRAY"}
+                      🟢 {lang === "mr" ? "फवारणी सल्ला" : "SPRAY ADVISORY"}
                     </div>
                   </div>
 
@@ -917,10 +917,12 @@ export default function Home() {
                     <div className="kisan-card-icon">🔬</div>
                     <div className="kisan-card-title">{t("kisan_disease_q")}</div>
                     <div className="kisan-card-desc">
-                      {lang === "mr" ? "कपाशीवरील गुलाबी बोंडअळी किंवा सोयाबीन पिवळा मोझॅक त्वरित ओळखा व १५L पंपाचे प्रमाण मिळवा." : "Instant photo diagnosis with pump dosage calculation."}
+                      {lang === "mr"
+                        ? "संदर्भ मार्गदर्शक, तज्ज्ञांकडून अद्याप पुनरावलोकन केलेले नाही. लक्षणे व १५L पंपाचे संदर्भ प्रमाण."
+                        : "Reference guide, not yet expert reviewed. Visual symptoms and pump reference dosage."}
                     </div>
                     <div className="kisan-status-badge warning">
-                      📸 {lang === "mr" ? "रोगनिदान स्कॅनर उघडा" : "OPEN CROP DOCTOR"}
+                      🔍 {lang === "mr" ? "रोगनिदान मार्गदर्शक" : "REFERENCE GUIDE"}
                     </div>
                   </div>
 
@@ -929,10 +931,12 @@ export default function Home() {
                     <div className="kisan-card-icon">💰</div>
                     <div className="kisan-card-title">{t("kisan_mandi_q")}</div>
                     <div className="kisan-card-desc">
-                      {lang === "mr" ? "बाजार समितीतील आजचे थेट भाव (किमान, सरासरी व कमाल दर ₹/क्विंटल)." : "APMC Mandi rates (Min, Modal, Max ₹/quintal)."}
+                      {lang === "mr"
+                        ? "नमुना संदर्भ भाव, संदर्भ तारीख दर्शविली आहे, थेट चालू दर नाहीत."
+                        : "Sample reference rates, reference date shown, not live."}
                     </div>
                     <div className="kisan-status-badge safe">
-                      📊 {lang === "mr" ? "बाजारभाव पहा" : "VIEW MANDI RATES"}
+                      📊 {lang === "mr" ? "संदर्भ भाव पहा" : "SAMPLE RATES"}
                     </div>
                   </div>
 
@@ -941,7 +945,9 @@ export default function Home() {
                     <div className="kisan-card-icon" style={{ background: "rgba(34, 197, 94, 0.15)" }}>📞</div>
                     <div className="kisan-card-title">{t("kisan_helpline")}</div>
                     <div className="kisan-card-desc">
-                      {lang === "mr" ? "शासकीय कृषी अधिकारी व विद्यापीठ शास्त्रज्ञांशी २४x७ मोफत थेट फोनवर बोला (Toll-Free Call)." : "Direct toll-free connection to certified ICAR & State agri officers."}
+                      {lang === "mr"
+                        ? "शासकीय कृषी कॉल सेंटर (KCC) १८००-१८०-१५५१ वर मोफत थेट फोन करा."
+                        : "Toll-free connection to Kisan Call Centre (1800-180-1551)."}
                     </div>
                     <div className="kisan-status-badge safe">
                       ☎️ {lang === "mr" ? "कॉल करण्यासाठी दाबा" : "TAP TO CALL NOW"}
@@ -953,22 +959,26 @@ export default function Home() {
                     <div className="kisan-card-icon" style={{ background: "rgba(212, 249, 54, 0.2)" }}>🎙️</div>
                     <div className="kisan-card-title">{lang === "mr" ? "कृषी प्रश्नोत्तरे (FAQ)" : "Krishi FAQ & Knowledge Guide"}</div>
                     <div className="kisan-card-desc">
-                      {lang === "mr" ? "माईकवर मराठीत शेतीचा कोणताही प्रश्न विचारा, राहुरी विद्यापीठाचा अधिकृत सल्ला त्वरित ऐका." : "Ask farming questions or tap mic for verified university-cited answers."}
+                      {lang === "mr"
+                        ? "माईकवर मराठीत शेतीचा कोणताही प्रश्न विचारा, विद्यापीठाच्या संदर्भ मार्गदर्शकातील माहिती ऐका."
+                        : "Ask farming questions or tap mic for university-cited guideline answers."}
                     </div>
                     <div className="kisan-status-badge safe">
                       🔊 {lang === "mr" ? "प्रश्नोत्तरे उघडा" : "OPEN KRISHI FAQ"}
                     </div>
                   </div>
 
-                  {/* Card 6: PMFBY 1 Rupee Insurance */}
+                  {/* Card 6: PMFBY Crop Insurance Guide */}
                   <div className="kisan-card" onClick={() => { setActiveTab("insurance"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
                     <div className="kisan-card-icon" style={{ background: "rgba(245, 158, 11, 0.2)" }}>🛡️</div>
-                    <div className="kisan-card-title">{lang === "mr" ? "₹१ पीक विमा व क्लेम" : "₹1 Crop Insurance Claim"}</div>
+                    <div className="kisan-card-title">{lang === "mr" ? "पीक विमा क्लेम मार्गदर्शक" : "Crop Insurance Claim Guide"}</div>
                     <div className="kisan-card-desc">
-                      {lang === "mr" ? "अतिवृष्टी किंवा पूर आल्यास ७२ तासांच्या आत नुकसानीची नोंदणी करा व भरपाईची रक्कम तपासा." : "72-hour disaster intimation guide and localized loss payout calculation."}
+                      {lang === "mr"
+                        ? "माहितीचे पुनरावलोकन बाकी (UNREVIEWED), कदाचित जुनी असू शकते. आपत्ती आल्यास ७२ तासांच्या आत बँक किंवा KVK कडे खात्री करा."
+                        : "UNREVIEWED - may be outdated, confirm terms with your bank/KVK. 72-hour disaster intimation guide."}
                     </div>
                     <div className="kisan-status-badge warning">
-                      ⏱️ {lang === "mr" ? "७२ तासांत क्लेम करा" : "72-HR INTIMATION"}
+                      ⚠️ UNREVIEWED • {lang === "mr" ? "माहिती जुनी असू शकते" : "May be outdated"}
                     </div>
                   </div>
 
@@ -977,7 +987,9 @@ export default function Home() {
                     <div className="kisan-card-icon" style={{ background: "rgba(56, 189, 248, 0.2)" }}>🧪</div>
                     <div className="kisan-card-title">{lang === "mr" ? "खताची पोती व वेळापत्रक" : "Fertilizer Bags & Doses"}</div>
                     <div className="kisan-card-desc">
-                      {lang === "mr" ? "माती परीक्षणानुसार डीएपी, युरिया व पोटॅशची आवश्यक पोती आणि ३ टप्प्यांचे वेळापत्रक." : "Soil test adjusted NPK bags and 3-stage split application dates."}
+                      {lang === "mr"
+                        ? "माती परीक्षणानुसार डीएपी, युरिया व पोटॅशची अंदाजित पोती आणि ३ टप्प्यांचे वेळापत्रक."
+                        : "Soil test adjusted NPK bag estimates and 3-stage split application schedules."}
                     </div>
                     <div className="kisan-status-badge safe">
                       📊 {lang === "mr" ? "खताची मात्रा काढा" : "CALCULATE BAGS"}
@@ -987,9 +999,11 @@ export default function Home() {
                   {/* Card 8: 7/12 Land Record & Health Card */}
                   <div className="kisan-card" onClick={() => { setActiveTab("satbara"); document.getElementById("agritech-console")?.scrollIntoView({ behavior: "smooth" }); }}>
                     <div className="kisan-card-icon" style={{ background: "rgba(16, 185, 129, 0.2)" }}>📄</div>
-                    <div className="kisan-card-title">{lang === "mr" ? "७/१२ उतारा व हेल्थ कार्ड" : "7/12 Digital Health Card"}</div>
+                    <div className="kisan-card-title">{lang === "mr" ? "७/१२ नोंद व शेतकरी हेल्थ कार्ड" : "7/12 Digital Health Card"}</div>
                     <div className="kisan-card-desc">
-                      {lang === "mr" ? "महाभूलेख सुसंगत गट नंबर नोंदणी करा आणि बँकेच्या कर्जासाठी अधिकृत हेल्थ कार्ड प्रिंट करा." : "Official Mahabhulekh land record registry with printable Farm Health Card."}
+                      {lang === "mr"
+                        ? "महाभूलेख सुसंगत गट नंबर नोंदणी करा आणि शेती माहितीचे हेल्थ कार्ड प्रिंट करा."
+                        : "Mahabhulekh format parcel entry with printable Farm Health Card layout."}
                     </div>
                     <div className="kisan-status-badge safe">
                       🖨️ {lang === "mr" ? "कार्ड डाऊनलोड करा" : "PRINT HEALTH CARD"}
@@ -1504,7 +1518,7 @@ export default function Home() {
                 <div className="tech-card-body">
                   <h3 className="tech-card-title">Sustainable Farming in the Modern Era</h3>
                   <p className="tech-card-desc">
-                    Empowering cultivators and FPOs with direct economic break-even calculators and verified central/state DBT schemes.
+                    Empowering cultivators and FPOs with direct economic break-even calculators and curated central/state DBT schemes.
                   </p>
                   <button
                     className="btn-lime-pill"
@@ -1938,7 +1952,7 @@ export default function Home() {
                       onClick={() => {
                         if (!weather || weather.temperature == null) return;
                         shareToWhatsApp(
-                          `⛅ *कृषी ओएस - हवामान व फवारणी सल्ला*\n📍 जिल्हा: ${selectedDistrict}\n🌡️ तापमान: ${weather.temperature.toFixed(1)}°C | आर्द्रता: ${weather.relative_humidity ?? "N/A"}%\n💨 वाऱ्याचा वेग: ${weather.wind_speed ?? "N/A"} km/h\n🌧️ पाऊस: ${weather.precipitation != null ? weather.precipitation.toFixed(1) : "0.0"} mm\n🏛️ अधिकृत स्त्रोत: IMD & Open-Meteo`
+                          `⛅ *कृषी ओएस - हवामान व फवारणी सल्ला*\n📍 जिल्हा: ${selectedDistrict}\n🌡️ तापमान: ${weather.temperature.toFixed(1)}°C | आर्द्रता: ${weather.relative_humidity ?? "N/A"}%\n💨 वाऱ्याचा वेग: ${weather.wind_speed ?? "N/A"} km/h\n🌧️ पाऊस: ${weather.precipitation != null ? weather.precipitation.toFixed(1) : "0.0"} mm\n🏛️ अधिकृत स्त्रोत: Open-Meteo`
                         );
                       }}
                     >
@@ -1985,7 +1999,7 @@ export default function Home() {
                   <div style={{ background: "var(--bg-card-subtle)", padding: 20, borderRadius: "var(--radius-md)", border: "1px solid var(--border-card)" }}>
                     <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase" }}>Data Provenance</div>
                     <div style={{ margin: "10px 0" }}>
-                      <span className="prov-badge live">LIVE OPEN-METEO & IMD</span>
+                      <span className="prov-badge live">LIVE OPEN-METEO</span>
                     </div>
                     <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
                       Telemetry fetched at: {weather?.fetched_at ? new Date(weather.fetched_at).toLocaleTimeString() : "Live"}
@@ -2070,8 +2084,8 @@ export default function Home() {
                       <span>ℹ️</span>
                       <span>
                         {lang === "mr"
-                          ? "नमुना संदर्भ भाव (दिनांक: १९ ऑक्टोबर २०२६) - हे थेट चालू दर नाहीत. अधिकृत MSAMB बुलेटिनवर आधारित."
-                          : "Sample reference prices as of 19-Oct-2026 from MSAMB daily bulletins. Not live streaming rates."}
+                          ? "नमुना संदर्भ भाव (दिनांक: १९ ऑक्टोबर २०२६) - हे थेट चालू दर नाहीत. संदर्भ तारीख दर्शविली आहे."
+                          : "Sample reference rates, reference date shown, not live."}
                       </span>
                     </div>
 
@@ -2812,7 +2826,7 @@ export default function Home() {
 
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <span>© 2026 AgriStack Ecosystem</span>
-              <span className="prov-badge live">Verified Production</span>
+              <span className="prov-badge live">Active Deployment</span>
             </div>
           </footer>
         </div>

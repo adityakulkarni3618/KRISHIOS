@@ -190,7 +190,7 @@ export default function EquipmentModule({ district, lang, apiUrl }: EquipmentMod
           {/* Nearby CHC Centers */}
           <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-card)", borderRadius: "var(--radius-md)", padding: 18, marginBottom: 20 }}>
             <h5 style={{ fontSize: 16, fontWeight: 800, color: "var(--accent-lime)", marginBottom: 12 }}>
-              📍 {lang === "mr" ? "जवळचे शेतकरी उत्पादक कंपनी (FPO) व शासकीय भाडे केंद्र:" : "Nearby Verified CHC & FPO Machinery Hubs:"}
+              📍 {lang === "mr" ? "जवळचे शेतकरी उत्पादक कंपनी (FPO) व शासकीय भाडे केंद्र:" : "Nearby CHC & FPO Machinery Hubs:"}
             </h5>
             <div style={{ display: "grid", gap: 12 }}>
               {estimate.nearby_centers.map((center, idx) => (
